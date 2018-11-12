@@ -4,6 +4,7 @@ const LOGIN_STATE = {
   isLoggedIn: false,
   username: '',
   password: '',
+  jwt: '',
 };
 /*
 const handleLogin = (state) => {
@@ -15,7 +16,13 @@ const handleLogin = (state) => {
 const loginReducer = (state = LOGIN_STATE, action) => {
   switch (action.type) {
     case LOGIN:
-      return state;
+      const {
+        username,
+        password
+      } = state;
+      const jwt = action.payload;
+      const newState = {username, password, jwt};
+      return newState;
     default:
       return state;
   }

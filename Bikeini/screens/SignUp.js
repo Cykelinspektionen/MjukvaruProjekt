@@ -4,6 +4,8 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import serverApi from '../utilities/serverApi';
+import deviceStorage from '../utilities/deviceStorage';
 
 const styles = StyleSheet.create({
   container: {
@@ -56,6 +58,20 @@ class SignUp extends React.PureComponent {
     };
   }
 
+  createNewUser = () => {
+    const {username, password} = this.state;
+    serverApi.fetchApi('sign_up', {
+       username: username,
+       password: password,
+    })
+    .then((responseJson) => {
+       console.log(responseJson);
+       deviceStorage.saveItem("id_token", responseJson.jwt);
+       //let jwt = responseJson.jwt;
+       //this.props.login(jwt);
+    }).catch(error => console.log(error));
+  }
+
   render() {
     const { username, password } = this.state;
     const { navigation } = this.props;
@@ -95,8 +111,14 @@ class SignUp extends React.PureComponent {
 
         <TouchableHighlight
           style={[styles.buttonContainer, styles.loginButton]}
-          onPress={() => console.log(this.state)
-          }
+          onPress={() => navigation.navigate('TempPage')}
+        >
+          <Text style={styles.loginText}>Login</Text>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          style={[styles.buttonContainer, styles.loginButton]}
+          onPress={this.createNewUser}
         >
           <Text style={styles.loginText}>Sign up</Text>
         </TouchableHighlight>

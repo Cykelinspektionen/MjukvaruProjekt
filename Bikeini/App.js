@@ -2,11 +2,11 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import loginReducer from './navigation/reducers/LoginReducers';
+import reducers from './navigation/reducers/index';
 import AppNavigator from './navigation/AppNavigator';
 
 
-const store = createStore(loginReducer);
+const store = createStore(reducers);
 
 export default class App extends React.Component {
   render() {

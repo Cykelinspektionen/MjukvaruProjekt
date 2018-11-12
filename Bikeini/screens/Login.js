@@ -145,10 +145,9 @@ class Login extends React.PureComponent {
               <Text style={styles.loginText}>Login</Text>
             </TouchableHighlight>
 
-            <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.createNewUser}>
+            <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => navigation.navigate('SignUp')}>
               <Text style={styles.loginText}>Sign up</Text>
             </TouchableHighlight>
-
           </View>
         );
       }

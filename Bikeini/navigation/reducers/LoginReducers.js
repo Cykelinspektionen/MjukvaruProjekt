@@ -1,4 +1,3 @@
-import { combineReducers } from 'redux';
 import { LOGIN } from '../actions/types';
 
 const LOGIN_STATE = {
@@ -22,6 +21,4 @@ const loginReducer = (state = LOGIN_STATE, action) => {
   }
 };
 
-export default combineReducers({
-  loginState: loginReducer,
-});
+export default loginReducer;

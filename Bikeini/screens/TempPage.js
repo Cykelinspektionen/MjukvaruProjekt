@@ -20,7 +20,7 @@ class TempPage extends React.PureComponent {
     return (
       <View style={styles.container}>
         <Text>
-          Hello :D
+          {this.props.loginState.jwt}
         </Text>
       </View>
     );
@@ -28,8 +28,8 @@ class TempPage extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => {
-  const { login } = state;
-  return { login };
+  const { loginState } = state;
+  return { loginState };
 };
 
 export default connect(mapStateToProps)(TempPage);

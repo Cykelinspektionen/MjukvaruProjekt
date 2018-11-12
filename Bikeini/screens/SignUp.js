@@ -5,8 +5,6 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { login } from '../navigation/actions/LoginActions';
-
 
 const styles = StyleSheet.create({
   container: {
@@ -49,8 +47,7 @@ const styles = StyleSheet.create({
   },
 });
 
-
-class Login extends React.PureComponent {
+class SignUp extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -64,9 +61,7 @@ class Login extends React.PureComponent {
     const { navigation } = this.props;
     return (
       <View style={styles.container}>
-        <Text>
-            Welcome to Bikeini lalalal
-        </Text>
+        <Text>FILL IN YOUR SHIT!</Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputs}
@@ -88,34 +83,27 @@ class Login extends React.PureComponent {
           />
         </View>
 
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => navigation.navigate('TempPage')}>
+        <TouchableHighlight
+          style={[styles.buttonContainer, styles.loginButton]}
+          onPress={() => navigation.navigate('TempPage')}
+        >
           <Text style={styles.loginText}>Login</Text>
         </TouchableHighlight>
 
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => navigation.navigate('SignUp')}>
+        <TouchableHighlight
+          style={[styles.buttonContainer, styles.loginButton]}
+          // onPress={() => console.log(this.state)}
+        >
           <Text style={styles.loginText}>Sign up</Text>
         </TouchableHighlight>
-
       </View>
     );
   }
 }
-
-Login.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
-};
 
 const mapStateToProps = (state) => {
   const { loginState } = state;
   return { loginState };
 };
 
-const mapDispatchToProps = dispatch => (
-  bindActionCreators({
-    login,
-  }, dispatch)
-);
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default connect(mapStateToProps)(SignUp);

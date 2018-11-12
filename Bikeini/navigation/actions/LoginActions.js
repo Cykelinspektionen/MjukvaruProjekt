@@ -1,4 +1,4 @@
-import { LOGIN } from './types';
+import { LOGIN, LOGOUT } from './types';
 
 export const login = credentials => (
   {

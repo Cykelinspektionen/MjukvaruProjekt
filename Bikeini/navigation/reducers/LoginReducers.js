@@ -6,23 +6,14 @@ const LOGIN_STATE = {
   password: '',
   jwt: '',
 };
-/*
-const handleLogin = (state) => {
-  const { userName, password } = state;
-  // TODO: validate credentials
-  return state;
-};
-*/
+
 const loginReducer = (state = LOGIN_STATE, action) => {
+  const { username, password } = state;
+  let { jwt } = state;
   switch (action.type) {
     case LOGIN:
-      const {
-        username,
-        password
-      } = state;
-      const jwt = action.payload;
-      const newState = {username, password, jwt};
-      return newState;
+      jwt = action.payload;
+      return { username, password, jwt };
     default:
       return state;
   }

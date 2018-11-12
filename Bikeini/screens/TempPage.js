@@ -17,10 +17,11 @@ const styles = StyleSheet.create({
 
 class TempPage extends React.PureComponent {
   render() {
+    const { jwt } = this.props.loginState;
     return (
       <View style={styles.container}>
         <Text>
-          {this.props.loginState.jwt}
+          {jwt}
         </Text>
       </View>
     );

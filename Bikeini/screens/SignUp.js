@@ -59,17 +59,17 @@ class SignUp extends React.PureComponent {
   }
 
   createNewUser = () => {
-    const {username, password} = this.state;
+    const { username, password } = this.state;
     serverApi.fetchApi('sign_up', {
-       username: username,
-       password: password,
+      username,
+      password,
     })
-    .then((responseJson) => {
-       console.log(responseJson);
-       deviceStorage.saveItem("id_token", responseJson.jwt);
-       //let jwt = responseJson.jwt;
-       //this.props.login(jwt);
-    }).catch(error => console.log(error));
+      .then((responseJson) => {
+        console.log(responseJson);
+        deviceStorage.saveItem('id_token', responseJson.jwt);
+        // let jwt = responseJson.jwt;
+        // this.props.login(jwt);
+      }).catch(error => console.log(error));
   }
 
   render() {

@@ -1,6 +1,6 @@
 const SIGN_UP_STATE = {
   isLoggedIn: false,
-  newUserame: '',
+  newUsername: '',
   newPassword: '',
 };
 

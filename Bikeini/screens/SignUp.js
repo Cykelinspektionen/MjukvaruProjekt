@@ -62,6 +62,7 @@ class SignUp extends React.PureComponent {
 
   createNewUser = () => {
     const { newUsername, newPassword, navigation } = this.state;
+    const { login } = this.props;
     serverApi.fetchApi('sign_up', {
       newUsername,
       newPassword,
@@ -151,12 +152,13 @@ SignUp.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
+  login: PropTypes.func.isRequired,
 };
 
 
 const mapStateToProps = (state) => {
-  const { loginState } = state;
-  return { loginState };
+  const { signUpState } = state;
+  return { signUpState };
 };
 
 const mapDispatchToProps = dispatch => (

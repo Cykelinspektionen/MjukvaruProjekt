@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { login } from '../navigation/actions/LoginActions';
 import serverApi from '../utilities/serverApi';
+
 import deviceStorage from '../utilities/deviceStorage';
 
 
@@ -63,14 +64,7 @@ class Login extends React.PureComponent {
 
     this.deleteJWT = deviceStorage.deleteJWT.bind(this);
     this.loadJWT = deviceStorage.loadJWT.bind(this);
-
     this.loadJWT();
-  }
-
-  newJWT = (jwt) => {
-    this.setState({
-      jwt,
-    });
   }
 
   logOutUser = () => {
@@ -78,21 +72,29 @@ class Login extends React.PureComponent {
   }
 
   logInUser = () => {
-    { navigation, login } = this.props;
-    const jwt = 'auth_token_1';
-    login(jwt);
-    deviceStorage.saveItem('id_token', jwt);
-    navigation.navigate('TempPage');
+    const { username, password, jwt } = this.state;
+    const { navigation, login } = this.props;
+    serverApi.fetchApi('sign_in', {
+      username,
+      password,
+    })
+      .then((responseJson) => {
+        // Check for failure!
+        console.log(responseJson);
+        deviceStorage.saveItem('id_token', responseJson.jwt);
+        login(jwt);
+        navigation.navigate('TempPage');
+      }).catch(error => console.log(error));
   }
 
   render() {
-    const { username, password } = this.state;
+    const { username, password, jwt } = this.state;
     const { navigation } = this.props;
 
     // VERY TEMPORARY TESTING SOLUTION!
     // it looks horrible but it used for testing that storing
     // using AsyncStorage is actually working! :)
-    if (this.state.jwt) {
+    if (jwt) {
       return (
         <View style={styles.container}>
           <Text> Already logged in fam </Text>

@@ -9,11 +9,14 @@ const LOGIN_STATE = {
 
 const loginReducer = (state = LOGIN_STATE, action) => {
   const { username, password } = state;
-  let { jwt } = state;
+  let { jwt, isLoggedIn } = state;
   switch (action.type) {
     case LOGIN:
       jwt = action.payload;
-      return { username, password, jwt };
+      isLoggedIn = true;
+      return {
+        username, password, jwt, isLoggedIn,
+      };
     default:
       return state;
   }

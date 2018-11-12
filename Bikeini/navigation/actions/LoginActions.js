@@ -6,3 +6,10 @@ export const login = credentials => (
     payload: credentials,
   }
 );
+
+export const logout = credentials => (
+  {
+    type: LOGOUT,
+    payload: credentials,
+  }
+);

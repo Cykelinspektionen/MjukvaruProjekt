@@ -3,7 +3,6 @@ import {
   StyleSheet, Text, View, TextInput, TouchableHighlight,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 
 const styles = StyleSheet.create({
@@ -51,8 +50,9 @@ class SignUp extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
-      password: '',
+      newUsername: '',
+      newPassword: '',
+      newPasswordConfirm: '',
     };
   }
 
@@ -69,7 +69,7 @@ class SignUp extends React.PureComponent {
             keyboardType="email-address"
             underlineColorAndroid="transparent"
             value={username}
-            onChangeText={text => this.setState({ username: text })}
+            onChangeText={text => this.setState({ newUsername: text })}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -79,20 +79,24 @@ class SignUp extends React.PureComponent {
             secureTextEntry
             underlineColorAndroid="transparent"
             value={password}
-            onChangeText={text => this.setState({ password: text })}
+            onChangeText={text => this.setState({ newPassword: text })}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputs}
+            placeholder="Confirm Password"
+            secureTextEntry
+            underlineColorAndroid="transparent"
+            value={password}
+            onChangeText={text => this.setState({ newPasswordConfirm: text })}
           />
         </View>
 
         <TouchableHighlight
           style={[styles.buttonContainer, styles.loginButton]}
-          onPress={() => navigation.navigate('TempPage')}
-        >
-          <Text style={styles.loginText}>Login</Text>
-        </TouchableHighlight>
-
-        <TouchableHighlight
-          style={[styles.buttonContainer, styles.loginButton]}
-          // onPress={() => console.log(this.state)}
+          onPress={() => console.log(this.state)
+          }
         >
           <Text style={styles.loginText}>Sign up</Text>
         </TouchableHighlight>
@@ -100,6 +104,12 @@ class SignUp extends React.PureComponent {
     );
   }
 }
+
+SignUp.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+};
 
 const mapStateToProps = (state) => {
   const { loginState } = state;

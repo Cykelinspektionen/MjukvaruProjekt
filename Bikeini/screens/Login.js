@@ -93,14 +93,16 @@ class Login extends React.PureComponent {
 
   logInUser = () => {
     const { navigation } = this.props;
-    this.props.login('auth_token_1');
+    let jwt = 'auth_token_1';
+    this.props.login(jwt);
+    deviceStorage.saveItem("id_token", jwt)
     navigation.navigate('TempPage');
 
   }
 
   render() {
     const { username, password } = this.state;
-    //const { navigation } = this.props;
+    const { navigation } = this.props;
 
     // VERY TEMPORARY TESTING SOLUTION!
     // it looks horrible but it used for testing that storing

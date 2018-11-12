@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { login } from '../navigation/actions/LoginActions';
+import serverApi from '../utilities/serverApi';
+import deviceStorage from '../utilities/deviceStorage';
 
 
 const styles = StyleSheet.create({
@@ -56,48 +58,100 @@ class Login extends React.PureComponent {
     this.state = {
       username: '',
       password: '',
+      jwt: '',
     };
+
+    this.deleteJWT = deviceStorage.deleteJWT.bind(this);
+    this.loadJWT = deviceStorage.loadJWT.bind(this);
+
+    this.loadJWT();
+  }
+
+  newJWT = (jwt) => {
+    this.setState({
+      jwt: jwt
+    });
+  }
+
+  createNewUser = () => {
+    const {username, password} = this.state;
+    serverApi.fetchApi('sign_up', {
+       username: username,
+       password: password,
+    })
+    .then((responseJson) => {
+       console.log(responseJson);
+       deviceStorage.saveItem("id_token", responseJson.jwt);
+       let jwt = responseJson.jwt;
+       this.props.login(jwt);
+    }).catch(error => console.log(error));
+  }
+
+  logOutUser = () => {
+    this.deleteJWT();
+  }
+
+  logInUser = () => {
+    const { navigation } = this.props;
+    this.props.login('auth_token_1');
+    navigation.navigate('TempPage');
+
   }
 
   render() {
     const { username, password } = this.state;
-    const { navigation } = this.props;
-    return (
-      <View style={styles.container}>
-        <Text>
-            Welcome to Bikeini lalalal
-        </Text>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.inputs}
-            placeholder="Email"
-            keyboardType="email-address"
-            underlineColorAndroid="transparent"
-            value={username}
-            onChangeText={text => this.setState({ username: text })}
-          />
+    //const { navigation } = this.props;
+
+    // VERY TEMPORARY TESTING SOLUTION!
+    // it looks horrible but it used for testing that storing
+    // using AsyncStorage is actually working! :)
+    if(this.state.jwt) {
+      return (
+        <View style={styles.container}>
+            <Text> Already logged in fam </Text>
+            <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.logOutUser}>
+                <Text style={styles.loginText}>Log me out fam</Text>
+            </TouchableHighlight>
         </View>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.inputs}
-            placeholder="Password"
-            secureTextEntry
-            underlineColorAndroid="transparent"
-            value={password}
-            onChangeText={text => this.setState({ password: text })}
-          />
-        </View>
+      )}
+    else {
+        return (
+          <View style={styles.container}>
+            <Text>
+                Welcome to Bikeini lalalal
+            </Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.inputs}
+                placeholder="Email"
+                keyboardType="email-address"
+                underlineColorAndroid="transparent"
+                value={username}
+                onChangeText={text => this.setState({ username: text })}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.inputs}
+                placeholder="Password"
+                secureTextEntry
+                underlineColorAndroid="transparent"
+                value={password}
+                onChangeText={text => this.setState({ password: text })}
+              />
+            </View>
 
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => navigation.navigate('TempPage')}>
-          <Text style={styles.loginText}>Login</Text>
-        </TouchableHighlight>
+            <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.logInUser}>
+              <Text style={styles.loginText}>Login</Text>
+            </TouchableHighlight>
 
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => console.log(this.state)}>
-          <Text style={styles.loginText}>Sign up</Text>
-        </TouchableHighlight>
+            <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.createNewUser}>
+              <Text style={styles.loginText}>Sign up</Text>
+            </TouchableHighlight>
 
-      </View>
-    );
+          </View>
+        );
+      }
   }
 }
 

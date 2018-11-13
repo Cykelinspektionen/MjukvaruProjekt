@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
 
 
 class Login extends React.PureComponent {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       username: '',
       password: '',

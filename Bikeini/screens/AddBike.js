@@ -6,9 +6,10 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
+import { ImagePicker } from 'expo';
+import permissions from '../utilities/permissions';
 
-
-const myBikeImg = require('../assets/images/robot-dev.png');
+const defaultBike = require('../assets/images/robot-dev.png');
 const cameraImg = require('../assets/images/albumImage.png');
 const albumImg = require('../assets/images/camera.png');
 
@@ -49,6 +50,9 @@ class ReportStolen extends React.PureComponent {
   constructor() {
     super();
     this.state = {
+      hasCameraPermission: null,
+      hasCameraRollPermission: null,
+      myBikeImg: false,
       Title: '',
       Type: [
         {
@@ -87,18 +91,40 @@ class ReportStolen extends React.PureComponent {
         },
       ],
     };
+    this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
   }
 
   typeRadio = Type => this.setState({ Type });
 
+  startCameraRoll = () => {
+    this.cameraRollPermission();
+    this.pickImage();
+  }
+
+  pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    });
+
+    console.log(result);
+
+    if (!result.cancelled) {
+      console.log(result.uri);
+      this.setState({ myBikeImg: result.uri });
+    }
+  };
+
   render() {
     // This is so weird, following is considered correct according to ESlint running airbnb, why?
-    const { myBikesState } = this.props;
+    const { myBikesState, navigation } = this.props;
     const {
-      Title, Type, Color, Brand, Size,
+      Title, Type, Color, Brand, Size, hasCameraPermission, hasCameraRollPermission,
     } = this.state;
+
+    const { myBikeImg } = this.state;
     console.log(myBikesState);
-    console.log(Title, Type);
+    console.log(hasCameraPermission, hasCameraRollPermission);
     return (
       <View style={styles.container}>
         <Text>
@@ -106,13 +132,12 @@ class ReportStolen extends React.PureComponent {
         </Text>
         <View style={styles.rowContainer}>
           <View>
-            <Image
-              source={myBikeImg}
-            />
+            {!myBikeImg && <Image source={defaultBike} /> }
+            {myBikeImg && <Image source={{ uri: myBikeImg }} style={{ width: 200, height: 200 }} />}
           </View>
           <View>
             <View style={styles.rowContainer}>
-              <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton]} onPress={this.logInUser}>
+              <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton]} onPress={this.startCameraRoll}>
                 <Text style={styles.loginText}>ADD FROM ALBUM</Text>
               </TouchableHighlight>
               <Image
@@ -120,7 +145,7 @@ class ReportStolen extends React.PureComponent {
               />
             </View>
             <View style={styles.rowContainer}>
-              <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton]} onPress={this.logInUser}>
+              <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton]} onPress={() => navigation.navigate('Camera')}>
                 <Text style={styles.loginText}>TAKE A PHOTO</Text>
               </TouchableHighlight>
               <Image

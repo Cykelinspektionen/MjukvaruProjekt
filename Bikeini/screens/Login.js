@@ -67,10 +67,6 @@ class Login extends React.PureComponent {
     this.loadJWT();
   }
 
-  logOutUser = () => {
-    this.deleteJWT();
-  }
-
   logInUser = () => {
     const { username, password, jwt } = this.state;
     const { navigation, login } = this.props;
@@ -85,6 +81,10 @@ class Login extends React.PureComponent {
         login(jwt);
         navigation.navigate('TempPage');
       }).catch(error => console.log(error));
+  }
+
+  logOutUser = () => {
+    this.deleteJWT();
   }
 
   render() {

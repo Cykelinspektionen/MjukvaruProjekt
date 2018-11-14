@@ -116,8 +116,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     width: 20,
     height: 60,
-  }
+  },
 });
+
+const missingBicycles = [
+  { key: '1', name: 'Bicycle 1', location: 'Gränby' },
+  { key: '2', name: 'Bicycle 2', location: 'Gottsunda' },
+  { key: '3', name: 'Bicycle 3', location: 'Stenhagen' },
+  { key: '4', name: 'Bicycle 4', location: 'Gränby' },
+  { key: '5', name: 'Bicycle 5', location: 'Gottsunda' },
+  { key: '6', name: 'Bicycle 6', location: 'Stenhagen' }];
+
+const foundBicycles = [
+  { key: '11', name: 'Bicycle 11', location: 'Sunnersta' },
+  { key: '12', name: 'Bicycle 12', location: 'Valsätra' },
+  { key: '13', name: 'Bicycle 13', location: 'Norby' },
+  { key: '14', name: 'Bicycle 14', location: 'Luthagen' }];
 
 class Browser extends React.PureComponent {
   constructor(props) {
@@ -125,13 +139,7 @@ class Browser extends React.PureComponent {
 
     this.state = {
       showMissing: true,
-      bicycles: [
-        { key: '1', name: 'Bicycle 1', location: 'Gränby' },
-        { key: '2', name: 'Bicycle 2', location: 'Gottsunda' },
-        { key: '3', name: 'Bicycle 3', location: 'Stenhagen' },
-        { key: '4', name: 'Bicycle 4', location: 'Gränby' },
-        { key: '5', name: 'Bicycle 5', location: 'Gottsunda' },
-        { key: '6', name: 'Bicycle 6', location: 'Stenhagen' }],
+      bicycles: missingBicycles,
     };
   }
 
@@ -139,7 +147,7 @@ class Browser extends React.PureComponent {
 
   renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => console.log('pressed: ' + item.name)}
+      onPress={() => console.log(`pressed: ${item.name}`)}
     >
       <Item name={item.name} location={item.location} />
     </TouchableOpacity>
@@ -155,36 +163,39 @@ class Browser extends React.PureComponent {
           </Text>
         </View>
       );
-    } else {
-      return (
-        <View style={styles.header}>
-          <Text style={styles.headerText}>
-            Found bikes in &#34;region&#34;
-          </Text>
-        </View>
-      );
     }
+    return (
+      <View style={styles.header}>
+        <Text style={styles.headerText}>
+            Found bikes in &#34;region&#34;
+        </Text>
+      </View>
+    );
   }
 
   switchPageType = () => {
     this.setState(prevState => ({
-      showMissing: !prevState.showMissing
+      showMissing: !prevState.showMissing,
     }), () => {
-      console.log('switch page type');
+      const { showMissing } = this.state;
+      if (showMissing) {
+        this.setState({ bicycles: missingBicycles });
+      } else {
+        this.setState({ bicycles: foundBicycles });
+      }
     });
   }
 
   render() {
-    const { showMissing, bicycles } = this.state;
-    let header = this.renderHeader();
+    const { bicycles } = this.state;
+    const header = this.renderHeader();
     return (
       <View style={styles.container}>
         {header}
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.showType}
           onPress={this.switchPageType}
-          >
-        </TouchableOpacity>
+        />
         <View style={styles.filter}>
           <Text>Filter * </Text>
         </View>

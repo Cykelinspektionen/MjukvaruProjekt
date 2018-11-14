@@ -1,9 +1,11 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, TextInput, TouchableHighlight,
+  Alert, StyleSheet, Text, View, TextInput, TouchableHighlight,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux';
+import { login } from '../navigation/actions/AuthActions';
 import serverApi from '../utilities/serverApi';
 import deviceStorage from '../utilities/deviceStorage';
 
@@ -48,7 +50,7 @@ const styles = StyleSheet.create({
   },
 });
 
-class SignUp extends React.PureComponent {
+class SignUp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -59,22 +61,48 @@ class SignUp extends React.PureComponent {
   }
 
   createNewUser = () => {
-    const {username, password} = this.state;
+    const { newUsername, newPassword, navigation } = this.state;
+    const { login } = this.props;
     serverApi.fetchApi('sign_up', {
-       username: username,
-       password: password,
+      newUsername,
+      newPassword,
     })
-    .then((responseJson) => {
-       console.log(responseJson);
-       deviceStorage.saveItem("id_token", responseJson.jwt);
-       //let jwt = responseJson.jwt;
-       //this.props.login(jwt);
-    }).catch(error => console.log(error));
+      .then((responseJson) => {
+        // Check for failure!
+        console.log(responseJson);
+        deviceStorage.saveItem('id_token', responseJson.jwt);
+        navigation.navigate('TempPage');
+        const { jwt } = responseJson.jwt;
+        login(jwt);
+        navigation.navigate('TempPage');
+      }).catch(error => console.log(error));
+  }
+
+  handleSignUp = () => {
+    switch (this.verifyRequiredCredentials()) {
+      case 'emptyField':
+        Alert.alert('All fields must not be empty');
+        break;
+      case 'missMatch':
+        Alert.alert('Passwords must match');
+        break;
+      case 'approved':
+        this.createNewUser();
+        break;
+      default:
+        break;
+    }
+  }
+
+  verifyRequiredCredentials = () => {
+    const { newUsername, newPassword, newPasswordConfirm } = this.state;
+    if (newUsername.trim() === '' || newPassword.trim() === '' || newPasswordConfirm.trim() === '') return 'emptyField';
+    if (newPassword !== newPasswordConfirm) return 'missMatch';
+    return 'approved';
   }
 
   render() {
     const { username, password } = this.state;
-    const { navigation } = this.props;
     return (
       <View style={styles.container}>
         <Text>FILL IN YOUR SHIT!</Text>
@@ -111,14 +139,7 @@ class SignUp extends React.PureComponent {
 
         <TouchableHighlight
           style={[styles.buttonContainer, styles.loginButton]}
-          onPress={() => navigation.navigate('TempPage')}
-        >
-          <Text style={styles.loginText}>Login</Text>
-        </TouchableHighlight>
-
-        <TouchableHighlight
-          style={[styles.buttonContainer, styles.loginButton]}
-          onPress={this.createNewUser}
+          onPress={this.handleSignUp}
         >
           <Text style={styles.loginText}>Sign up</Text>
         </TouchableHighlight>
@@ -131,11 +152,19 @@ SignUp.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
+  login: PropTypes.func.isRequired,
 };
+
 
 const mapStateToProps = (state) => {
-  const { loginState } = state;
-  return { loginState };
+  const { signUpState } = state;
+  return { signUpState };
 };
 
-export default connect(mapStateToProps)(SignUp);
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    login,
+  }, dispatch)
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

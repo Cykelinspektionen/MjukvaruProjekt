@@ -5,8 +5,9 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { login } from '../navigation/actions/LoginActions';
+import { login } from '../navigation/actions/AuthActions';
 import serverApi from '../utilities/serverApi';
+
 import deviceStorage from '../utilities/deviceStorage';
 
 
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
 });
 
 
-class Login extends React.PureComponent {
+class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -63,96 +64,82 @@ class Login extends React.PureComponent {
 
     this.deleteJWT = deviceStorage.deleteJWT.bind(this);
     this.loadJWT = deviceStorage.loadJWT.bind(this);
-
     this.loadJWT();
   }
 
-  newJWT = (jwt) => {
-    this.setState({
-      jwt: jwt
-    });
-  }
-
-  createNewUser = () => {
-    const {username, password} = this.state;
-    serverApi.fetchApi('sign_up', {
-       username: username,
-       password: password,
+  logInUser = () => {
+    const { username, password, jwt } = this.state;
+    const { navigation, login } = this.props;
+    serverApi.fetchApi('sign_in', {
+      username,
+      password,
     })
-    .then((responseJson) => {
-       console.log(responseJson);
-       deviceStorage.saveItem("id_token", responseJson.jwt);
-       let jwt = responseJson.jwt;
-       this.props.login(jwt);
-    }).catch(error => console.log(error));
+      .then((responseJson) => {
+        // Check for failure!
+        console.log(responseJson);
+        deviceStorage.saveItem('id_token', responseJson.jwt);
+        login(jwt);
+        navigation.navigate('TempPage');
+      }).catch(error => console.log(error));
   }
 
   logOutUser = () => {
     this.deleteJWT();
   }
 
-  logInUser = () => {
-    const { navigation } = this.props;
-    let jwt = 'auth_token_1';
-    this.props.login(jwt);
-    deviceStorage.saveItem("id_token", jwt)
-    navigation.navigate('TempPage');
-
-  }
-
   render() {
-    const { username, password } = this.state;
+    const { username, password, jwt } = this.state;
     const { navigation } = this.props;
 
     // VERY TEMPORARY TESTING SOLUTION!
     // it looks horrible but it used for testing that storing
     // using AsyncStorage is actually working! :)
-    if(this.state.jwt) {
+    if (jwt) {
       return (
         <View style={styles.container}>
-            <Text> Already logged in fam </Text>
-            <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.logOutUser}>
-                <Text style={styles.loginText}>Log me out fam</Text>
-            </TouchableHighlight>
+          <Text> Already logged in fam </Text>
+          <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.logOutUser}>
+            <Text style={styles.loginText}>Log me out fam</Text>
+          </TouchableHighlight>
         </View>
-      )}
-    else {
-        return (
-          <View style={styles.container}>
-            <Text>
+      );
+    }
+
+    return (
+      <View style={styles.container}>
+        <Text>
                 Welcome to Bikeini lalalal
-            </Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.inputs}
-                placeholder="Email"
-                keyboardType="email-address"
-                underlineColorAndroid="transparent"
-                value={username}
-                onChangeText={text => this.setState({ username: text })}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.inputs}
-                placeholder="Password"
-                secureTextEntry
-                underlineColorAndroid="transparent"
-                value={password}
-                onChangeText={text => this.setState({ password: text })}
-              />
-            </View>
+        </Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputs}
+            placeholder="Email"
+            keyboardType="email-address"
+            underlineColorAndroid="transparent"
+            value={username}
+            onChangeText={text => this.setState({ username: text })}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputs}
+            placeholder="Password"
+            secureTextEntry
+            underlineColorAndroid="transparent"
+            value={password}
+            onChangeText={text => this.setState({ password: text })}
+          />
+        </View>
 
             <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => navigation.navigate('Location')}>
               <Text style={styles.loginText}>Login</Text>
             </TouchableHighlight>
 
-            <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => navigation.navigate('SignUp')}>
-              <Text style={styles.loginText}>Sign up</Text>
-            </TouchableHighlight>
-          </View>
-        );
-      }
+        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => navigation.navigate('SignUp')}>
+          <Text style={styles.loginText}>Sign up</Text>
+        </TouchableHighlight>
+      </View>
+    );
   }
 }
 
@@ -160,6 +147,7 @@ Login.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
+  login: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {

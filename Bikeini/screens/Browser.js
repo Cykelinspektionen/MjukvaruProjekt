@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, FlatList,
+  StyleSheet, Text, View, FlatList, TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -108,6 +108,15 @@ const styles = StyleSheet.create({
     marginLeft: '10%',
     width: '88%',
   },
+  showType: {
+    alignSelf: 'flex-start',
+    position: 'absolute',
+    marginTop: '8%',
+    marginLeft: 10,
+    backgroundColor: 'black',
+    width: 20,
+    height: 60,
+  }
 });
 
 class Browser extends React.PureComponent {
@@ -129,14 +138,17 @@ class Browser extends React.PureComponent {
   keyExtractor = item => item.key;
 
   renderItem = ({ item }) => (
-    <Item name={item.name} location={item.location} />
+    <TouchableOpacity
+      onPress={() => console.log('pressed: ' + item.name)}
+    >
+      <Item name={item.name} location={item.location} />
+    </TouchableOpacity>
   );
 
-  render() {
-    const { showMissing, bicycles } = this.state;
-    let header;
+  renderHeader = () => {
+    const { showMissing } = this.state;
     if (showMissing) {
-      header = (
+      return (
         <View style={styles.header}>
           <Text style={styles.headerText}>
             Missing bikes in &#34;region&#34;
@@ -144,7 +156,7 @@ class Browser extends React.PureComponent {
         </View>
       );
     } else {
-      header = (
+      return (
         <View style={styles.header}>
           <Text style={styles.headerText}>
             Found bikes in &#34;region&#34;
@@ -152,9 +164,27 @@ class Browser extends React.PureComponent {
         </View>
       );
     }
+  }
+
+  switchPageType = () => {
+    this.setState(prevState => ({
+      showMissing: !prevState.showMissing
+    }), () => {
+      console.log('switch page type');
+    });
+  }
+
+  render() {
+    const { showMissing, bicycles } = this.state;
+    let header = this.renderHeader();
     return (
       <View style={styles.container}>
         {header}
+        <TouchableOpacity 
+          style={styles.showType}
+          onPress={this.switchPageType}
+          >
+        </TouchableOpacity>
         <View style={styles.filter}>
           <Text>Filter * </Text>
         </View>

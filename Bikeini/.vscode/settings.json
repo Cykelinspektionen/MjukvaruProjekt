@@ -1,0 +1,8 @@
+{
+    "eslint.enable": true,
+    "cSpell.words": [
+        "bikeini",
+        "lalalal"
+    ],
+    "react-native.packager.port": 19001
+}

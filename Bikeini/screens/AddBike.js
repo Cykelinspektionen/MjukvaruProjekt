@@ -1,13 +1,16 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, TouchableHighlight, TextInput,
+  StyleSheet, Text, View, Image, TouchableHighlight, TextInput, Alert,
 } from 'react-native';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
 import { ImagePicker } from 'expo';
 import permissions from '../utilities/permissions';
+import * as addBikeActions from '../navigation/actions/AddBikeActions';
+
 
 const defaultBike = require('../assets/images/robot-dev.png');
 const cameraImg = require('../assets/images/albumImage.png');
@@ -46,13 +49,11 @@ const styles = StyleSheet.create({
   },
 });
 
-class ReportStolen extends React.PureComponent {
+class AddBike extends React.Component {
   constructor() {
     super();
     this.state = {
-      hasCameraPermission: null,
       hasCameraRollPermission: null,
-      myBikeImg: false,
       Title: '',
       Type: [
         {
@@ -97,34 +98,33 @@ class ReportStolen extends React.PureComponent {
   typeRadio = Type => this.setState({ Type });
 
   startCameraRoll = () => {
-    this.cameraRollPermission();
-    this.pickImage();
+    this.cameraRollPermission(this.pickImage);
   }
 
   pickImage = async () => {
+    const { hasCameraRollPermission } = this.state;
+    if (!hasCameraRollPermission) {
+      Alert.alert('No Access');
+      return;
+    }
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [4, 3],
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
-      console.log(result.uri);
-      this.setState({ myBikeImg: result.uri });
+      const { saveImageToState } = this.props;
+      saveImageToState(result.uri);
+      console.log(this.props);
     }
   };
 
   render() {
-    // This is so weird, following is considered correct according to ESlint running airbnb, why?
-    const { myBikesState, navigation } = this.props;
+    const { addBikeState, navigation } = this.props;
     const {
-      Title, Type, Color, Brand, Size, hasCameraPermission, hasCameraRollPermission,
+      Title, Type, Color, Brand, Size,
     } = this.state;
-
-    const { myBikeImg } = this.state;
-    console.log(myBikesState);
-    console.log(hasCameraPermission, hasCameraRollPermission);
+    console.log(addBikeState);
     return (
       <View style={styles.container}>
         <Text>
@@ -132,8 +132,8 @@ class ReportStolen extends React.PureComponent {
         </Text>
         <View style={styles.rowContainer}>
           <View>
-            {!myBikeImg && <Image source={defaultBike} /> }
-            {myBikeImg && <Image source={{ uri: myBikeImg }} style={{ width: 200, height: 200 }} />}
+            {!addBikeState.uriSet && <Image source={defaultBike} /> }
+            {addBikeState.uriSet && <Image source={{ uri: addBikeState.imgToUploadUri }} style={{ width: 200, height: 200 }} />}
           </View>
           <View>
             <View style={styles.rowContainer}>
@@ -185,19 +185,25 @@ class ReportStolen extends React.PureComponent {
   }
 }
 
-ReportStolen.propTypes = {
+AddBike.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
-  myBikesState: PropTypes.shape({
-    missingID: PropTypes.array.isRequired,
-    retrievedID: PropTypes.array.isRequired,
+  addBikeState: PropTypes.shape({
+    newBikeID: PropTypes.string.isRequired,
+    imgToUploadUri: PropTypes.string.isRequired,
   }).isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { myBikesState } = state;
-  return { myBikesState };
+  const { addBikeState } = state;
+  return { addBikeState };
 };
 
-export default connect(mapStateToProps)(ReportStolen);
+const mapDispatchToProps = dispatch => bindActionCreators(
+  { ...addBikeActions },
+  dispatch,
+);
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddBike);

@@ -13,7 +13,7 @@ const AppNavigator = createStackNavigator({
   Camera: { screen: Camera },
 },
 {
-  initialRouteName: 'Login',
+  initialRouteName: 'AddBike',
 });
 
 export default AppNavigator;

@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux';
 import loginReducer from './LoginReducers';
 import signUpReducer from './SignUpReducers';
-import reportStolenReducers from './ReportStolenReducers';
+import addBikeReducers from './AddBikeReducers';
 import PermissionsReducers from './PermissionsReducers';
 
 
 export default combineReducers({
   loginState: loginReducer,
   signUpState: signUpReducer,
-  myBikesState: reportStolenReducers,
+  addBikeState: addBikeReducers,
   permissionState: PermissionsReducers,
 });

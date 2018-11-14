@@ -83,3 +83,4 @@ typings/
 .idea
 .DS_Store
 .expo
+server/

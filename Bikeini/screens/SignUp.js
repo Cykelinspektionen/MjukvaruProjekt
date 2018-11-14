@@ -5,7 +5,7 @@ import {
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import { login } from '../navigation/actions/LoginActions';
+import * as loginActions from '../navigation/actions/LoginActions';
 import serverApi from '../utilities/serverApi';
 import deviceStorage from '../utilities/deviceStorage';
 
@@ -161,10 +161,9 @@ const mapStateToProps = (state) => {
   return { signUpState };
 };
 
-const mapDispatchToProps = dispatch => (
-  bindActionCreators({
-    login,
-  }, dispatch)
+const mapDispatchToProps = dispatch => bindActionCreators(
+  { ...loginActions },
+  dispatch,
 );
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

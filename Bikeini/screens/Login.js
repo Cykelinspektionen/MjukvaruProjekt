@@ -3,9 +3,9 @@ import {
   StyleSheet, Text, View, TextInput, TouchableHighlight,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { login } from '../navigation/actions/LoginActions';
+import { bindActionCreators } from 'redux';
+import * as loginActions from '../navigation/actions/LoginActions';
 import serverApi from '../utilities/serverApi';
 
 import deviceStorage from '../utilities/deviceStorage';
@@ -155,10 +155,9 @@ const mapStateToProps = (state) => {
   return { loginState };
 };
 
-const mapDispatchToProps = dispatch => (
-  bindActionCreators({
-    login,
-  }, dispatch)
+const mapDispatchToProps = dispatch => bindActionCreators(
+  { ...loginActions },
+  dispatch,
 );
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

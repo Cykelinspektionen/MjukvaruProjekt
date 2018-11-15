@@ -193,6 +193,7 @@ AddBike.propTypes = {
     newBikeID: PropTypes.string.isRequired,
     imgToUploadUri: PropTypes.string.isRequired,
   }).isRequired,
+  saveImageToState: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {

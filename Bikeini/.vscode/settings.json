@@ -1,8 +1,15 @@
 {
     "eslint.enable": true,
     "cSpell.words": [
+        "barcode",
         "bikeini",
-        "lalalal"
+        "camerja",
+        "dropleft",
+        "dropright",
+        "ionicons",
+        "lalalal",
+        "monark",
+        "octicons"
     ],
     "react-native.packager.port": 19001
 }

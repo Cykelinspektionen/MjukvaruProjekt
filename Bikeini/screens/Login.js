@@ -5,7 +5,7 @@ import {
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import * as loginActions from '../navigation/actions/LoginActions';
+import * as authActions from '../navigation/actions/AuthActions';
 import serverApi from '../utilities/serverApi';
 
 import deviceStorage from '../utilities/deviceStorage';
@@ -156,7 +156,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...loginActions },
+  { ...authActions },
   dispatch,
 );
 

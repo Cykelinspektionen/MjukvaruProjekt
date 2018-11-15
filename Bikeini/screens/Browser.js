@@ -1,7 +1,8 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, FlatList, TouchableOpacity, CheckBox, ListView
+  StyleSheet, Text, View, FlatList, TouchableOpacity, ListView,
 } from 'react-native';
+import { CheckBox } from 'react-native-elements';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -37,14 +38,15 @@ const stylesFilter = StyleSheet.create({
   },
   rowContainer: {
     flexDirection: 'row',
-    height: 50,
-    width: 500,
+    height: 30,
+    width: '100%',
     backgroundColor: 'red',
-    borderWidth: 1
   },
   itemContainer: {
+    flexDirection: 'row',
     width: '50%',
-    borderWidth: 1
+    height: '100%',
+    backgroundColor: 'white',
   },
   itemText: {
     fontSize: 22,
@@ -53,58 +55,119 @@ const stylesFilter = StyleSheet.create({
 
 
 const filterItems = [
-  'row 1', 'row 1-2', 
-  'row 2', 'row 2-2'
-]
+  '1', '2',
+  '3', '4',
+  '5', '6',
+];
+/*
+let checkBoxes = [
+  false, false,
+  false, false,
+];
+*/
 
-class Filter extends React.PureComponent {
+class ItemCheckbox extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isChecked: false,
+            title: this.props.title,
+            id: this.props.id,
+        }
+    }
+
+    changeStatus = () => {
+        const { id } = this.state;
+        this.setState({isChecked: !this.state.isChecked}, () => {
+            this.props.onChange(id);
+        });
+    }
+
+    render() {
+      const { title } = this.state;
+      return(
+          <CheckBox
+              title={this.state.title}
+              checkedIcon='dot-circle-o'
+              uncheckedIcon='circle-o'
+              checked={this.state.isChecked}
+              containerStyle={{backgroundColor: 'white', borderWidth: 0}}
+              onPress={this.changeStatus}
+           />
+      );
+    }
+}
+
+class Filter extends React.Component {
 
   constructor(props) {
     super(props);
 
-    /*
-    checked: false,
-    checked2: false
-    */
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-    //{a:'row 1', b:'row 1-2'}, {a:'row 2', b:'row 2-2'}
     this.state = {
-      dataSource: ds.cloneWithRows([['row 1', 'row 1-2'], ['row 2', 'row 2-2']]),
-      checked: false,
-      checked2: false,
+      dataSource: ds.cloneWithRows(this.processFilterItems(filterItems)),
     };
+
+    this.updateCheckBoxes = this.updateCheckBoxes.bind(this);
+    this.checkBoxes = [];
+  }
+
+  updateCheckBoxes(id) {
+    let newCheckBoxes = this.checkBoxes;
+    let ind = id%2;
+    let rowInd = (ind-id)/2;
+    newCheckBoxes[rowInd][ind] = !newCheckBoxes[rowInd][ind];
+
+    this.checkBoxes = newCheckBoxes;
+    console.log(this.checkBoxes);
+  }
+
+  processFilterItems(filterItems) {
+    let row = [];
+    let processedFilter = [];
+    let newCheckBoxes = [];
+    for(let i=0; i<filterItems.length; i=i+2) {
+        row.push(i);
+        row.push(i+1);
+
+        row.push(filterItems[i]);
+        row.push(filterItems[i+1]);
+
+        newCheckBoxes.push([false, false]);
+
+        //newCheckBoxes.push(false);
+
+        //processedFilter.push(filterItems[i]);
+        processedFilter.push(row);
+        row = [];
+    }
+    console.log(processedFilter);
+    console.log(newCheckBoxes);
+    this.checkBoxes = newCheckBoxes;
+    return processedFilter;
   }
 
   renderRow(rowData) {
+    //return <ItemCheckbox />;
+
+    let id1 = rowData[0];
+    let text1 = rowData[2];
+    let id2 = rowData[1];
+    let text2 = rowData[3];
     return (
       <View style={stylesFilter.rowContainer}>
         <View style={stylesFilter.itemContainer}>
-          <CheckBox 
-              title='Click Here'
-              value={this.state.checked}
-              onChange={() => this.setState({checked: !this.state.checked})}
-            />
-          <Text style={stylesFilter.itemText}>{filterItems[0]}</Text>
+          <ItemCheckbox title={text1} id={id1} onChange={this.updateCheckBoxes}/>
+        </View>
+        <View style={stylesFilter.itemContainer}>
+          <ItemCheckbox title={text2} id={id2} onChange={this.updateCheckBoxes}/>
         </View>
       </View>
-
     );
   }
 
-  /*
-          <View style={stylesFilter.boxPanel}>
-            <CheckBox 
-              title='Click Here'
-              value={this.state.checked}
-              onChange={() => this.setState({checked: !this.state.checked})}
-            />
-            <CheckBox 
-              title='Click Here'
-              value={this.state.checked2}
-              onChange={() => this.setState({checked2: !this.state.checked2})}
-            />
-          </View>
-  */
   render() {
     return (
       <View style={stylesFilter.fullContainter}>
@@ -170,7 +233,7 @@ const stylesItem = StyleSheet.create({
   },
 });
 
-class Item extends React.PureComponent {
+class Item extends React.Component {
   render() {
     const { name, location } = this.props;
     return (
@@ -249,14 +312,14 @@ const foundBicycles = [
   { key: '13', name: 'Bicycle 13', location: 'Norby' },
   { key: '14', name: 'Bicycle 14', location: 'Luthagen' }];
 
-class Browser extends React.PureComponent {
+class Browser extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       showMissing: true,
       bicycles: missingBicycles,
-      showFilter: false,
+      showFilter: true,
     };
   }
 

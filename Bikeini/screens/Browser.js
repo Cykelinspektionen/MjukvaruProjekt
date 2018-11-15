@@ -1,9 +1,125 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, FlatList, TouchableOpacity,
+  StyleSheet, Text, View, FlatList, TouchableOpacity, CheckBox, ListView
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+
+const stylesFilter = StyleSheet.create({
+  fullContainter: {
+    width: '100%',
+    height: '50%',
+    marginTop: '2%',
+  },
+  container: {
+    alignSelf: 'flex-start',
+    alignItems: 'flex-start',
+    width: '80%',
+    height: '100%',
+    marginLeft: '10%',
+    borderWidth: 1,
+  },
+  searchBar: {
+    height: '10%',
+    width: '70%',
+    borderWidth: 1,
+  },
+  breakLine: {
+    width: '100%',
+    height: '1%',
+    borderWidth: 0,
+    borderBottomWidth: 1,
+  },
+  boxPanel: {
+    flexDirection: 'row',
+    marginTop: '5%',
+    width: '100%'
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    height: 50,
+    width: 500,
+    backgroundColor: 'red',
+    borderWidth: 1
+  },
+  itemContainer: {
+    width: '50%',
+    borderWidth: 1
+  },
+  itemText: {
+    fontSize: 22,
+  }
+});
+
+
+const filterItems = [
+  'row 1', 'row 1-2', 
+  'row 2', 'row 2-2'
+]
+
+class Filter extends React.PureComponent {
+
+  constructor(props) {
+    super(props);
+
+    /*
+    checked: false,
+    checked2: false
+    */
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    //{a:'row 1', b:'row 1-2'}, {a:'row 2', b:'row 2-2'}
+    this.state = {
+      dataSource: ds.cloneWithRows([['row 1', 'row 1-2'], ['row 2', 'row 2-2']]),
+      checked: false,
+      checked2: false,
+    };
+  }
+
+  renderRow(rowData) {
+    return (
+      <View style={stylesFilter.rowContainer}>
+        <View style={stylesFilter.itemContainer}>
+          <CheckBox 
+              title='Click Here'
+              value={this.state.checked}
+              onChange={() => this.setState({checked: !this.state.checked})}
+            />
+          <Text style={stylesFilter.itemText}>{filterItems[0]}</Text>
+        </View>
+      </View>
+
+    );
+  }
+
+  /*
+          <View style={stylesFilter.boxPanel}>
+            <CheckBox 
+              title='Click Here'
+              value={this.state.checked}
+              onChange={() => this.setState({checked: !this.state.checked})}
+            />
+            <CheckBox 
+              title='Click Here'
+              value={this.state.checked2}
+              onChange={() => this.setState({checked2: !this.state.checked2})}
+            />
+          </View>
+  */
+  render() {
+    return (
+      <View style={stylesFilter.fullContainter}>
+        <View style={stylesFilter.container}>
+          <View style={stylesFilter.searchBar} />
+          <ListView
+            dataSource={this.state.dataSource}
+            renderRow={(rowData) => this.renderRow(rowData)}
+          />
+        </View>
+        <View style={stylesFilter.breakLine} />
+      </View>
+    );
+  }
+}
 
 const stylesItem = StyleSheet.create({
   item: {
@@ -90,7 +206,7 @@ const styles = StyleSheet.create({
   header: {
     alignSelf: 'flex-start',
     marginTop: '5%',
-    marginLeft: '10%',
+    marginLeft: '13%',
   },
   headerText: {
     fontSize: 22,
@@ -99,7 +215,7 @@ const styles = StyleSheet.create({
   filter: {
     alignSelf: 'flex-start',
     marginTop: '5%',
-    marginLeft: '10%',
+    marginLeft: '13%',
   },
   browserList: {
     flex: 1,
@@ -140,6 +256,7 @@ class Browser extends React.PureComponent {
     this.state = {
       showMissing: true,
       bicycles: missingBicycles,
+      showFilter: false,
     };
   }
 
@@ -186,9 +303,21 @@ class Browser extends React.PureComponent {
     });
   }
 
+  renderFilter = () => {
+    const { showFilter } = this.state;
+
+    if(showFilter) {
+      return <Filter />;
+    }
+    else {
+      return;
+    }
+  }
+
   render() {
-    const { bicycles } = this.state;
+    const { bicycles, showFilter } = this.state;
     const header = this.renderHeader();
+    const filter = this.renderFilter();
     return (
       <View style={styles.container}>
         {header}
@@ -196,9 +325,13 @@ class Browser extends React.PureComponent {
           style={styles.showType}
           onPress={this.switchPageType}
         />
-        <View style={styles.filter}>
+        <TouchableOpacity 
+          style={styles.filter}
+          onPress={() => this.setState({showFilter: !this.state.showFilter})}
+        >
           <Text>Filter * </Text>
-        </View>
+        </TouchableOpacity>
+        {filter}
         <View style={styles.browserList}>
           <FlatList
             data={bicycles}

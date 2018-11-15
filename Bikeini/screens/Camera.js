@@ -110,32 +110,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 10,
   },
-  detectors: {
-    flex: 0.5,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  pictureQualityLabel: {
-    fontSize: 10,
-    marginVertical: 3,
-    color: 'white',
-  },
-  pictureSizeContainer: {
-    flex: 0.5,
-    alignItems: 'center',
-    paddingTop: 10,
-  },
-  pictureSizeChooser: {
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-  },
-  pictureSizeLabel: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   row: {
     flexDirection: 'row',
   },

@@ -131,9 +131,9 @@ class Login extends React.Component {
           />
         </View>
 
-            <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => navigation.navigate('Location')}>
-              <Text style={styles.loginText}>Login</Text>
-            </TouchableHighlight>
+        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => navigation.navigate('Location')}>
+          <Text style={styles.loginText}>Login</Text>
+        </TouchableHighlight>
 
         <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.loginText}>Sign up</Text>

@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
-import { ImagePicker } from 'expo';
+import { ImagePicker, ImageManipulator } from 'expo';
 import permissions from '../utilities/permissions';
 import * as addBikeActions from '../navigation/actions/AddBikeActions';
 
@@ -46,6 +46,15 @@ const styles = StyleSheet.create({
     height: 45,
     marginLeft: 16,
     borderBottomColor: '#FFFFFF',
+  },
+  thumbnail: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
+  },
+  icons: {
+    width: 25,
+    height: 25,
   },
 });
 
@@ -133,7 +142,7 @@ class AddBike extends React.Component {
         <View style={styles.rowContainer}>
           <View>
             {!addBikeState.uriSet && <Image source={defaultBike} /> }
-            {addBikeState.uriSet && <Image source={{ uri: addBikeState.imgToUploadUri }} style={{ width: 200, height: 200 }} />}
+            {addBikeState.uriSet && <Image source={{ uri: addBikeState.imgToUploadUri }} style={styles.thumbnail} />}
           </View>
           <View>
             <View style={styles.rowContainer}>
@@ -141,6 +150,7 @@ class AddBike extends React.Component {
                 <Text style={styles.loginText}>ADD FROM ALBUM</Text>
               </TouchableHighlight>
               <Image
+                style={styles.icons}
                 source={cameraImg}
               />
             </View>
@@ -149,6 +159,7 @@ class AddBike extends React.Component {
                 <Text style={styles.loginText}>TAKE A PHOTO</Text>
               </TouchableHighlight>
               <Image
+                style={styles.icons}
                 source={albumImg}
               />
             </View>

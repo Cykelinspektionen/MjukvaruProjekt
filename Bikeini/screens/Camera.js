@@ -1,7 +1,7 @@
 // Inspired by guide from expo camerja repository
 import React from 'react';
 import {
-  StyleSheet, Text, View, TouchableOpacity, Platform,
+  StyleSheet, Text, View, TouchableOpacity,
 } from 'react-native';
 import {
   Constants, Camera, FileSystem,
@@ -124,14 +124,11 @@ class CameraPage extends React.Component {
       autoFocus: 'on',
       type: 'back',
       whiteBalance: 'auto',
-      ratio: '16:9',
-      ratios: [],
       pictureSize: undefined,
       pictureSizes: [],
       pictureSizeId: 0,
       showMoreOptions: false,
       hasCameraPermission: false,
-      // type: Camera.Constants.Type.back,
     };
     this.cameraPermission = permissions.cameraPermission.bind(this);
     this.cameraPermission();
@@ -142,11 +139,6 @@ class CameraPage extends React.Component {
       console.log(e, 'Directory exists');
     });
   }
-
-  getRatios = async () => {
-    const ratios = await this.camera.getSupportedRatios();
-    return ratios;
-  };
 
   toggleMoreOptions = () => {
     const { showMoreOptions } = this.state;
@@ -162,8 +154,6 @@ class CameraPage extends React.Component {
     const { flash } = this.state;
     this.setState({ flash: flashModeOrder[flash] });
   }
-
-  setRatio = ratio => this.setState({ ratio });
 
   toggleWB = () => {
     const { whiteBalance } = this.state;
@@ -195,6 +185,8 @@ class CameraPage extends React.Component {
   takePicture = () => {
     if (this.camera) {
       this.camera.takePictureAsync({ onPictureSaved: this.setUriDetails });
+      const { navigation } = this.props;
+      navigation.navigate('AddBike');
     }
   };
 
@@ -203,25 +195,9 @@ class CameraPage extends React.Component {
   setUriDetails = (photo) => {
     console.log(photo);
     console.log(this.state);
-    const { saveImageToState, navigation } = this.props;
+    const { saveImageToState } = this.props;
     saveImageToState(photo.uri);
-    navigation.navigate('AddBike');
   }
-
-  collectPictureSizes = async () => {
-    if (this.camera) {
-      const { ratio } = this.state;
-      const pictureSizes = await this.camera.getAvailablePictureSizesAsync(ratio);
-      let pictureSizeId = 0;
-      if (Platform.OS === 'ios') {
-        pictureSizeId = pictureSizes.indexOf('High');
-      } else {
-        // returned array is sorted in ascending order - default size is the largest one
-        pictureSizeId = pictureSizes.length - 1;
-      }
-      this.setState({ pictureSizes, pictureSizeId, pictureSize: pictureSizes[pictureSizeId] });
-    }
-  };
 
   previousPictureSize = () => this.changePictureSize(1, this.state);
 
@@ -294,7 +270,6 @@ renderCamera = (state => (
       autoFocus={state.autoFocus}
       zoom={state.zoom}
       whiteBalance={state.whiteBalance}
-      ratio={state.ratio}
       pictureSize={state.pictureSize}
       onMountError={this.handleMountError}
     >

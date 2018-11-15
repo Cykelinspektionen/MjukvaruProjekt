@@ -64,6 +64,7 @@ class AddBike extends React.Component {
     this.state = {
       hasCameraRollPermission: null,
       Title: '',
+      savedImgRef:'',
       Type: [
         {
           label: 'Stolen',
@@ -133,7 +134,6 @@ class AddBike extends React.Component {
     const {
       Title, Type, Color, Brand, Size,
     } = this.state;
-    console.log(addBikeState);
     return (
       <View style={styles.container}>
         <Text>
@@ -191,6 +191,22 @@ class AddBike extends React.Component {
             data={Size}
           />
         </View>
+        <TouchableHighlight
+          style={[styles.smallButtonContainer, styles.actionButton]}
+          onPress={() => {
+            // API CALL TO SAVE IMG, STORE RESPONSE IN saveImgRef
+            // API CALL TO SAVE STATE
+            const stolen = Type[0].selected;
+            if (stolen) {
+              // SET PREVIEW STATE TO SHOW STOLEN
+            } else {
+              // SET PREVIEW STATE TO SHOW FOUND
+            }
+            // navigation.navigate('PREVIEW ADS!')
+          }}
+        >
+          <Text style={styles.loginText}>Submit</Text>
+        </TouchableHighlight>
       </View>
     );
   }

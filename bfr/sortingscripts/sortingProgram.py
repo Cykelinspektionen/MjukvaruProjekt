@@ -4,30 +4,33 @@ Basic manual sorting program
 import os, sys
 import Tkinter
 from Tkinter import *
-import Image, ImageTk
+#from PIL import *
+from PIL import Image
+from PIL import ImageTk
+#import Image, ImageTk
 
 
 
-BULKPATH = "/Users/adrian/Documents/MjukvaruProjekt/bfr/images_unsorted/bike_png"
+BULKPATH = "/Users/adrian/Documents/MjukvaruProjekt/bfr/images_unsorted/bike_Formated"
 SAVEPATH = "/Users/adrian/Documents/MjukvaruProjekt/bfr/dataset/training/"
 
 """Set variables"""
-colors = ["blue", "black", "yellow", "red", "green", "white", "purple", "gray", "pink", "orange", "brown"] #black, white, red, green, yellow, blue, pink, gray, brown, orange and purple.
+colors = ["blue", "black", "yellow", "red", "green", "white", "purple", "gray", "pink", "orange", "brown", "silver", "gold"] #black, white, red, green, yellow, blue, pink, gray, brown, orange and purple.
 basket = ["yes", "no"]
 rack = ["yes", "no"]
-frame = ["male", "female", "sport"]
-mudguard = ["yes", "no"]
-net = ["yes", "no"]
-chainProtection = ["yes", "no"] 
+frame = ["male", "female", "sport", "child", "special"]
+#mudguard = ["yes", "no"]
+#net = ["yes", "no"]
+#chainProtection = ["yes", "no"] 
 lamp = ["yes", "no"]
 
 categories = {"colors": colors, 
               "basket": basket, 
               "rack": rack, 
               "frame": frame, 
-              "mudguard": mudguard, 
-              "net":net , 
-              "chainProtection": chainProtection,
+              #"mudguard": mudguard, 
+              #"net":net , 
+              #"chainProtection": chainProtection,
               "lamp": lamp
               }
             
@@ -48,7 +51,16 @@ def saveImg():
                 print imgSavePath
                 image1.save(imgSavePath , 'png')
         
-
+def SelectButton(myopt, mycat):
+    def wrapper(opt=myopt, cat=mycat):
+        print opt
+        print cat
+        value = checkbuttons[cat]
+        for v in value:
+            if v.cget("text") != opt:
+                v.deselect()
+    return wrapper
+    
 def button_click_exit_mainloop (event):
     pass
     #event.widget.quit() # this will cause mainloop to unblock.
@@ -98,7 +110,15 @@ bottomframe = Frame(root)
 """Add Bike Data Alternatives""" 
 keys=categories.keys()  #in python 3, you'll need `list(i.keys())`
 values=categories.values()
-checkbuttons = []
+checkbuttons = {"colors": [], 
+              "basket": [], 
+              "rack": [], 
+              "frame": [], 
+              "mudguard": [], 
+              "net":[] , 
+              "chainProtection": [],
+              "lamp":[]
+              }
 checkbuttonsValues = {"colors": [], 
               "basket": [], 
               "rack": [], 
@@ -124,8 +144,8 @@ for cat in categories:
     for opt in value: 
         v = IntVar()
         checkbuttonsValues[cat].append(v)
-        c = Checkbutton(f1, text=opt, font=("Helvetica", 12), variable=v)
-        #checkbuttons.append(c)
+        c = Checkbutton(f1, text=opt, font=("Helvetica", 12), variable=v, command = SelectButton(opt, cat))
+        checkbuttons[cat].append(c)
         c.var = v
         c.pack(side = RIGHT)
     f1.pack()
@@ -180,6 +200,7 @@ dirlist = os.listdir(BULKPATH)
 old_label_image = None
 counter = 1
 for f in dirlist:
+    print f
     print "conuter: " + str(counter) 
     counter +=1
     if f == ".DS_Store":
@@ -189,7 +210,7 @@ for f in dirlist:
     #root.geometry('%dx%d' % (image1.size[0]/2,image1.size[1]/2))
     tkpi = ImageTk.PhotoImage(image1)
     label_image = Tkinter.Label(root, image=tkpi)
-    label_image.place(x=0,y=0,width=image1.size[0],height=image1.size[1])
+    label_image.place(x=0,y=195,width=image1.size[0],height=image1.size[1])
     if old_label_image is not None:
         old_label_image.destroy()
     old_label_image = label_image

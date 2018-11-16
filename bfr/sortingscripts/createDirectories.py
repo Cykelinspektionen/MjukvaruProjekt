@@ -8,15 +8,15 @@ from PIL import Image
 import os
 ####
 # Create directories
-colors = ["blue", "black", "yellow", "red", "green", "white", "purple", "gray", "pink", "orange", "brown"] #black, white, red, green, yellow, blue, pink, gray, brown, orange and purple.
+colors = ["blue", "black", "yellow", "red", "green", "white", "purple", "gray", "pink", "orange", "brown", "silver", "gold"] #black, white, red, green, yellow, blue, pink, gray, brown, orange and purple.
 basket = ["yes", "no"]
 rack = ["yes", "no"]
-frame = ["male", "female", "sport"]
+frame = ["male", "female", "sport", "child", "special"]
 mudguard = ["yes", "no"]
 net = ["yes", "no"]
 chainProtection = ["yes", "no"] 
 
-path = "/Users/adrian/Documents/MjukvaruProjekt/bfr/dataset"
+path = "/Users/adrian/Documents/MjukvaruProjekt/bfr/dataset/"
 
 
 ###

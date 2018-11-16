@@ -6,7 +6,7 @@ import PermissionsReducers from './PermissionsReducers';
 
 
 export default combineReducers({
-  loginState: authReducer,
+  authState: authReducer,
   signUpState: signUpReducer,
   addBikeState: addBikeReducers,
   permissionState: PermissionsReducers,

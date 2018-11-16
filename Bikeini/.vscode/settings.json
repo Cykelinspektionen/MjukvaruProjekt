@@ -9,6 +9,7 @@
         "ionicons",
         "lalalal",
         "monark",
+        "multipart",
         "octicons"
     ],
     "react-native.packager.port": 19001

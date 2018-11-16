@@ -82,6 +82,7 @@ class AddBike extends React.Component {
         chainProtection: 'true',
         net: 'true',
         winterTires: 'true',
+        brand: '',
         // Below is not implemented
         stolen: '',
         found: '',
@@ -180,24 +181,6 @@ class AddBike extends React.Component {
           value: 'Not Red',
         },
       ],
-      // Change to text input??
-      Brand: [
-        {
-          value: 'Monark',
-        },
-        {
-          value: 'Budget',
-        },
-      ],
-      // Temporary, details i suspect will be given later
-      Size: [
-        {
-          value: 'Small',
-        },
-        {
-          value: 'Freaking Huge',
-        },
-      ],
     };
     this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
   }
@@ -220,7 +203,6 @@ class AddBike extends React.Component {
     if (!result.cancelled) {
       const { saveImageToState } = this.props;
       saveImageToState(result.uri);
-      console.log(this.props);
     }
   };
 
@@ -255,7 +237,7 @@ class AddBike extends React.Component {
   render() {
     const { addBikeState, navigation } = this.props;
     const {
-      bikeData, radios, Color, Brand, Size,
+      bikeData, radios, Color,
     } = this.state;
     return (
       <ScrollView style={styles.background}>
@@ -317,6 +299,13 @@ class AddBike extends React.Component {
             value={bikeData.description}
             onChangeText={text => this.setBikeData('description', text)}
           />
+          <TextInput
+            style={styles.inputs}
+            placeholder="Brand"
+            underlineColorAndroid="transparent"
+            value={bikeData.description}
+            onChangeText={text => this.setBikeData('brand', text)}
+          />
           <RadioGroup
             radioButtons={radios.addType}
             onPress={(data) => { this.radioUpdater(data, 'addType'); }}
@@ -362,14 +351,6 @@ class AddBike extends React.Component {
               label="Color"
               data={Color}
               onChangeText={value => this.setBikeData('color', value)}
-            />
-            <Dropdown
-              label="Brand"
-              data={Brand}
-            />
-            <Dropdown
-              label="Size"
-              data={Size}
             />
           </View>
           <TouchableHighlight

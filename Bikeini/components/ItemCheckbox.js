@@ -1,38 +1,59 @@
 import React from 'react';
+import {
+  StyleSheet, View,
+} from 'react-native';
 import { CheckBox } from 'react-native-elements';
 import PropTypes from 'prop-types';
+
+const styles = StyleSheet.create({
+  emptyContainer: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'white',
+  },
+});
 
 export default class ItemCheckbox extends React.Component {
   constructor(props) {
     super(props);
 
-    const { title, id, isChecked } = this.props;
+    const {
+      title, id, isChecked, category,
+    } = this.props;
     this.state = {
       isChecked,
       title,
       id,
+      category,
     };
   }
 
   changeStatus = () => {
-    const { id, isChecked, onChange } = this.state;
+    const {
+      id, category, isChecked, onChange,
+    } = this.state;
     this.setState({ isChecked: !isChecked }, () => {
-      this.props.onChange(id);
+      this.props.onChange(id, category);
     });
   }
 
   render() {
     const { title, isChecked } = this.state;
-    return (
-      <CheckBox
-        title={title}
-        checkedIcon="dot-circle-o"
-        uncheckedIcon="circle-o"
-        checked={isChecked}
-        containerStyle={{ backgroundColor: 'white', borderWidth: 0 }}
-        onPress={this.changeStatus}
-      />
-    );
+    if (title !== '') {
+      return (
+        <CheckBox
+          title={title}
+          checkedIcon="dot-circle-o"
+          uncheckedIcon="circle-o"
+          checked={isChecked}
+          containerStyle={{ backgroundColor: 'white', borderWidth: 0 }}
+          onPress={this.changeStatus}
+        />
+      );
+    }
+
+
+    return <View style={styles.emptyContainer} />;
   }
 }
 
@@ -40,5 +61,6 @@ ItemCheckbox.propTypes = {
   title: PropTypes.string.isRequired,
   id: PropTypes.number.isRequired,
   isChecked: PropTypes.bool.isRequired,
+  category: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
 };

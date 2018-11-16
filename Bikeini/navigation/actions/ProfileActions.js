@@ -1,9 +1,9 @@
-import { LOCATION } from './types';
+import { SET_LOCATION } from './types';
 
-export const location = credentials => (
+export const setLocation = location => (
   {
-    type: LOCATION,
-    payload: credentials,
+    type: SET_LOCATION,
+    payload: location,
   }
 );
 

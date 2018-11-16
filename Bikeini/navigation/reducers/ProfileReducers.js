@@ -1,18 +1,15 @@
-import { LOCATION } from '../actions/types';
+import { SET_LOCATION } from '../actions/types';
 
-const LOCATION_STATE = {
+const PROFILE_INITIAL_STATE = {
   location: '',
+  userName: '',
+  email: '',
 };
 
-const profileReducer = (state = LOCATION_STATE, action) => {
-  const { location } = state;
-  let city = state;
+const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
   switch (action.type) {
-    case LOCATION:
-      city = action.payload;
-      return {
-        location, city,
-      };
+    case SET_LOCATION:
+      return { ...state, location: action.payload };
     default:
       return state;
   }

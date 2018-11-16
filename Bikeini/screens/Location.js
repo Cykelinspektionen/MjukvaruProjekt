@@ -7,7 +7,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Constants } from 'expo';
 import { CheckBox } from 'react-native-elements';
-import * as cities from '../assets/Cities';
+import cities from '../assets/Cities';
+import * as profileActions from '../navigation/actions/ProfileActions';
+
+const logo = require('../assets/images/biker.png');
 
 const styles = StyleSheet.create({
   container: {
@@ -53,19 +56,19 @@ const styles = StyleSheet.create({
 let checkedFlag = false;
 let checkedCity = '';
 
-class Location extends React.PureComponent {
+class Location extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       checked: [],
-      location: '',
     };
   }
 
 checkItem = (item) => {
-  const { checked, location } = this.state;
+  const { setLocation } = this.props;
+  const { checked } = this.state;
   if (!checked.includes(item) && checkedFlag !== true) {
-    this.setState({ checked: [...checked, item], location: item });
+    this.setState({ checked: [...checked, item] });
     checkedFlag = true;
     checkedCity = item;
   } else if (checkedCity === item) {
@@ -75,19 +78,20 @@ checkItem = (item) => {
   } else {
     this.setState({ checked: checked.filter(a => a !== item) });
   }
+  setLocation(item);
 };
 
 
 render() {
   const { checked } = this.state;
-  const city = cities.cities;
   return (
     <View style={styles.container}>
-      <Image style={styles.logo} source={require('../assets/images/biker.png')} />
+      <Image style={styles.logo} source={logo} />
       <Text style={styles.heading}>SELECT CITY</Text>
       <FlatList
         style={styles.city}
-        data={city}
+        data={cities}
+        keyExtractor={(item, index) => index.toString()}
         extraData={this.state}
         renderItem={({ item }) => (
           <CheckBox
@@ -109,18 +113,17 @@ Location.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
-  //location: PropTypes.func.isRequired,
+  setLocation: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { locationState } = state;
-  return { locationState };
+  const { profileState } = state;
+  return { profileState };
 };
 
-/* const mapDispatchToProps = dispatch => (
-  bindActionCreators({
-    location,
-  }, dispatch)
-); */
+const mapDispatchToProps = dispatch => bindActionCreators(
+  { ...profileActions },
+  dispatch,
+);
 
-export default connect(mapStateToProps /* , mapDispatchToProps */)(Location);
+export default connect(mapStateToProps, mapDispatchToProps)(Location);

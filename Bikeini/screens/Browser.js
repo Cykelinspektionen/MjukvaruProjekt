@@ -5,7 +5,7 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { fetchBikes } from '../navigation/actions/BrowserActions';
+import { fetchBikes, fetchBikesSuccess } from '../navigation/actions/BrowserActions';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
@@ -49,61 +49,74 @@ const styles = StyleSheet.create({
   },
 });
 
-const missingBicycles = [
-  { key: '1', name: 'Bicycle 1', location: 'Gränby' },
-  { key: '2', name: 'Bicycle 2', location: 'Gottsunda' },
-  { key: '3', name: 'Bicycle 3', location: 'Stenhagen' },
-  { key: '4', name: 'Bicycle 4', location: 'Gränby' },
-  { key: '5', name: 'Bicycle 5', location: 'Gottsunda' },
-  { key: '6', name: 'Bicycle 6', location: 'Stenhagen' }];
-
-const foundBicycles = [
-  { key: '11', name: 'Bicycle 11', location: 'Sunnersta' },
-  { key: '12', name: 'Bicycle 12', location: 'Valsätra' },
-  { key: '13', name: 'Bicycle 13', location: 'Norby' },
-  { key: '14', name: 'Bicycle 14', location: 'Luthagen' }];
-
 class Browser extends React.Component {
   constructor(props) {
     super(props);
 
     const { browserState } = this.props;
+
     this.state = {
       showMissing: true,
       missingBicycles: browserState.missingBicycles,
       foundBicycles: browserState.foundBicycles,
       showFilter: false,
+      isLoading: false,
+      isLoaded: false,
     };
   }
 
+  // Something is wrong...
+  // BrowserReducer is called with FETCH_BIKES
+  // but the state is not updated?
   componentDidMount() {
-    const { fetchBikes } = this.props;
+    this.props.fetchBikes();
+    // this.state.isLoading show be 'true'
+    console.log(this.state.isLoading);
+  }
 
-    //weird issue here ):
-    //fetchBikes();
-    
-    /*serverApi.get('bikes/getfoundbikes/', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZWQ3ODkzZDYwZDhmMDAxNjdhZWY5OSIsImlhdCI6MTU0MjM3ODg4NywiZXhwIjoxNTQyMzgyNDg3fQ.rOx6nX-5sykfbIkdaNGBPc62B3X35gItF-mWG2dFgSU')
+  handleServerBicycles = () => {
+    const { token } = 'TODO';
+    const foundBicycles = [];
+    const missingBicycles = [];
+
+    // get(_urlEnd, _contentType, _jwt)
+    this.props.dispatch(fetchBikes());
+    serverApi.get('bikes/getfoundbikes/', token)
       .then((responseJson) => {
-        // Check for failure!
         console.log(responseJson);
-        //deviceStorage.saveItem('id_token', responseJson.jwt);
-        //login(jwt);
-        //navigation.navigate('TempPage');
-      }).catch(error => console.log(error));*/
+
+        for (let i = 0; i < responseJson.length; i += 1) {
+          foundBicycles.push(responseJson[i]);
+        }
+      }).catch(error => console.log(error));
+
+    serverApi.get('bikes/getstolenbikes/', token)
+      .then((responseJson) => {
+        console.log(responseJson);
+
+        for (let i = 0; i < responseJson.length; i += 1) {
+          missingBicycles.push(responseJson[i]);
+        }
+      }).catch(error => console.log(error));
+
+    this.setState({ missingBicycles, foundBicycles }, () => {
+      this.props.dispatch(fetchBikesSuccess());
+    });
   }
 
   keyExtractor = item => item.key;
 
   renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => console.log(`pressed: ${item.name}`)}
+      onPress={() => console.log(`pressed: ${item.description}`)}
     >
-      <Item name={item.name} location={item.location} />
+      <Item description={item.description} model={item.model} />
     </TouchableOpacity>
   );
 
   renderHeader = () => {
     const { showMissing } = this.state;
+    // const { region } = this.props;      <- TODO, get selected region from user
     if (showMissing) {
       return (
         <View style={styles.header}>
@@ -125,14 +138,7 @@ class Browser extends React.Component {
   switchPageType = () => {
     this.setState(prevState => ({
       showMissing: !prevState.showMissing,
-    }), () => {
-      const { showMissing } = this.state;
-      if (showMissing) {
-        this.setState({ bicycles: missingBicycles });
-      } else {
-        this.setState({ bicycles: foundBicycles });
-      }
-    });
+    }));
   }
 
   renderFilter = () => {
@@ -148,7 +154,7 @@ class Browser extends React.Component {
   renderList = () => {
     const { showMissing, missingBicycles, foundBicycles } = this.state;
 
-    if(showMissing) {
+    if (showMissing) {
       return (
         <View style={styles.browserList}>
           <FlatList
@@ -161,18 +167,17 @@ class Browser extends React.Component {
       );
     }
 
-    else {
-      return (
-        <View style={styles.browserList}>
-          <FlatList
-            data={foundBicycles}
-            extraData={this.state}
-            keyExtractor={this.keyExtractor}
-            renderItem={this.renderItem}
-          />
-        </View>
-      );
-    }
+
+    return (
+      <View style={styles.browserList}>
+        <FlatList
+          data={foundBicycles}
+          extraData={this.state}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderItem}
+        />
+      </View>
+    );
   }
 
   changeFilterStatus = () => {
@@ -182,12 +187,9 @@ class Browser extends React.Component {
   }
 
   render() {
-    const { bicycles, showMissing } = this.state;
     const header = this.renderHeader();
     const filter = this.renderFilter();
     const list = this.renderList();
-
-    let bicyclesShown = [];
 
     return (
       <View style={styles.container}>
@@ -209,6 +211,16 @@ class Browser extends React.Component {
   }
 }
 
+Browser.propTypes = {
+  browserState: PropTypes.shape({
+    showMissing: PropTypes.bool,
+    missingBicycles: PropTypes.array,
+    foundBicycles: PropTypes.array,
+    isLoading: PropTypes.bool,
+    isLoaded: PropTypes.bool,
+  }),
+};
+
 const mapStateToProps = (state) => {
   const { browserState } = state;
   return { browserState };
@@ -217,7 +229,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = dispatch => (
   bindActionCreators({
     fetchBikes,
+    fetchBikesSuccess,
   }, dispatch)
 );
 
-export default connect(mapStateToProps)(Browser);
+export default connect(mapStateToProps, mapDispatchToProps)(Browser);

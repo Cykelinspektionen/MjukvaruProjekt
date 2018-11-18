@@ -107,20 +107,19 @@ class Filter extends React.Component {
 
   search = () => {
     const { checkBoxes, categories, searchText } = this.state;
-    let filterOptions = [];
-    let categoryOptions = {attributes: []};
-    let categoryInd = 0;
+    const filterOptions = [];
+    let categoryOptions = { attributes: [] };
 
     for (let i = 0; i < categories.length; i += 1) {
       const { items, category } = checkBoxes[i];
       categoryOptions.category = category;
       for (let j = 0; j < items.length; j += 1) {
-        if(items[j].isChecked) {
+        if (items[j].isChecked) {
           categoryOptions.attributes.push(items[j].title);
         }
       }
       filterOptions.push(categoryOptions);
-      categoryOptions = {attributes: []};
+      categoryOptions = { attributes: [] };
     }
 
     console.log(filterOptions);

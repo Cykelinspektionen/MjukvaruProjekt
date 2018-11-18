@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '400',
   },
-  location: {
+  model: {
     fontSize: 16,
     fontWeight: '500',
   },
@@ -55,16 +55,16 @@ const styles = StyleSheet.create({
 
 export default class Item extends React.PureComponent {
   render() {
-    const { name, location } = this.props;
+    const { description, model } = this.props;
     return (
       <View style={styles.item}>
         <View style={styles.image} />
         <View style={styles.textView}>
           <Text style={styles.description}>
-            {name}
+            {description}
           </Text>
-          <Text style={styles.location}>
-            {location}
+          <Text style={styles.model}>
+            {model}
           </Text>
         </View>
         <View style={styles.commentsTag} />
@@ -75,6 +75,6 @@ export default class Item extends React.PureComponent {
 }
 
 Item.propTypes = {
-  name: PropTypes.string.isRequired,
-  location: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  model: PropTypes.string.isRequired,
 };

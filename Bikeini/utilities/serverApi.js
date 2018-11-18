@@ -3,21 +3,26 @@
 // Use 'localhost' when using external device on Home-Network
 // and local IP-address when on Uni-network! :)
 const serverApi = {
-  post(_urlEnd, _body) {
+  fetchApi(_urlEnd, _body, _contentType, _jwt) {
     return fetch(`https://bikeify.herokuapp.com/${_urlEnd}`, {
-	  method: 'POST',
-	  body: JSON.stringify(_body),
-	  headers: { 'Content-Type': 'application/json' },
+    method: 'POST',
+    body: JSON.stringify(_body),
+      headers: {
+        'Content-Type': _contentType,
+        'x-access-token': _jwt,
+      },
+    // Authorization: 'Bearer ' + 'SECRET_OAUTH2_TOKEN_IF_AUTH' },
     })
       .then(response => response.json());
   },
 
-  get(_urlEnd, _token) {
+  get(_urlEnd, _jwt) {
     return fetch(`https://bikeify.herokuapp.com/${_urlEnd}`, {
-	  method: 'GET',
-	  headers: { 
-	  			'x-access-token': _token
-	  			},
+    method: 'GET',
+      headers: {
+        'x-access-token': _jwt,
+      },
+    // Authorization: 'Bearer ' + 'SECRET_OAUTH2_TOKEN_IF_AUTH' },
     })
       .then(response => response.json());
   },

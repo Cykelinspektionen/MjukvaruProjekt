@@ -1,11 +1,12 @@
-import { FETCH_BIKES, FETCH_BIKES_SUCCESS } from './types';
+import { FETCH_BIKES } from './types';
 
-export const fetchBikes = data => (
-  {
+export function fetchBikes(data) {
+  return {
     type: FETCH_BIKES,
     payload: data,
-  }
-);
+  };
+}
+/*
 
 export const fetchBikesSuccess = data => (
   {
@@ -13,3 +14,4 @@ export const fetchBikesSuccess = data => (
     payload: data,
   }
 );
+*/

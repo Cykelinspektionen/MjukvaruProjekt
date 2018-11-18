@@ -8,7 +8,7 @@ const AppNavigator = createStackNavigator({
   Login: { screen: Login },
   TempPage: { screen: TempPage },
   SignUp: { screen: SignUp },
-  Browser: { screen: Browser},
+  Browser: { screen: Browser },
 },
 {
   initialRouteName: 'Browser',

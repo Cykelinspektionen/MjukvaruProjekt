@@ -30,7 +30,7 @@ export default class ItemCheckbox extends React.Component {
 
   changeStatus = () => {
     const {
-      id, category, isChecked, onChange,
+      id, category, isChecked,
     } = this.state;
     this.setState({ isChecked: !isChecked }, () => {
       this.props.onChange(id, category);

@@ -21,11 +21,11 @@ k.tensorflow_backend.set_session(tf.Session(config=config))
 
 
 #dirs
-train_dir = '../dataset/training/frame/'
-validation_dir = '../dataset/validation/frame/'
+train_dir = '../dataset/training2/rack/'
+validation_dir = '../dataset/validation/rack/'
 
 #set img training size
-image_size = 200
+image_size = 256
 
 #Load the VGG model
 vgg_conv = VGG16(weights='imagenet', include_top=False, input_shape=(image_size, image_size, 3))
@@ -57,14 +57,46 @@ model.add(layers.Dense(2, activation='softmax'))
 model.summary()
 
 
+#Autosplit
+"""
+data_generator = ImageDataGenerator(rescale=1./255, validation_split=0.33)
+
+train_generator = data_generator.flow_from_directory(train_dir, 
+                                                     target_size=(image_size, image_size), 
+                                                     shuffle=True, 
+                                                     seed=13,
+                                                     class_mode='categorical', 
+                                                     batch_size=train_batchsize, 
+                                                     subset="training")
+
+validation_generator = data_generator.flow_from_directory(train_dir, 
+                                                          target_size=(image_size, image_size), 
+                                                          shuffle=True, 
+                                                          seed=13,
+                                                          class_mode='categorical', 
+                                                          batch_size=val_batchsize, 
+                                                          subset="validation")
+
+"""
+
 # putita stuff
 train_datagen = ImageDataGenerator(
       rescale=1./255,
-      #rotation_range=0,
-      #width_shift_range=0,
-      #height_shift_range=0,
-      #horizontal_flip=False,
+      rotation_range=10,
+      zca_whitening=True,
+      zoom_range = 0.1,
+      width_shift_range = 0.1,
+      height_shift_range = 0.1,
+      horizontal_flip=True,
       fill_mode='nearest')
+"""
+for batch in datagen.flow(img_arr, batch_size=1, save_to_dir='path/to/save', save_prefix='1_param', save_format='jpeg'):
+    print(batch[0][0][0])
+    pyplot.imshow(batch[0])
+    pyplot.show()
+    break
+"""
+
  
 validation_datagen = ImageDataGenerator(rescale=1./255)
  
@@ -106,7 +138,7 @@ history = model.fit_generator(
       verbose=1)
  
 # Save the model
-model.save('./models/t1.h5')
+model.save('./models/t2.h5')
 
 print("klar!")
 

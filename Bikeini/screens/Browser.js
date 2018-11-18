@@ -3,8 +3,12 @@ import {
   StyleSheet, Text, View, FlatList, TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
+import { fetchBikes } from '../navigation/actions/BrowserActions';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
+import serverApi from '../utilities/serverApi';
 
 const styles = StyleSheet.create({
   container: {
@@ -63,11 +67,29 @@ class Browser extends React.Component {
   constructor(props) {
     super(props);
 
+    const { browserState } = this.props;
     this.state = {
       showMissing: true,
-      bicycles: missingBicycles,
-      showFilter: true,
+      missingBicycles: browserState.missingBicycles,
+      foundBicycles: browserState.foundBicycles,
+      showFilter: false,
     };
+  }
+
+  componentDidMount() {
+    const { fetchBikes } = this.props;
+
+    //weird issue here ):
+    //fetchBikes();
+    
+    /*serverApi.get('bikes/getfoundbikes/', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZWQ3ODkzZDYwZDhmMDAxNjdhZWY5OSIsImlhdCI6MTU0MjM3ODg4NywiZXhwIjoxNTQyMzgyNDg3fQ.rOx6nX-5sykfbIkdaNGBPc62B3X35gItF-mWG2dFgSU')
+      .then((responseJson) => {
+        // Check for failure!
+        console.log(responseJson);
+        //deviceStorage.saveItem('id_token', responseJson.jwt);
+        //login(jwt);
+        //navigation.navigate('TempPage');
+      }).catch(error => console.log(error));*/
   }
 
   keyExtractor = item => item.key;
@@ -123,6 +145,36 @@ class Browser extends React.Component {
     return null;
   }
 
+  renderList = () => {
+    const { showMissing, missingBicycles, foundBicycles } = this.state;
+
+    if(showMissing) {
+      return (
+        <View style={styles.browserList}>
+          <FlatList
+            data={missingBicycles}
+            extraData={this.state}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderItem}
+          />
+        </View>
+      );
+    }
+
+    else {
+      return (
+        <View style={styles.browserList}>
+          <FlatList
+            data={foundBicycles}
+            extraData={this.state}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderItem}
+          />
+        </View>
+      );
+    }
+  }
+
   changeFilterStatus = () => {
     const { showFilter } = this.state;
 
@@ -130,9 +182,13 @@ class Browser extends React.Component {
   }
 
   render() {
-    const { bicycles } = this.state;
+    const { bicycles, showMissing } = this.state;
     const header = this.renderHeader();
     const filter = this.renderFilter();
+    const list = this.renderList();
+
+    let bicyclesShown = [];
+
     return (
       <View style={styles.container}>
         {header}
@@ -147,22 +203,21 @@ class Browser extends React.Component {
           <Text>Filter * </Text>
         </TouchableOpacity>
         {filter}
-        <View style={styles.browserList}>
-          <FlatList
-            data={bicycles}
-            extraData={this.state}
-            keyExtractor={this.keyExtractor}
-            renderItem={this.renderItem}
-          />
-        </View>
+        {list}
       </View>
     );
   }
 }
 
 const mapStateToProps = (state) => {
-  const { loginState } = state;
-  return { loginState };
+  const { browserState } = state;
+  return { browserState };
 };
+
+const mapDispatchToProps = dispatch => (
+  bindActionCreators({
+    fetchBikes,
+  }, dispatch)
+);
 
 export default connect(mapStateToProps)(Browser);

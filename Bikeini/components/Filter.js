@@ -107,17 +107,23 @@ class Filter extends React.Component {
 
   search = () => {
     const { checkBoxes, categories, searchText } = this.state;
-    const filterOptions = [];
+    let filterOptions = [];
+    let categoryOptions = {attributes: []};
+    let categoryInd = 0;
 
     for (let i = 0; i < categories.length; i += 1) {
       const { items, category } = checkBoxes[i];
+      categoryOptions.category = category;
       for (let j = 0; j < items.length; j += 1) {
-
+        if(items[j].isChecked) {
+          categoryOptions.attributes.push(items[j].title);
+        }
       }
+      filterOptions.push(categoryOptions);
+      categoryOptions = {attributes: []};
     }
 
-    console.log(this.state);
-    // if no text has been entered to the TextInput => '' is still sent!
+    console.log(filterOptions);
   }
 
   processFilterItems(filterItems) {

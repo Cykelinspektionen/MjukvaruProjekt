@@ -2,7 +2,6 @@ export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
 export const SIGN_UP = 'SIGN_UP';
 export const CHANGEITEMS = 'CHANGEITEMS';
-export const SET_LOCATION = 'SET_LOCATION';
 export const CAMERA = 'CAMERA';
 export const ROLL = 'ROLL';
 export const NEW_IMG_URI = 'NEW_IMG_URI';

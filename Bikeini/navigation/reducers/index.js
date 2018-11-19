@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
-import loginReducer from './LoginReducers';
+import authReducer from './AuthReducers';
 import signUpReducer from './SignUpReducers';
 import filterReducer from './FilterReducers';
 import browserReducer from './BrowserReducers';
 
 export default combineReducers({
-  loginState: loginReducer,
+  loginState: authReducer,
   signUpState: signUpReducer,
   filterState: filterReducer,
   browserState: browserReducer,

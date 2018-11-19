@@ -5,7 +5,7 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { login } from '../navigation/actions/LoginActions';
+import { login } from '../navigation/actions/AuthActions';
 import serverApi from '../utilities/serverApi';
 
 import deviceStorage from '../utilities/deviceStorage';
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
 });
 
 
-class Login extends React.PureComponent {
+class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -65,10 +65,6 @@ class Login extends React.PureComponent {
     this.deleteJWT = deviceStorage.deleteJWT.bind(this);
     this.loadJWT = deviceStorage.loadJWT.bind(this);
     this.loadJWT();
-  }
-
-  logOutUser = () => {
-    this.deleteJWT();
   }
 
   logInUser = () => {
@@ -85,6 +81,10 @@ class Login extends React.PureComponent {
         login(jwt);
         navigation.navigate('TempPage');
       }).catch(error => console.log(error));
+  }
+
+  logOutUser = () => {
+    this.deleteJWT();
   }
 
   render() {

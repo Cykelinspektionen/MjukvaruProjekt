@@ -1,6 +1,8 @@
 {
     "eslint.enable": true,
     "cSpell.words": [
+        "addbike",
+        "antitheft",
         "barcode",
         "bikeini",
         "camerja",

@@ -122,7 +122,7 @@ class Filter extends React.Component {
       categoryOptions = { attributes: [] };
     }
 
-    console.log(filterOptions);
+    this.props.search(filterOptions);
   }
 
   processFilterItems(filterItems) {
@@ -236,6 +236,7 @@ const mapDispatchToProps = dispatch => (
 
 Filter.propTypes = {
   filterState: PropTypes.object.isRequired,
+  search: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Filter);

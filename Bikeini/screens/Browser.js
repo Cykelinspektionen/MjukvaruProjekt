@@ -3,9 +3,6 @@ import {
   StyleSheet, Text, View, FlatList, TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
-//import { fetchBikes, fetchBikesSuccess } from '../navigation/actions/BrowserActions';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
@@ -49,9 +46,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const missingBicycles = [{ key: '1', description: 'Bicycle 1', location: 'Gränby', model: 'Regular bike' }];
-const foundBicycles = [{ key: '2', description: 'Bicycle 2', location: 'Gränby', model: 'Regular bike' },
-                        { key: '3', description: 'Bicycle 3', location: 'Gränby', model: 'Regular bike' }];
+const missingBicycles = [{
+  key: '1', description: 'Bicycle 1', location: 'Grï¿½nby', model: 'Regular bike',
+}];
+const foundBicycles = [{
+  key: '2', description: 'Bicycle 2', location: 'Grï¿½nby', model: 'Regular bike',
+},
+{
+  key: '3', description: 'Bicycle 3', location: 'Grï¿½nby', model: 'Regular bike',
+}];
 
 class Browser extends React.Component {
   constructor(props) {
@@ -60,51 +63,53 @@ class Browser extends React.Component {
     const { loginState } = this.props;
     const { jwt } = loginState;
 
-      console.log(jwt);
-      console.log(jwt);
+    console.log(jwt);
+    console.log(jwt);
 
     this.state = {
       showMissing: true,
-      missingBicycles: missingBicycles,
-      foundBicycles: foundBicycles,
+      missingBicycles,
+      foundBicycles,
       showFilter: false,
-      isLoading: false,
-      isLoaded: false,
-    }; 
+    };
+
+    this.search = this.search.bind(this);
   }
 
-    componentDidMount() {
-        this.handleServerBicycles();
-    }
+  componentDidMount() {
+    this.handleServerBicycles();
+  }
 
   handleServerBicycles = () => {
     const { loginState } = this.props;
-      const { jwt } = loginState;
-      let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZjI5MWQxNzg1N2I1MDAxNmRiNThhOCIsImlhdCI6MTU0MjYyMzcxMSwiZXhwIjoxNTQyNjI3MzExfQ.H1md4tcUsEBTLn52PfuWQnTxCQzQpNqx1aLHrlLxj2Q';
-    
+    const { jwt } = loginState;
+    //  let token = jwt[0];
+    // Currently using dummy token, use 'jwt' when merging with Client-Side branch!
+      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZjI5MWQxNzg1N2I1MDAxNmRiNThhOCIsImlhdCI6MTU0MjYzMTAzMiwiZXhwIjoxNTQyNjM0NjMyfQ.xf6jWqsUIB1huih8rZW5HHxg3nvsSeldvgXCVYVxHlo';
+
     const foundBicycles = [];
     const missingBicycles = [];
 
     serverApi.get('bikes/getfoundbikes/', token)
-      .then((responseJson) => {
-        console.log(responseJson);
+      .then((response) => {
+        console.log(response);
 
-        for (let i = 0; i < responseJson.length; i += 1) {
-          foundBicycles.push(responseJson[i]);
+        for (let i = 0; i < response.length; i += 1) {
+          foundBicycles.push(response[i]);
         }
       }).catch(error => console.log(error));
 
     serverApi.get('bikes/getstolenbikes/', token)
-      .then((responseJson) => {
-        console.log(responseJson);
+      .then((response) => {
+        console.log(response);
 
-        for (let i = 0; i < responseJson.length; i += 1) {
-          missingBicycles.push(responseJson[i]);
+        for (let i = 0; i < response.length; i += 1) {
+          missingBicycles.push(response[i]);
         }
       }).catch(error => console.log(error));
 
     this.setState({ missingBicycles, foundBicycles }, () => {
-      //this.props.dispatch(fetchBikesSuccess());
+      // this.props.dispatch(fetchBikesSuccess());
     });
   }
 
@@ -149,7 +154,7 @@ class Browser extends React.Component {
     const { showFilter } = this.state;
 
     if (showFilter) {
-      return <Filter />;
+      return <Filter search={this.search} />;
     }
 
     return null;
@@ -190,6 +195,10 @@ class Browser extends React.Component {
     this.setState({ showFilter: !showFilter });
   }
 
+  search(searchOptions) {
+    console.log(searchOptions);
+  }
+
   render() {
     const header = this.renderHeader();
     const filter = this.renderFilter();
@@ -215,26 +224,9 @@ class Browser extends React.Component {
   }
 }
 
-/*Browser.propTypes = {
-  browserState: PropTypes.shape({
-    showMissing: PropTypes.bool,
-    missingBicycles: PropTypes.array,
-    foundBicycles: PropTypes.array,
-    isLoading: PropTypes.bool,
-    isLoaded: PropTypes.bool,
-  }),
-};*/
-
 const mapStateToProps = (state) => {
-    const { loginState } = state;
-    return { loginState };
+  const { loginState } = state;
+  return { loginState };
 };
-
-/*const mapDispatchToProps = dispatch => (
-  bindActionCreators({
-    fetchBikes,
-    fetchBikesSuccess,
-  }, dispatch)
-);*/
 
 export default connect(mapStateToProps)(Browser);

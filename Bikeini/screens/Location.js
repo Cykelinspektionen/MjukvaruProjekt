@@ -84,7 +84,7 @@ checkItem = (item) => {
 
 sendLocationToServer = () => {
   const { setLocation, loginState } = this.props;
-  serverApi.fetchApi('setLocation', setLocation, 'multipart/form-data;', loginState.jwt[0]);
+  serverApi.fetchApi('setLocation', setLocation, 'multipart/form-data', loginState.jwt[0]);
 }
 
 render() {

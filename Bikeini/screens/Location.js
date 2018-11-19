@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
   },
 });
 
-let checkedFlag = false;
 let checkedCity = '';
 
 class Location extends React.Component {
@@ -68,13 +67,11 @@ class Location extends React.Component {
 checkItem = (item) => {
   const { setLocation } = this.props;
   const { checked } = this.state;
-  if (!checked.includes(item) && checkedFlag !== true) {
-    this.setState({ checked: [...checked, item] });
-    checkedFlag = true;
+  if (!checked.includes(item)) {
+    this.setState({ checked: [item] });
     checkedCity = item;
   } else if (checkedCity === item) {
     this.setState({ checked: checked.filter(a => a !== item) });
-    checkedFlag = false;
     checkedCity = '';
   } else {
     this.setState({ checked: checked.filter(a => a !== item) });

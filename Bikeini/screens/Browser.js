@@ -71,14 +71,14 @@ class Browser extends React.Component {
     const foundBicycles = [];
     const missingBicycles = [];
 
-    serverApi.get('bikes/getfoundbikes/', jwt)
+    serverApi.get('bikes/getfoundbikes/', jwt[0])
       .then((responseJson) => {
         for (let i = 0; i < responseJson.length; i += 1) {
           foundBicycles.push(responseJson[i]);
         }
       }).catch(error => console.log(error));
 
-    serverApi.get('bikes/getstolenbikes/', jwt)
+    serverApi.get('bikes/getstolenbikes/', jwt[0])
       .then((responseJson) => {
         for (let i = 0; i < responseJson.length; i += 1) {
           missingBicycles.push(responseJson[i]);

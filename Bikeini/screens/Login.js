@@ -3,9 +3,9 @@ import {
   StyleSheet, Text, View, TextInput, TouchableHighlight,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import * as loginActions from '../navigation/actions/AuthActions';
+import { bindActionCreators } from 'redux';
+import * as authActions from '../navigation/actions/AuthActions';
 import serverApi from '../utilities/serverApi';
 
 import deviceStorage from '../utilities/deviceStorage';
@@ -53,9 +53,9 @@ const styles = StyleSheet.create({
 });
 
 
-class Login extends React.Component {
-  constructor(props) {
-    super(props);
+class Login extends React.PureComponent {
+  constructor() {
+    super();
     this.state = {
       username: '',
       password: '',
@@ -157,7 +157,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...loginActions },
+  { ...authActions },
   dispatch,
 );
 

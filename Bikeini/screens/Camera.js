@@ -193,8 +193,6 @@ class CameraPage extends React.Component {
   handleMountError = ({ message }) => console.error(message);
 
   setUriDetails = (photo) => {
-    console.log(photo);
-    console.log(this.state);
     const { saveImageToState } = this.props;
     saveImageToState(photo.uri);
   }

@@ -68,108 +68,154 @@ class AddBike extends React.Component {
     this.state = {
       hasCameraRollPermission: null,
       bikeData: {
+        type: 'STOLEN',
         title: '',
-        imageOfBike: null,
-        addType: 'stolen',
-        color: '',
-        frameNumber: '',
-        description: '',
-        antiTheftCode: '',
-        frameType: 'male',
-        basket: 'true',
-        rack: 'true',
-        mudguard: 'true',
-        chainProtection: 'true',
-        net: 'true',
-        winterTires: 'true',
         brand: '',
-        // Below is not implemented
-        stolen: '',
-        found: '',
-        location: '',
-        keywords: '',
-        sport: '',
-        tandem: '',
+        model: '',
+        color: '',
+        frame_number: null,
+        antitheft_code: '',
+        description: '',
+        location: {
+          Lat: null,
+          Long: null,
+        },
+        keywords: {
+          frameType: 'MALE',
+          child: false,
+          sport: false,
+          tandem: false,
+          basket: false,
+          rack: false,
+          mudguard: false,
+          chain_protection: false,
+          net: false,
+          winter_tires: false,
+          light: false,
+        },
+        imageOfBike: null,
       },
       radios: {
-        addType: [
+        type: [
           {
             label: 'Stolen',
-            value: 'stolen',
+            value: 'STOLEN',
           },
           {
             label: 'Found',
-            value: 'found',
+            value: 'FOUND',
           },
         ],
         frameType: [
           {
             label: 'Male',
-            value: 'male',
+            value: 'MALE',
           },
           {
             label: 'Female',
-            value: 'female',
+            value: 'FEMALE',
           },
         ],
-        basket: [
+
+        child: [
           {
-            label: 'Basket',
-            value: 'true',
+            label: 'Adult',
+            value: 2,
           },
           {
-            label: 'No Basket',
-            value: 'false',
+            label: 'Child',
+            value: 1,
+          },
+        ],
+
+        sport: [
+          {
+            label: 'Sport',
+            value: 1,
+          },
+          {
+            label: 'Casual',
+            value: 2,
+          },
+        ],
+        tandem: [
+          {
+            label: 'Single',
+            value: 2,
+          },
+          {
+            label: 'Tandem',
+            value: 1,
           },
         ],
         rack: [
           {
             label: 'Rack',
-            value: 'true',
+            value: 1,
           },
           {
             label: 'No Rack',
-            value: 'false',
+            value: 2,
+          },
+        ],
+        basket: [
+          {
+            label: 'Basket',
+            value: 1,
+          },
+          {
+            label: 'No Basket',
+            value: 2,
           },
         ],
         mudguard: [
           {
             label: 'Mudguard',
-            value: 'true',
+            value: 1,
           },
           {
             label: 'No Mudguard',
-            value: 'false',
+            value: 2,
           },
         ],
         chainProtection: [
           {
             label: 'Chain protector',
-            value: 'true',
+            value: 1,
           },
           {
             label: 'No chain protector',
-            value: 'false',
+            value: 2,
           },
         ],
         net: [
           {
             label: 'Net',
-            value: 'true',
+            value: 1,
           },
           {
             label: 'No Net',
-            value: 'false',
+            value: 2,
           },
         ],
         winterTires: [
           {
-            label: 'Winter tires',
-            value: 'true',
+            label: 'Winter Tires',
+            value: 1,
           },
           {
-            label: 'No winter tires',
-            value: 'false',
+            label: 'Summer Tires',
+            value: 2,
+          },
+        ],
+        light: [
+          {
+            label: 'Light',
+            value: 1,
+          },
+          {
+            label: 'No Light',
+            value: 2,
           },
         ],
       },
@@ -215,21 +261,28 @@ class AddBike extends React.Component {
       type: 'image/jpg',
     };
     this.setBikeData('imageOfBike', bikeImgData);
-    console.log(bikeData);
-    serverApi.fetchApi('addBike', bikeData, 'multipart/form-data;', authState.jwt[0]);
+    serverApi.fetchApi('addBike', bikeData, 'multipart/form-data', authState.jwt[0]);
   }
 
-  setBikeData = (attr, value) => {
+  setBikeData = (attr, value, setKeyword) => {
     const { bikeData } = this.state;
-    bikeData[attr] = value;
+    if (setKeyword) {
+      const { keywords } = bikeData;
+      if (value === 1 || value === 2) {
+        keywords[attr] = Boolean(value);
+      } else {
+        keywords[attr] = value;
+      }
+    } else {
+      bikeData[attr] = value;
+    }
     this.setState({ bikeData });
   }
 
-  radioUpdater = (change, name) => {
+  radioUpdater = (change, name, head) => {
     const { radios } = this.state;
     const selectedButton = radios[name].find(e => e.selected === true);
-    this.setBikeData(name, selectedButton.value);
-    console.log(selectedButton);
+    this.setBikeData(name, selectedButton.value, head);
     radios[name] = change;
     this.setState({ radios });
   }
@@ -273,13 +326,6 @@ class AddBike extends React.Component {
           </View>
           <TextInput
             style={styles.inputs}
-            placeholder="Title"
-            underlineColorAndroid="transparent"
-            value={bikeData.title}
-            onChangeText={text => this.setBikeData('title', text)}
-          />
-          <TextInput
-            style={styles.inputs}
             placeholder="Frame number"
             underlineColorAndroid="transparent"
             value={bikeData.frameNumber}
@@ -294,56 +340,90 @@ class AddBike extends React.Component {
           />
           <TextInput
             style={styles.inputs}
-            placeholder="Description"
-            underlineColorAndroid="transparent"
-            value={bikeData.description}
-            onChangeText={text => this.setBikeData('description', text)}
-          />
-          <TextInput
-            style={styles.inputs}
             placeholder="Brand"
             underlineColorAndroid="transparent"
             value={bikeData.description}
             onChangeText={text => this.setBikeData('brand', text)}
           />
+          <TextInput
+            style={styles.inputs}
+            placeholder="Model"
+            underlineColorAndroid="transparent"
+            value={bikeData.description}
+            onChangeText={text => this.setBikeData('model', text)}
+          />
+          <TextInput
+            style={styles.inputs}
+            placeholder="Title"
+            underlineColorAndroid="transparent"
+            value={bikeData.title}
+            onChangeText={text => this.setBikeData('title', text)}
+          />
+          <TextInput
+            style={styles.inputs}
+            placeholder="Description"
+            underlineColorAndroid="transparent"
+            value={bikeData.description}
+            onChangeText={text => this.setBikeData('description', text)}
+          />
           <RadioGroup
-            radioButtons={radios.addType}
-            onPress={(data) => { this.radioUpdater(data, 'addType'); }}
+            radioButtons={radios.type}
+            onPress={(data) => { this.radioUpdater(data, 'type'); }}
             flexDirection="row"
           />
           <RadioGroup
             radioButtons={radios.frameType}
-            onPress={(data) => { this.radioUpdater(data, 'frameType'); }}
+            onPress={(data) => { this.radioUpdater(data, 'frameType', true); }}
+            flexDirection="row"
+          />
+          <RadioGroup
+            radioButtons={radios.child}
+            onPress={(data) => { this.radioUpdater(data, 'child', true); }}
+            flexDirection="row"
+          />
+          <RadioGroup
+            radioButtons={radios.sport}
+            onPress={(data) => { this.radioUpdater(data, 'sport', true); }}
+            flexDirection="row"
+          />
+          <RadioGroup
+            radioButtons={radios.tandem}
+            onPress={(data) => { this.radioUpdater(data, 'tandem', true); }}
             flexDirection="row"
           />
           <RadioGroup
             radioButtons={radios.basket}
-            onPress={(data) => { this.radioUpdater(data, 'basket'); }}
+            onPress={(data) => { this.radioUpdater(data, 'basket', true); }}
             flexDirection="row"
           />
           <RadioGroup
             radioButtons={radios.rack}
-            onPress={(data) => { this.radioUpdater(data, 'rack'); }}
+            onPress={(data) => { this.radioUpdater(data, 'rack', true); }}
             flexDirection="row"
           />
           <RadioGroup
             radioButtons={radios.mudguard}
-            onPress={(data) => { this.radioUpdater(data, 'mudguard'); }}
+            onPress={(data) => { this.radioUpdater(data, 'mudguard', true); }}
             flexDirection="row"
           />
           <RadioGroup
             radioButtons={radios.chainProtection}
-            onPress={(data) => { this.radioUpdater(data, 'chainProtection'); }}
+            onPress={(data) => { this.radioUpdater(data, 'chainProtection', true); }}
             flexDirection="row"
           />
           <RadioGroup
             radioButtons={radios.net}
-            onPress={(data) => { this.radioUpdater(data, 'net'); }}
+            onPress={(data) => { this.radioUpdater(data, 'net', true); }}
             flexDirection="row"
           />
           <RadioGroup
             radioButtons={radios.winterTires}
-            onPress={(data) => { this.radioUpdater(data, 'winterTires'); }}
+            onPress={(data) => { this.radioUpdater(data, 'winterTires', true); }}
+            flexDirection="row"
+          />
+          <RadioGroup
+            radioButtons={radios.light}
+            onPress={(data) => { this.radioUpdater(data, 'light', true); }}
             flexDirection="row"
           />
           <View style={styles.dropdowns}>
@@ -360,14 +440,17 @@ class AddBike extends React.Component {
                 Alert.alert('Picture is mandatory!');
                 return;
               }
-              this.sendBikeToServer();
+              // this.sendBikeToServer();
               const stolen = radios.addType[0].selected;
               if (stolen) {
               // SET PREVIEW STATE TO SHOW STOLEN
               } else {
               // SET PREVIEW STATE TO SHOW FOUND
               }
-              // clear URI
+              this.sendBikeToServer();
+              this.setBikeData('imageOfBike', null);
+              const { clearImgUri } = this.props;
+              clearImgUri();
             // navigation.navigate('PREVIEW ADS!')
             }}
           >
@@ -393,7 +476,7 @@ AddBike.propTypes = {
     password: PropTypes.string.isRequired,
     jwt: PropTypes.array.isRequired,
   }).isRequired,
-  saveImageToState: PropTypes.func.isRequired,
+  clearImgUri: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {

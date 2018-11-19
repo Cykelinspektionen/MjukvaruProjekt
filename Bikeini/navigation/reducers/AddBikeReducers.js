@@ -1,4 +1,4 @@
-import { NEW_IMG_URI } from '../actions/types';
+import { NEW_IMG_URI, REMOVE_IMG_URI } from '../actions/types';
 
 const ADD_BIKE_STATE = {
   newBikeID: '',
@@ -13,6 +13,12 @@ const addBikeReducers = (state = ADD_BIKE_STATE, action) => {
         ...state,
         imgToUploadUri: action.payload,
         uriSet: true,
+      };
+    case REMOVE_IMG_URI:
+      return {
+        ...state,
+        imgToUploadUri: '',
+        uriSet: false,
       };
     default:
       return state;

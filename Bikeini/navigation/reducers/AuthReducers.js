@@ -7,7 +7,7 @@ const LOGIN_STATE = {
   jwt: [],
 };
 
-const loginReducer = (state = LOGIN_STATE, action) => {
+const authReducer = (state = LOGIN_STATE, action) => {
   const { username, password } = state;
   let { jwt, isLoggedIn } = state;
   switch (action.type) {
@@ -22,4 +22,4 @@ const loginReducer = (state = LOGIN_STATE, action) => {
   }
 };
 
-export default loginReducer;
+export default authReducer;

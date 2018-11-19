@@ -70,6 +70,7 @@ class Login extends React.PureComponent {
   logInUser = () => {
     const { username, password, jwt } = this.state;
     const { navigation, login } = this.props;
+    navigation.navigate('Browser');
     serverApi.fetchApi('sign_in', {
       username,
       password,

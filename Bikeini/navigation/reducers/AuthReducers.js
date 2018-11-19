@@ -1,13 +1,13 @@
 import { LOGIN } from '../actions/types';
 
-const LOGIN_STATE = {
+const AUTH_STATE = {
   isLoggedIn: false,
   username: '',
   password: '',
   jwt: [],
 };
 
-const authReducer = (state = LOGIN_STATE, action) => {
+const authState = (state = AUTH_STATE, action) => {
   const { username, password } = state;
   let { jwt, isLoggedIn } = state;
   switch (action.type) {
@@ -22,4 +22,4 @@ const authReducer = (state = LOGIN_STATE, action) => {
   }
 };
 
-export default authReducer;
+export default authState;

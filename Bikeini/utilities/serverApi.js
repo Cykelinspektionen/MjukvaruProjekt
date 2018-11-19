@@ -15,6 +15,17 @@ const serverApi = {
     })
       .then(response => response.json());
   },
+
+  get(_urlEnd, _jwt) {
+    return fetch(`https://bikeify.herokuapp.com/${_urlEnd}`, {
+      method: 'GET',
+      headers: {
+        'x-access-token': _jwt,
+      },
+    // Authorization: 'Bearer ' + 'SECRET_OAUTH2_TOKEN_IF_AUTH' },
+    })
+      .then(response => response.json());
+  },
 };
 
 export default serverApi;

@@ -13,7 +13,7 @@ const AppNavigator = createStackNavigator({
   Location: { screen: Location },
 },
 {
-  initialRouteName: 'Browser',
+  initialRouteName: 'Login',
 });
 
 export default AppNavigator;

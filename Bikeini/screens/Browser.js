@@ -50,12 +50,6 @@ class Browser extends React.Component {
   constructor(props) {
     super(props);
 
-    const { loginState } = this.props;
-    const { jwt } = loginState;
-
-    console.log(jwt);
-    console.log(jwt);
-
     this.state = {
       showMissing: true,
       missingBicycles: [],
@@ -71,28 +65,21 @@ class Browser extends React.Component {
   }
 
   handleServerBicycles = () => {
-    const { loginState } = this.props;
-    const { jwt } = loginState;
-    //  let token = jwt[0];
-    // Currently using dummy token, use 'jwt' when merging with Client-Side branch!
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZjI5MWQxNzg1N2I1MDAxNmRiNThhOCIsImlhdCI6MTU0MjYzMTAzMiwiZXhwIjoxNTQyNjM0NjMyfQ.xf6jWqsUIB1huih8rZW5HHxg3nvsSeldvgXCVYVxHlo';
+      const { authState } = this.props;
+      const { jwt } = authState;
 
     const foundBicycles = [];
     const missingBicycles = [];
 
-    serverApi.get('bikes/getfoundbikes/', token)
+    serverApi.get('bikes/getfoundbikes/', jwt)
       .then((responseJson) => {
-        console.log(responseJson);
-
         for (let i = 0; i < responseJson.length; i += 1) {
           foundBicycles.push(responseJson[i]);
         }
       }).catch(error => console.log(error));
 
-    serverApi.get('bikes/getstolenbikes/', token)
+    serverApi.get('bikes/getstolenbikes/', jwt)
       .then((responseJson) => {
-        console.log(responseJson);
-
         for (let i = 0; i < responseJson.length; i += 1) {
           missingBicycles.push(responseJson[i]);
         }
@@ -112,8 +99,9 @@ class Browser extends React.Component {
   );
 
   renderHeader = () => {
-    const { showMissing } = this.state;
-    // const { region } = this.props;      <- TODO, get selected region from user
+      const { showMissing } = this.state;
+      const { profileState } = this.props;
+      const { region } = profileState;
     if (showMissing) {
       return (
         <View style={styles.header}>
@@ -184,7 +172,6 @@ class Browser extends React.Component {
   }
 
   search(searchOptions) {
-    console.log(searchOptions);
   }
 
   render() {
@@ -214,8 +201,8 @@ class Browser extends React.Component {
 
 const mapStateToProps = (state) => {
   // Add connection to ProfileReducer to get 'Region'
-  const { loginState } = state;
-  return { loginState };
+    const { authState, profileState } = state;
+    return { authState, profileState };
 };
 
 export default connect(mapStateToProps)(Browser);

@@ -5,7 +5,7 @@ import filterReducer from './FilterReducers';
 import profileReducer from './ProfileReducers';
 
 export default combineReducers({
-  loginState: authReducer,
+  authState: authReducer,
   signUpState: signUpReducer,
   filterState: filterReducer,
   profileState: profileReducer,

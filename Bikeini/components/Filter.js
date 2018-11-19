@@ -68,6 +68,7 @@ const styles = StyleSheet.create({
 });
 
 /*
+ * THE STRUCTURE FOR FILTER IS IN BETA - WILL PROBABLY BE CHANGED LATER WHEN THE TIME IS RIGHT!
   The 'checkBoxes' state is structured as following array:
   [
     {

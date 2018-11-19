@@ -46,16 +46,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const missingBicycles = [{
-  key: '1', description: 'Bicycle 1', location: 'Gr�nby', model: 'Regular bike',
-}];
-const foundBicycles = [{
-  key: '2', description: 'Bicycle 2', location: 'Gr�nby', model: 'Regular bike',
-},
-{
-  key: '3', description: 'Bicycle 3', location: 'Gr�nby', model: 'Regular bike',
-}];
-
 class Browser extends React.Component {
   constructor(props) {
     super(props);
@@ -68,8 +58,8 @@ class Browser extends React.Component {
 
     this.state = {
       showMissing: true,
-      missingBicycles,
-      foundBicycles,
+      missingBicycles: [],
+      foundBicycles: [],
       showFilter: false,
     };
 
@@ -85,35 +75,33 @@ class Browser extends React.Component {
     const { jwt } = loginState;
     //  let token = jwt[0];
     // Currently using dummy token, use 'jwt' when merging with Client-Side branch!
-      const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZjI5MWQxNzg1N2I1MDAxNmRiNThhOCIsImlhdCI6MTU0MjYzMTAzMiwiZXhwIjoxNTQyNjM0NjMyfQ.xf6jWqsUIB1huih8rZW5HHxg3nvsSeldvgXCVYVxHlo';
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZjI5MWQxNzg1N2I1MDAxNmRiNThhOCIsImlhdCI6MTU0MjYzMTAzMiwiZXhwIjoxNTQyNjM0NjMyfQ.xf6jWqsUIB1huih8rZW5HHxg3nvsSeldvgXCVYVxHlo';
 
     const foundBicycles = [];
     const missingBicycles = [];
 
     serverApi.get('bikes/getfoundbikes/', token)
-      .then((response) => {
-        console.log(response);
+      .then((responseJson) => {
+        console.log(responseJson);
 
-        for (let i = 0; i < response.length; i += 1) {
-          foundBicycles.push(response[i]);
+        for (let i = 0; i < responseJson.length; i += 1) {
+          foundBicycles.push(responseJson[i]);
         }
       }).catch(error => console.log(error));
 
     serverApi.get('bikes/getstolenbikes/', token)
-      .then((response) => {
-        console.log(response);
+      .then((responseJson) => {
+        console.log(responseJson);
 
-        for (let i = 0; i < response.length; i += 1) {
-          missingBicycles.push(response[i]);
+        for (let i = 0; i < responseJson.length; i += 1) {
+          missingBicycles.push(responseJson[i]);
         }
       }).catch(error => console.log(error));
 
-    this.setState({ missingBicycles, foundBicycles }, () => {
-      // this.props.dispatch(fetchBikesSuccess());
-    });
+    this.setState({ missingBicycles, foundBicycles });
   }
 
-  keyExtractor = item => item.key;
+  keyExtractor = item => item._id;
 
   renderItem = ({ item }) => (
     <TouchableOpacity
@@ -225,6 +213,7 @@ class Browser extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+  // Add connection to ProfileReducer to get 'Region'
   const { loginState } = state;
   return { loginState };
 };

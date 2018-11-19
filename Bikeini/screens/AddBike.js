@@ -261,7 +261,7 @@ class AddBike extends React.Component {
       type: 'image/jpg',
     };
     this.setBikeData('imageOfBike', bikeImgData);
-    serverApi.fetchApi('addBike', bikeData, 'multipart/form-data', authState.jwt[0]);
+    serverApi.fetchApi('bikes/addbike', bikeData, 'multipart/form-data', authState.jwt[0]);
   }
 
   setBikeData = (attr, value, setKeyword) => {

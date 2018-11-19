@@ -4,6 +4,7 @@ import TempPage from '../screens/TempPage';
 import SignUp from '../screens/SignUp';
 import AddBike from '../screens/AddBike';
 import Camera from '../screens/Camera';
+import Location from '../screens/Location';
 
 const AppNavigator = createStackNavigator({
   Login: { screen: Login },
@@ -11,6 +12,7 @@ const AppNavigator = createStackNavigator({
   SignUp: { screen: SignUp },
   AddBike: { screen: AddBike },
   Camera: { screen: Camera },
+  Location: { screen: Location },
 },
 {
   initialRouteName: 'Login',

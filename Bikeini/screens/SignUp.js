@@ -71,10 +71,9 @@ class SignUp extends React.Component {
         // Check for failure!
         console.log(responseJson);
         deviceStorage.saveItem('id_token', responseJson.jwt);
-        navigation.navigate('TempPage');
         const { jwt } = responseJson.jwt;
         login(jwt);
-        navigation.navigate('TempPage');
+        navigation.navigate('Location');
       }).catch(error => console.log(error));
   }
 

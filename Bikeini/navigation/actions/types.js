@@ -6,3 +6,4 @@ export const ROLL = 'ROLL';
 export const NEW_IMG_URI = 'NEW_IMG_URI';
 export const SET_NEW_ID = 'SET_NEW_ID';
 export const REMOVE_IMG_URI = 'REMOVE_IMG_URI';
+export const SET_LOCATION = 'SET_LOCATION';

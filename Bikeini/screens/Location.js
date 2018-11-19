@@ -9,6 +9,7 @@ import { Constants } from 'expo';
 import { CheckBox } from 'react-native-elements';
 import cities from '../assets/Cities';
 import * as profileActions from '../navigation/actions/ProfileActions';
+import serverApi from '../utilities/serverApi';
 
 const logo = require('../assets/images/biker.png');
 
@@ -57,8 +58,8 @@ let checkedFlag = false;
 let checkedCity = '';
 
 class Location extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       checked: [],
     };
@@ -81,9 +82,14 @@ checkItem = (item) => {
   setLocation(item);
 };
 
+sendLocationToServer = () => {
+  const { setLocation, loginState } = this.props;
+  serverApi.fetchApi('setLocation', setLocation, 'multipart/form-data;', loginState.jwt[0]);
+}
 
 render() {
   const { checked } = this.state;
+  console.log(this.props);
   return (
     <View style={styles.container}>
       <Image style={styles.logo} source={logo} />
@@ -101,7 +107,13 @@ render() {
           />
         )}
       />
-      <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.logOutUser}>
+      <TouchableHighlight
+        style={[styles.buttonContainer, styles.loginButton]}
+        onPress={() => {
+          this.sendLocationToServer();
+          // navigation.navigate(this.logOutUser);
+        }}
+      >
         <Text style={styles.loginText}>Submit</Text>
       </TouchableHighlight>
     </View>
@@ -109,16 +121,23 @@ render() {
 }
 }
 
+
 Location.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
   setLocation: PropTypes.func.isRequired,
+  loginState: PropTypes.shape({
+    isLoggedIn: PropTypes.bool.isRequired,
+    username: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired,
+    jwt: PropTypes.array.isRequired,
+  }).isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { profileState } = state;
-  return { profileState };
+  const { profileState, loginState } = state;
+  return { profileState, loginState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(

@@ -4,7 +4,7 @@ const LOGIN_STATE = {
   isLoggedIn: false,
   username: '',
   password: '',
-  jwt: '',
+  jwt: [],
 };
 
 const loginReducer = (state = LOGIN_STATE, action) => {

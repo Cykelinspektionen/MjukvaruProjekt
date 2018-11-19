@@ -5,7 +5,7 @@ import {
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import { login } from '../navigation/actions/AuthActions';
+import * as loginActions from '../navigation/actions/AuthActions';
 import serverApi from '../utilities/serverApi';
 import deviceStorage from '../utilities/deviceStorage';
 
@@ -71,10 +71,9 @@ class SignUp extends React.Component {
         // Check for failure!
         console.log(responseJson);
         deviceStorage.saveItem('id_token', responseJson.jwt);
-        navigation.navigate('TempPage');
         const { jwt } = responseJson.jwt;
         login(jwt);
-        navigation.navigate('TempPage');
+        navigation.navigate('Location');
       }).catch(error => console.log(error));
   }
 
@@ -161,10 +160,9 @@ const mapStateToProps = (state) => {
   return { signUpState };
 };
 
-const mapDispatchToProps = dispatch => (
-  bindActionCreators({
-    login,
-  }, dispatch)
+const mapDispatchToProps = dispatch => bindActionCreators(
+  { ...loginActions },
+  dispatch,
 );
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignUp);

@@ -5,7 +5,7 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { fetchBikes, fetchBikesSuccess } from '../navigation/actions/BrowserActions';
+//import { fetchBikes, fetchBikesSuccess } from '../navigation/actions/BrowserActions';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
@@ -49,38 +49,42 @@ const styles = StyleSheet.create({
   },
 });
 
+const missingBicycles = [{ key: '1', description: 'Bicycle 1', location: 'Gränby', model: 'Regular bike' }];
+const foundBicycles = [{ key: '2', description: 'Bicycle 2', location: 'Gränby', model: 'Regular bike' },
+                        { key: '3', description: 'Bicycle 3', location: 'Gränby', model: 'Regular bike' }];
+
 class Browser extends React.Component {
   constructor(props) {
     super(props);
 
-    const { browserState } = this.props;
+    const { loginState } = this.props;
+    const { jwt } = loginState;
+
+      console.log(jwt);
+      console.log(jwt);
 
     this.state = {
       showMissing: true,
-      missingBicycles: browserState.missingBicycles,
-      foundBicycles: browserState.foundBicycles,
+      missingBicycles: missingBicycles,
+      foundBicycles: foundBicycles,
       showFilter: false,
       isLoading: false,
       isLoaded: false,
-    };
+    }; 
   }
 
-  // Something is wrong...
-  // BrowserReducer is called with FETCH_BIKES
-  // but the state is not updated?
-  componentDidMount() {
-    this.props.fetchBikes();
-    // this.state.isLoading show be 'true'
-    console.log(this.state.isLoading);
-  }
+    componentDidMount() {
+        this.handleServerBicycles();
+    }
 
   handleServerBicycles = () => {
-    const { token } = 'TODO';
+    const { loginState } = this.props;
+      const { jwt } = loginState;
+      let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZjI5MWQxNzg1N2I1MDAxNmRiNThhOCIsImlhdCI6MTU0MjYyMzcxMSwiZXhwIjoxNTQyNjI3MzExfQ.H1md4tcUsEBTLn52PfuWQnTxCQzQpNqx1aLHrlLxj2Q';
+    
     const foundBicycles = [];
     const missingBicycles = [];
 
-    // get(_urlEnd, _contentType, _jwt)
-    this.props.dispatch(fetchBikes());
     serverApi.get('bikes/getfoundbikes/', token)
       .then((responseJson) => {
         console.log(responseJson);
@@ -100,7 +104,7 @@ class Browser extends React.Component {
       }).catch(error => console.log(error));
 
     this.setState({ missingBicycles, foundBicycles }, () => {
-      this.props.dispatch(fetchBikesSuccess());
+      //this.props.dispatch(fetchBikesSuccess());
     });
   }
 
@@ -211,7 +215,7 @@ class Browser extends React.Component {
   }
 }
 
-Browser.propTypes = {
+/*Browser.propTypes = {
   browserState: PropTypes.shape({
     showMissing: PropTypes.bool,
     missingBicycles: PropTypes.array,
@@ -219,18 +223,18 @@ Browser.propTypes = {
     isLoading: PropTypes.bool,
     isLoaded: PropTypes.bool,
   }),
-};
+};*/
 
 const mapStateToProps = (state) => {
-  const { browserState } = state;
-  return { browserState };
+    const { loginState } = state;
+    return { loginState };
 };
 
-const mapDispatchToProps = dispatch => (
+/*const mapDispatchToProps = dispatch => (
   bindActionCreators({
     fetchBikes,
     fetchBikesSuccess,
   }, dispatch)
-);
+);*/
 
-export default connect(mapStateToProps, mapDispatchToProps)(Browser);
+export default connect(mapStateToProps)(Browser);

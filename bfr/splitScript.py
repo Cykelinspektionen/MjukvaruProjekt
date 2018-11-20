@@ -2,7 +2,6 @@ import os
 import shutil
 import numpy as np
 
-
 def split_dataset_into_test_and_train_sets(all_data_dir, training_data_dir, testing_data_dir, testing_data_pct):
     # Recreate testing and training directories
     if testing_data_dir.count('/') > 1:

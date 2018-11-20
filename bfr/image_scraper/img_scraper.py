@@ -35,6 +35,7 @@ for pageNumber in range (6, pageAmount):
         try:
             src = (image.get_attribute('src'))
             print(src)
+            # Only save jpg files
             if ".jpg" in src:
                 local= SAVEPATH + "/bike_"+  str(pageNumber) + "_" + str(imageNumber)+ ".png"
                 

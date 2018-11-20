@@ -1,3 +1,8 @@
+"""
+Finds bike objects in a picture and save them in a new folder
+TODO: only save one bike per img. Approximate a minimum score 
+"""
+
 from imageai.Detection import ObjectDetection
 import os
 

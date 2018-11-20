@@ -10,7 +10,6 @@ import os
 
 newpath = "/Users/adrian/Documents/MjukvaruProjekt/bfr/images_unsorted/bike_Formated/"
 path = "/Users/adrian/Documents/MjukvaruProjekt/bfr/images_unsorted/bike/"
-print("lol")
 for file in os.listdir(path):
     if ".DS_Store" in file:
         continue

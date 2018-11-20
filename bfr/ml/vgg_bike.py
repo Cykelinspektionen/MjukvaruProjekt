@@ -59,6 +59,7 @@ model.summary()
 
 #Autosplit
 """
+#Automatic split into validation folder, might be used
 data_generator = ImageDataGenerator(rescale=1./255, validation_split=0.33)
 
 train_generator = data_generator.flow_from_directory(train_dir, 
@@ -82,9 +83,10 @@ validation_generator = data_generator.flow_from_directory(train_dir,
 # putita stuff
 train_datagen = ImageDataGenerator(
       rescale=1./255,
-      rotation_range=10,
+      rotation_range=20,
       zca_whitening=True,
-      zoom_range = 0.1,
+      zoom_range = 0.2,
+      shear_range = 0.2
       width_shift_range = 0.1,
       height_shift_range = 0.1,
       horizontal_flip=True,
@@ -124,9 +126,9 @@ print("validation_generator class_indices")
 print(validation_generator.class_indices)
 		
 # Compile the model
-model.compile(loss='categorical_crossentropy',
-              optimizer=optimizers.RMSprop(lr=1e-4),
-              metrics=['acc'])
+model.compile(loss='categorical_crossentropy', # (ln(output 1) + ln(output 2) 
+              optimizer=optimizers.RMSprop(lr=1e-4), # Test adam and SGD(prefarable in fine-tuning)
+              metrics=['acc']) # like loss function but not used during training
 			  
 # Train the model
 history = model.fit_generator(

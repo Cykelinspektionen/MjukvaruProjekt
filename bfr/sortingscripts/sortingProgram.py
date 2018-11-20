@@ -4,12 +4,8 @@ Basic manual sorting program
 import os, sys
 import Tkinter
 from Tkinter import *
-#from PIL import *
 from PIL import Image
 from PIL import ImageTk
-#import Image, ImageTk
-
-
 
 BULKPATH = "/Users/adrian/Documents/MjukvaruProjekt/bfr/images_unsorted/bike_Formated"
 SAVEPATH = "/Users/adrian/Documents/MjukvaruProjekt/bfr/dataset/training/"
@@ -19,9 +15,6 @@ colors = ["blue", "black", "yellow", "red", "green", "white", "purple", "gray", 
 basket = ["yes", "no"]
 rack = ["yes", "no"]
 frame = ["male", "female", "sport", "child", "special"]
-#mudguard = ["yes", "no"]
-#net = ["yes", "no"]
-#chainProtection = ["yes", "no"] 
 lamp = ["yes", "no"]
 
 categories = {"colors": colors, 
@@ -61,10 +54,6 @@ def SelectButton(myopt, mycat):
                 v.deselect()
     return wrapper
     
-def button_click_exit_mainloop (event):
-    pass
-    #event.widget.quit() # this will cause mainloop to unblock.
-
 def next(event):
     colors = checkbuttonsValues["colors"]
     for c in colors:
@@ -92,18 +81,8 @@ def skip(event):
 
 """root and frames """
 root = Tkinter.Tk()
-#root.geometry('+%d+%d' % (300,300))
-#root.resizable(width=FALSE, height=FALSE)
+
 root.geometry('{}x{}'.format(6000, 760))
-#top_frame = Frame(root, bg='cyan', width=450, height=50, pady=3)
-
-
-#top_frame = Frame(root, bg='cyan', width = 1000, height=50, pady=3).grid(row=0, columnspan=3)
-
-
-#frame1 = Frame(root, width=00, height=700, background="bisque")
-#frame1.pack(fill=None, expand=False)
-
 bottomframe = Frame(root)
 
 #print keys[values.index("bar")]
@@ -150,27 +129,6 @@ for cat in categories:
         c.pack(side = RIGHT)
     f1.pack()
 
-#bottomframe.pack(side = RIGHT)
-# t1 = Text (root)
-# t1.insert(INSERT, "T1")
-# t1.insert(INSERT, " \n T3")
-# t1.pack()
-
-# t2 = Text (root)
-# t2.insert(INSERT, "T2")
-# t2.pack()
-
-
-
-
-
-
-# text.tag_add("here", "1.0", "1.4")
-# text.tag_add("start", "1.8", "1.13")
-# text.tag_config("here", background="yellow", foreground="blue")
-# text.tag_config("start", background="black", foreground="green")
-
-
 
 """Add buttons """
 
@@ -181,28 +139,24 @@ B1.bind('<Button-1>', next)
 B2 = Button(root, text='Skip')
 B2.pack(side = RIGHT)
 B2.bind('<Button-1>', skip)
-#top_frame.pack()
 
-
-
-
-#B = Tkinter.Button(root, text ="Next", command = helloCallBack)
-
-#B.pack()
-
-#root.bind("<Button>", button_click_exit_mainloop)
-
-#root.mainloop()
 
 root.title("Bike Sorter")
 
 dirlist = os.listdir(BULKPATH)
 old_label_image = None
 counter = 1
+"""
+Load Imagess
+"""
+
 for f in dirlist:
+
     print f
     print "conuter: " + str(counter) 
     counter +=1
+    if counter < 760:
+        continue
     if f == ".DS_Store":
         continue
     #try:
@@ -214,9 +168,4 @@ for f in dirlist:
     if old_label_image is not None:
         old_label_image.destroy()
     old_label_image = label_image
-    root.mainloop() # wait until user clicks the window
-    #except Exception, e:
-    #    print e
-        # This is used to skip anything not an image.
-        # Warning, this will hide other errors as well.
-        #pass
+    root.mainloop() 

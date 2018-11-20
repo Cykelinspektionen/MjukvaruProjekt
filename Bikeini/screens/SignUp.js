@@ -55,25 +55,70 @@ class SignUp extends React.Component {
     super(props);
     this.state = {
       newUsername: '',
+      newEmail: '',
+      newPhoneNumber: 0,
       newPassword: '',
       newPasswordConfirm: '',
     };
   }
 
+  jsonToFormData(details) {
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
+
+    return formBody;
+  }
+
   createNewUser = () => {
-    const { newUsername, newPassword, navigation } = this.state;
-    const { login } = this.props;
-    serverApi.fetchApi('sign_up', {
-      newUsername,
-      newPassword,
-    })
+    const { newUsername, newEmail, newPhoneNumber, newPassword } = this.state;
+    const standardLocation = 'Uppsala'; 
+    const userInformation = {
+      username: newUsername,
+      password: newPassword,
+      email: newEmail,
+      phone_number: newPhoneNumber,
+      location: standardLocation
+    };
+
+    var formBody = this.jsonToFormData(userInformation);
+
+    serverApi.fetchApi('auth/adduser', formBody, 'application/x-www-form-urlencoded', '')
       .then((responseJson) => {
         // Check for failure!
         console.log(responseJson);
+        /*
         deviceStorage.saveItem('id_token', responseJson.jwt);
         const { jwt } = responseJson.jwt;
         login(jwt);
         navigation.navigate('Location');
+        */
+        this.authNewUser();
+      }).catch(error => console.log(error));
+  }
+
+  authNewUser = () => {
+    const { login, navigation } = this.props;
+    const { newEmail, newPassword } = this.state;
+    const userInformation = {
+      email: newEmail,
+      password: newPassword
+    };
+
+    var formBody = this.jsonToFormData(userInformation);
+
+    serverApi.fetchApi('auth', formBody, 'application/x-www-form-urlencoded', '')
+      .then((responseJson) => {
+        const { token } = responseJson.data;
+        console.log(token);
+
+        deviceStorage.saveItem('id_token', token);
+        login([token, '']);
+        navigation.navigate('Browser');
       }).catch(error => console.log(error));
   }
 
@@ -84,6 +129,9 @@ class SignUp extends React.Component {
         break;
       case 'missMatch':
         Alert.alert('Passwords must match');
+        break;
+      case 'invalidEmail':
+        Alert.alert('Email is invalid (missing @)');
         break;
       case 'approved':
         this.createNewUser();
@@ -101,18 +149,37 @@ class SignUp extends React.Component {
   }
 
   render() {
-    const { username, password } = this.state;
+    const { username, email, phoneNumber, password } = this.state;
     return (
       <View style={styles.container}>
         <Text>FILL IN YOUR SHIT!</Text>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputs}
-            placeholder="Email"
-            keyboardType="email-address"
+            placeholder="Username"
             underlineColorAndroid="transparent"
             value={username}
             onChangeText={text => this.setState({ newUsername: text })}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputs}
+            placeholder="Email"
+            keyboardType="email-address"
+            underlineColorAndroid="transparent"
+            value={email}
+            onChangeText={text => this.setState({ newEmail: text })}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputs}
+            placeholder="Phone number"
+            keyboardType="numeric"
+            underlineColorAndroid="transparent"
+            value={phoneNumber}
+            onChangeText={text => this.setState({ newPhoneNumber: text })}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -156,8 +223,8 @@ SignUp.propTypes = {
 
 
 const mapStateToProps = (state) => {
-  const { signUpState } = state;
-  return { signUpState };
+  const { signUpState, authState } = state;
+  return { signUpState, authState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(

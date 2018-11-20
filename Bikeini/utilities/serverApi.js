@@ -6,7 +6,7 @@ const serverApi = {
   fetchApi(_urlEnd, _body, _contentType, _jwt) {
     return fetch(`https://bikeify.herokuapp.com/${_urlEnd}`, {
 	  method: 'POST',
-	  body: JSON.stringify(_body),
+	  body: _body,
       headers: {
         'Content-Type': _contentType,
         'x-access-token': _jwt,

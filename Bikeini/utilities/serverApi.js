@@ -2,8 +2,11 @@
 //      http://10.0.2.2:3000/
 // Use 'localhost' when using external device on Home-Network
 // and local IP-address when on Uni-network! :)
+
 const serverApi = {
   fetchApi(_urlEnd, _body, _contentType, _jwt) {
+    // application/x-www-form-urlencoded ??
+    // const formBody = Object.entries(_body).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
     return fetch(`https://bikeify.herokuapp.com/${_urlEnd}`, {
 	  method: 'POST',
 	  body: JSON.stringify(_body),
@@ -11,9 +14,14 @@ const serverApi = {
         'Content-Type': _contentType,
         'x-access-token': _jwt,
       },
-    // Authorization: 'Bearer ' + 'SECRET_OAUTH2_TOKEN_IF_AUTH' },
     })
-      .then(response => response.json());
+      .then((response) => {
+        try {
+          response.json();
+        } catch (error) {
+          console.error(error);
+        }
+      });
   },
 
   get(_urlEnd, _jwt) {

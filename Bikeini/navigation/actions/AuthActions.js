@@ -7,9 +7,8 @@ export const login = credentials => (
   }
 );
 
-export const logout = credentials => (
+export const logout = () => (
   {
     type: LOGOUT,
-    payload: credentials,
   }
 );

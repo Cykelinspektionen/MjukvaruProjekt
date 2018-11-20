@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, TextInput, TouchableHighlight,
+  StyleSheet, Text, View, TextInput, TouchableHighlight, Alert,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -53,13 +53,12 @@ const styles = StyleSheet.create({
 });
 
 
-class Login extends React.PureComponent {
+class Login extends React.Component {
   constructor() {
     super();
     this.state = {
-      username: '',
+      email: '',
       password: '',
-      jwt: '',
     };
 
     this.deleteJWT = deviceStorage.deleteJWT.bind(this);
@@ -68,34 +67,45 @@ class Login extends React.PureComponent {
   }
 
   logInUser = () => {
-    const { username, password, jwt } = this.state;
+    const { email, password } = this.state;
     const { navigation, login } = this.props;
-    navigation.navigate('Browser');
-    serverApi.fetchApi('sign_in', {
-      username,
+    // navigation.navigate('Browser');
+    serverApi.fetchApi('auth/', {
+      email,
       password,
-    })
+    }, 'application/json')
       .then((responseJson) => {
-        // Check for failure!
         console.log(responseJson);
-        deviceStorage.saveItem('id_token', responseJson.jwt);
-        login(jwt);
-        navigation.navigate('TempPage');
+        if (responseJson.error) {
+          Alert.alert(responseJson.message);
+          return;
+          // TODO: Show failure to user better!
+        } if (responseJson.status === 'success') {
+          // deviceStorage.saveItem('id_token', responseJson.token);
+          console.log(responseJson);
+          // login(responseJson.token);
+          // console.log(this.props.authState);
+        } else {
+          Alert.alert('Unknown failure');
+        }
+        // Check for failure!
+        // navigation.navigate('TempPage'); */
       }).catch(error => console.log(error));
   }
 
   logOutUser = () => {
     this.deleteJWT();
+    authActions.logout();
   }
 
   render() {
-    const { username, password, jwt } = this.state;
-    const { navigation } = this.props;
+    const { email, password } = this.state;
+    const { navigation, authState } = this.props;
 
     // VERY TEMPORARY TESTING SOLUTION!
     // it looks horrible but it used for testing that storing
     // using AsyncStorage is actually working! :)
-    if (jwt) {
+    if (authState.jwt.length) {
       return (
         <View style={styles.container}>
           <Text> Already logged in fam </Text>
@@ -117,8 +127,8 @@ class Login extends React.PureComponent {
             placeholder="Email"
             keyboardType="email-address"
             underlineColorAndroid="transparent"
-            value={username}
-            onChangeText={text => this.setState({ username: text })}
+            value={email}
+            onChangeText={text => this.setState({ email: text })}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -152,8 +162,8 @@ Login.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  const { loginState } = state;
-  return { loginState };
+  const { authState } = state;
+  return { authState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(

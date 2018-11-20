@@ -1,4 +1,4 @@
-import { LOGIN } from '../actions/types';
+import { LOGIN, LOGOUT } from '../actions/types';
 
 const AUTH_STATE = {
   isLoggedIn: false,
@@ -8,15 +8,11 @@ const AUTH_STATE = {
 };
 
 const authState = (state = AUTH_STATE, action) => {
-  const { username, password } = state;
-  let { jwt, isLoggedIn } = state;
   switch (action.type) {
     case LOGIN:
-      jwt = action.payload;
-      isLoggedIn = true;
-      return {
-        username, password, jwt, isLoggedIn,
-      };
+      return { ...state, jwt: action.payload, isLoggedIn: true };
+    case LOGOUT:
+      return { ...state, jwt: [], isLoggedIn: false };
     default:
       return state;
   }

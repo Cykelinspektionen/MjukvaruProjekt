@@ -2,6 +2,7 @@
 //      http://10.0.2.2:3000/
 // Use 'localhost' when using external device on Home-Network
 // and local IP-address when on Uni-network! :)
+import { Alert } from 'react-native';
 
 // Handle HTTP errors since fetch won't.
 function handleErrors(response) {
@@ -49,11 +50,16 @@ const serverApi = {
         .then(handleErrors)
         .then(response => response.json())
         .then((json) => {
+          if (json.error) {
+            Alert.alert(json.error);
+          } else if (json.status === 'error') {
+            Alert.alert(json.message);
+          }
           dispatch(dispatchSucces(json));
           return json;
         })
         .catch((error) => {
-          console.log(error);
+          console.log('GET:', error);
           dispatch(dispatchFailure(error));
           return false;
         });

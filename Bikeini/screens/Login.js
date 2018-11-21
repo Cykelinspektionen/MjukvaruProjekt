@@ -102,7 +102,7 @@ class Login extends React.Component {
   render() {
     const { email, password } = this.state;
     const { navigation, authState, profileState } = this.props;
-
+    //console.log(authState, profileState);
     if (authState.loadingJwt || profileState.loadingProfile || authState.authorizing) {
       return (
         <View style={styles.container}>

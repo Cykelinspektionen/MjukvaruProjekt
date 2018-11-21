@@ -82,7 +82,7 @@ class Login extends React.Component {
       && !authState.deletingJwt) {
       loadProfileInit(authState.jwt[0]);
     } else if (profileState.profileLoaded && profileState.location.length) {
-      navigation.navigate('TempPage');
+      navigation.navigate('Browser');
     } else if (profileState.profileLoaded && !profileState.location.length) {
       navigation.navigate('Location');
     }

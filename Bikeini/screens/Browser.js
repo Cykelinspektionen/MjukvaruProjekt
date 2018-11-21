@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
+import headerStyle from './header';
 
 const styles = StyleSheet.create({
   container: {
@@ -47,6 +48,10 @@ const styles = StyleSheet.create({
 });
 
 class Browser extends React.Component {
+  static navigationOptions = {
+    ...headerStyle,
+  };
+
   constructor(props) {
     super(props);
 
@@ -65,8 +70,8 @@ class Browser extends React.Component {
   }
 
   handleServerBicycles = () => {
-      const { authState } = this.props;
-      const { jwt } = authState;
+    const { authState } = this.props;
+    const { jwt } = authState;
 
     const foundBicycles = [];
     const missingBicycles = [];
@@ -99,9 +104,9 @@ class Browser extends React.Component {
   );
 
   renderHeader = () => {
-      const { showMissing } = this.state;
-      const { profileState } = this.props;
-      const { region } = profileState;
+    const { showMissing } = this.state;
+    const { profileState } = this.props;
+    const { region } = profileState;
     if (showMissing) {
       return (
         <View style={styles.header}>
@@ -201,8 +206,8 @@ class Browser extends React.Component {
 
 const mapStateToProps = (state) => {
   // Add connection to ProfileReducer to get 'Region'
-    const { authState, profileState } = state;
-    return { authState, profileState };
+  const { authState, profileState } = state;
+  return { authState, profileState };
 };
 
 export default connect(mapStateToProps)(Browser);

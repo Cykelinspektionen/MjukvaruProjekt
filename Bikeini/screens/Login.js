@@ -44,10 +44,10 @@ const styles = StyleSheet.create({
     width: 250,
     borderRadius: 30,
   },
-  loginButton: {
-    backgroundColor: '#00b5ec',
+  greenButton: {
+    backgroundColor: '#44ccad',
   },
-  loginText: {
+  greenButtonText: {
     color: 'white',
   },
 });
@@ -99,8 +99,8 @@ class Login extends React.PureComponent {
       return (
         <View style={styles.container}>
           <Text> Already logged in fam </Text>
-          <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.logOutUser}>
-            <Text style={styles.loginText}>Log me out fam</Text>
+          <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={this.logOutUser}>
+            <Text style={styles.greenButtonText}>Log me out fam</Text>
           </TouchableHighlight>
         </View>
       );
@@ -132,12 +132,12 @@ class Login extends React.PureComponent {
           />
         </View>
 
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.logInUser}>
-          <Text style={styles.loginText}>Login</Text>
+        <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={this.logInUser}>
+          <Text style={styles.greenButtonText}>Login</Text>
         </TouchableHighlight>
 
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => navigation.navigate('SignUp')}>
-          <Text style={styles.loginText}>Sign up</Text>
+        <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={() => navigation.navigate('SignUp')}>
+          <Text style={styles.greenButtonText}>Sign up</Text>
         </TouchableHighlight>
       </View>
     );

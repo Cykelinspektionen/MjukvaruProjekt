@@ -6,14 +6,10 @@ import TabBarIcon from '../assets/TabBarIcon';
 import Browser from '../screens/Browser';
 import AddBike from '../screens/AddBike';
 
-const BrowserStack = createStackNavigator({
-  Browser: { screen: Browser },
-}, { headerMode: 'screen' });
+const BrowserStack = createStackNavigator({ Browser });
 
 BrowserStack.navigationOptions = {
   tabBarLabel: 'Ads',
-  title: 'Heej',
-  headerMode: 'none',
   tabBarOptions: {
     activeTintColor: '#44ccad',
   },
@@ -25,13 +21,10 @@ BrowserStack.navigationOptions = {
   ),
 };
 
-const NewStack = createStackNavigator({
-  New: AddBike,
-}, { headerMode: 'screen' });
+const NewStack = createStackNavigator({ AddBike });
 
 NewStack.navigationOptions = {
   tabBarLabel: 'New Ad',
-  headerMode: 'none',
   tabBarOptions: {
     activeTintColor: '#44ccad',
   },

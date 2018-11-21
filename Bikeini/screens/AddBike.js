@@ -10,6 +10,7 @@ import { Dropdown } from 'react-native-material-dropdown';
 import { ImagePicker } from 'expo';
 import permissions from '../utilities/permissions';
 import serverApi from '../utilities/serverApi';
+import headerStyle from './header';
 
 import * as addBikeActions from '../navigation/actions/AddBikeActions';
 
@@ -57,12 +58,22 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   icons: {
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 30,
+  },
+  greenButton: {
+    backgroundColor: '#44ccad',
+  },
+  greenButtonText: {
+    color: 'white',
   },
 });
 
 class AddBike extends React.Component {
+  static navigationOptions = {
+    ...headerStyle,
+  };
+
   constructor() {
     super();
     this.state = {
@@ -305,8 +316,8 @@ class AddBike extends React.Component {
             </View>
             <View>
               <View style={styles.rowContainer}>
-                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton]} onPress={this.startCameraRoll}>
-                  <Text style={styles.loginText}>ADD FROM ALBUM</Text>
+                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton]} onPress={this.startCameraRoll}>
+                  <Text style={styles.greenButtonText}>ADD FROM ALBUM</Text>
                 </TouchableHighlight>
                 <Image
                   style={styles.icons}
@@ -314,8 +325,8 @@ class AddBike extends React.Component {
                 />
               </View>
               <View style={styles.rowContainer}>
-                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton]} onPress={() => navigation.navigate('Camera')}>
-                  <Text style={styles.loginText}>TAKE A PHOTO</Text>
+                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => navigation.navigate('Camera')}>
+                  <Text style={styles.greenButtonText}>TAKE A PHOTO</Text>
                 </TouchableHighlight>
                 <Image
                   style={styles.icons}
@@ -434,7 +445,7 @@ class AddBike extends React.Component {
             />
           </View>
           <TouchableHighlight
-            style={[styles.smallButtonContainer, styles.actionButton]}
+            style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton]}
             onPress={() => {
               if (!addBikeState.uriSet) {
                 Alert.alert('Picture is mandatory!');
@@ -454,7 +465,7 @@ class AddBike extends React.Component {
             // navigation.navigate('PREVIEW ADS!')
             }}
           >
-            <Text style={styles.loginText}>Submit</Text>
+            <Text style={styles.greenButtonText}>Submit</Text>
           </TouchableHighlight>
         </View>
       </ScrollView>

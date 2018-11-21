@@ -13,7 +13,7 @@ function handleErrors(response) {
 
 const serverApi = {
 
-  getDispatch(urlEnd, jwt, dispatchBegin, dispatchSucces, dispatchFailure) {
+  getDispatch(urlEnd, jwt, dispatchBegin, dispatchFailure, dispatchSucces) {
     return (dispatch) => {
       dispatch(dispatchBegin());
       return fetch(`https://bikeify.herokuapp.com/${urlEnd}`, {
@@ -25,11 +25,38 @@ const serverApi = {
         .then(handleErrors)
         .then(response => response.json())
         .then((json) => {
-          console.log(json);
+          dispatch(dispatchSucces(json));
+          return true;
+        })
+        .catch((error) => {
+          dispatch(dispatchFailure(error));
+          return false;
+        });
+    };
+  },
+
+  postDispatch(urlEnd, body, contentType, jwt, dispatchBegin, dispatchFailure, dispatchSucces) {
+    return (dispatch) => {
+      dispatch(dispatchBegin());
+      return fetch(`https://bikeify.herokuapp.com/${urlEnd}`, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': contentType,
+          'x-access-token': jwt,
+        },
+      })
+        .then(handleErrors)
+        .then(response => response.json())
+        .then((json) => {
           dispatch(dispatchSucces(json));
           return json;
         })
-        .catch(error => dispatch(dispatchFailure(error)));
+        .catch((error) => {
+          console.log(error);
+          dispatch(dispatchFailure(error));
+          return false;
+        });
     };
   },
 

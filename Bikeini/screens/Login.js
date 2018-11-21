@@ -1,15 +1,15 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, TextInput, TouchableHighlight, Alert,
+  StyleSheet, Text, View, TextInput, TouchableHighlight,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import * as authActions from '../navigation/actions/AuthActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
-import serverApi from '../utilities/serverApi';
+// import serverApi from '../utilities/serverApi';
 
-import deviceStorage from '../utilities/deviceStorage';
+// import deviceStorage from '../utilities/deviceStorage';
 
 
 const styles = StyleSheet.create({
@@ -61,9 +61,6 @@ class Login extends React.Component {
       email: '',
       password: '',
     };
-
-    this.deleteJWT = deviceStorage.deleteJWT.bind(this);
-    this.loadJWT = deviceStorage.loadJWT.bind(this);
   }
 
 
@@ -73,118 +70,51 @@ class Login extends React.Component {
   }
 
   componentDidUpdate() {
-    const { authState, profileState } = this.props;
-    if (!authState.loadingJwt && authState.jwt[0] && !profileState.profileLoaded && !profileState.loadingProfile && !profileState.error) {
-      const { loadProfileInit } = this.props;
-      console.log('jwt to send:', authState.jwt[0]);
-      loadProfileInit(authState.jwt[0]);
-    } else if (profileState.error) {
-      console.log(profileState.errorMsg);
+    const {
+      authState, profileState, navigation, deleteJWTInit, loadProfileInit,
+    } = this.props;
+
+    if (
+      !authState.loadingJwt
+      && authState.jwt[0]
+      && !profileState.profileLoaded
+      && !profileState.loadingProfile
+      && !profileState.error
+      && !authState.isLoggedIn) {
+      // Might not work!...will probably not work!
+      if (!loadProfileInit(authState.jwt[0])) {
+        deleteJWTInit();
+      }
+    } else if (profileState.profileLoaded && profileState.location.length) {
+      navigation.navigate('TempPage');
+    } else if (profileState.profileLoaded && !profileState.location.length) {
+      navigation.navigate('Location');
     }
+    return 'did update'; // what to return?
   }
 
   logInUser = () => {
     const { email, password } = this.state;
-    const { navigation, login, setLocation } = this.props;
-    // navigation.navigate('Browser');
-    serverApi.fetchApi('auth/', {
-      email,
-      password,
-    }, 'application/json')
-      .then((responseJson) => {
-        console.log(responseJson);
-        if (responseJson.error) {
-          Alert.alert(responseJson.message);
-          // TODO: Show failure to user better!
-        } else if (responseJson.status === 'success') {
-          deviceStorage.saveItem('id_token', responseJson.data.token);
-          login(responseJson.data.token);
-          if (responseJson.data.user.location) {
-            setLocation(responseJson.data.user.location);
-            navigation.navigate('Browser');
-          } else {
-            navigation.navigate('Location');
-          }
-        } else {
-          Alert.alert('Unknown failure');
-        }
-      }).catch(error => console.log(error));
-  }
-
-  logOutUser = () => {
-    this.deleteJWT();
-    authActions.logout();
-  }
-
-  getUserData = () => {
-    const { jwt } = this.state;
-    const { navigation } = this.props;
-    serverApi.get('users/getuserinfo/', jwt)
-      .then((responseJson) => {
-        console.log(responseJson);
-        profileActions.setProfile(responseJson);
-        if (responseJson.location) {
-          navigation.navigate('Browser');
-        } else {
-          navigation.navigate('Location');
-        }
-      }).catch(error => console.log(error));
+    const { loginInit } = this.props;
+    loginInit(email, password);
   }
 
   render() {
-    const { email, password, jwt } = this.state;
+    const { email, password } = this.state;
     const { navigation, authState, profileState } = this.props;
 
-    // VERY TEMPORARY TESTING SOLUTION!
-    // it looks horrible but it used for testing that storing
-    // using AsyncStorage is actually working! :)
-    /*
-    console.log(authState, this.state);
-    if (jwt) {
-      console.log('test');
-      // this.getUserData();
-    }
-*/
-    if (authState.loadingJwt) {
-      console.log('loading jwt');
+    if (authState.loadingJwt || profileState.loadingProfile || authState.authorizing) {
       return (
-        <View>
+        <View style={styles.container}>
           <Text>Loading...</Text>
         </View>
       );
     }
 
-    if (!authState.loadingJwt && authState.jwt[0] && profileState.loadingProfile) {
-      console.log('loading profile', profileState);
-      return (
-        <View>
-          <Text>Loading...</Text>
-        </View>
-      );
-    }
-
-    if (!authState.loadingJwt && authState.jwt[0] && !profileState.profileLoaded && !profileState.loadingProfile) {
-      console.log('loaded jwt, initi load profile', profileState);
-      return (
-        <View>
-          <Text>Loading...</Text>
-        </View>
-      );
-    }
-
-    if (profileState.profileLoaded) {
-      console.log('Done');
-      return (
-        <View>
-          <Text>DONE...</Text>
-        </View>
-      );
-    }
-    console.log(authState, profileState);
     return (
       <View style={styles.container}>
         <Text>
-                Welcome to Bikeini lalalal
+                Welcome to Bikeini
         </Text>
         <View style={styles.inputContainer}>
           <TextInput
@@ -223,16 +153,29 @@ Login.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
-  login: PropTypes.func.isRequired,
-  setLocation: PropTypes.func.isRequired,
+  // login: PropTypes.func.isRequired,
+  // setLocation: PropTypes.func.isRequired,
   authState: PropTypes.shape({
     isLoggedIn: PropTypes.bool.isRequired,
     username: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired,
     jwt: PropTypes.array.isRequired,
   }).isRequired,
+  profileState: PropTypes.shape({
+    location: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    phone_number: PropTypes.number.isRequired,
+    create_time: PropTypes.string.isRequired,
+    game_score: PropTypes.number.isRequired,
+    loadingProfile: PropTypes.bool.isRequired,
+    profileLoaded: PropTypes.bool.isRequired,
+    errorMsg: PropTypes.string.isRequired,
+  }).isRequired,
   loadJWTInit: PropTypes.func.isRequired,
   loadProfileInit: PropTypes.func.isRequired,
+  deleteJWTInit: PropTypes.func.isRequired,
+  loginInit: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {

@@ -1,18 +1,20 @@
 import {
-  SET_LOCATION, LOAD_PROFILE_BEGIN, LOAD_PROFILE_SUCCES, LOAD_PROFILE_FAILURE,
+  SET_LOCATION,
+  LOAD_PROFILE_BEGIN,
+  LOAD_PROFILE_SUCCES,
+  LOAD_PROFILE_FAILURE,
 } from '../actions/types';
 
 const PROFILE_INITIAL_STATE = {
   location: '',
   username: '',
   email: '',
-  phone_number: '',
+  phone_number: 0,
   create_time: '',
-  game_score: '',
+  game_score: 0,
   loadingProfile: false,
   profileLoaded: false,
   errorMsg: '',
-  error: false,
 };
 
 const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
@@ -21,6 +23,14 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
       return { ...state, location: action.payload };
     case LOAD_PROFILE_BEGIN:
       return { ...state, loadingProfile: true };
+
+    case LOAD_PROFILE_FAILURE:
+      return {
+        ...state,
+        loadingProfile: false,
+        profileLoaded: false,
+        errorMsg: action.payload,
+      };
     case LOAD_PROFILE_SUCCES:
       return {
         ...state,
@@ -32,14 +42,6 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         game_score: action.payload.game_score,
         loadingProfile: false,
         profileLoaded: true,
-      };
-    case LOAD_PROFILE_FAILURE:
-      return {
-        ...state,
-        loadingProfile: false,
-        profileLoaded: false,
-        error: true,
-        errorMsg: action.payload,
       };
     default:
       return state;

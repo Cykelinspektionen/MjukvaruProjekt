@@ -38,5 +38,5 @@ export const loadProfileFailure = error => (
 );
 
 export function loadProfileInit(jwt) {
-  return serverApi.getDispatch('users/getuser/', jwt, loadProfileBegin, loadProfileSucces, loadProfileFailure);
+  return serverApi.getDispatch('users/getuser/', jwt, loadProfileBegin, loadProfileFailure, loadProfileSucces);
 }

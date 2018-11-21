@@ -65,6 +65,7 @@ class Login extends React.PureComponent {
     this.deleteJWT = deviceStorage.deleteJWT.bind(this);
     this.loadJWT = deviceStorage.loadJWT.bind(this);
     this.loadJWT();
+    this.deleteJWT();
   }
 
   logInUser = () => {

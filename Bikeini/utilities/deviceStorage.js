@@ -18,7 +18,7 @@ const deviceStorage = {
 	      if (value !== null) {
 	      	console.log(value);
 	        this.setState({
-	          jwt: value,
+	          jwt: [value, ''],
 	          loading: false,
 	        });
 	      } else {

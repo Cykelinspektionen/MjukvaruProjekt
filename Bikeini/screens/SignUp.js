@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Alert, StyleSheet, Text, View, TextInput, TouchableHighlight,
+  Alert, StyleSheet, Text, View, TextInput, TouchableHighlight, Image,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -8,6 +8,8 @@ import { bindActionCreators } from 'redux';
 import * as authActions from '../navigation/actions/AuthActions';
 import serverApi from '../utilities/serverApi';
 import deviceStorage from '../utilities/deviceStorage';
+
+const logo = require('../assets/images/biker.png');
 
 const styles = StyleSheet.create({
   container: {
@@ -22,16 +24,19 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderBottomWidth: 1,
     width: 250,
-    height: 45,
-    marginBottom: 20,
+    height: 35,
+    marginTop: 20,
     flexDirection: 'row',
     alignItems: 'center',
   },
   inputs: {
-    height: 45,
+    height: 35,
     marginLeft: 16,
     borderBottomColor: '#FFFFFF',
     flex: 1,
+  },
+  inputsError: {
+    color: 'red',
   },
   buttonContainer: {
     height: 45,
@@ -39,14 +44,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    width: 250,
-    borderRadius: 30,
+    width: '90%',
   },
   loginButton: {
-    backgroundColor: '#00b5ec',
+    marginTop: 35,
+    backgroundColor: '#74C3AE',
   },
   loginText: {
     color: 'white',
+  },
+  logo: {
+    height: 100,
+    width: 100,
+  },
+  logoTextCont: {
+    marginTop: 5,
+  },
+  logoText: {
+    fontStyle: 'italic',
+    fontWeight: '300',
+    fontSize: 14,
   },
 });
 
@@ -59,46 +76,47 @@ class SignUp extends React.Component {
       newPhoneNumber: 0,
       newPassword: '',
       newPasswordConfirm: '',
+      clicked: false,
     };
   }
 
-  jsonToFormData(details) {
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
-
-    return formBody;
-  }
-
   createNewUser = () => {
-    const { newUsername, newEmail, newPhoneNumber, newPassword } = this.state;
-    const standardLocation = 'Uppsala'; 
+    const {
+      newUsername, newEmail, newPhoneNumber, newPassword,
+    } = this.state;
+    const standardLocation = 'Uppsala';
     const userInformation = {
       username: newUsername,
       password: newPassword,
       email: newEmail,
       phone_number: newPhoneNumber,
-      location: standardLocation
+      location: standardLocation,
     };
 
-    var formBody = this.jsonToFormData(userInformation);
+    const formBody = this.jsonToFormData(userInformation);
 
-    serverApi.fetchApi('auth/adduser', formBody, 'application/x-www-form-urlencoded', '')
+    return serverApi.fetchApi('auth/adduser', formBody, 'application/x-www-form-urlencoded', '')
       .then((responseJson) => {
-        // Check for failure!
-        console.log(responseJson);
-        /*
-        deviceStorage.saveItem('id_token', responseJson.jwt);
-        const { jwt } = responseJson.jwt;
-        login(jwt);
-        navigation.navigate('Location');
-        */
-        this.authNewUser();
+        const responseErr = this.handleSignUpReponse(responseJson);
+
+        if (responseErr.length === 0) {
+          this.authNewUser();
+        } else {
+          Alert.alert('Username and/or email has to be unique!');
+          /*
+          for(let i = 0; i < responseErr.length; i += 1) {
+            if(responseErr[i] === 'username') {
+              credStatus.newUsername = "Username has to be unique!";
+            }
+            if(responseErr[i] === 'email') {
+              credStatus.newEmail = "Email has to be unique!";
+            }
+          }
+          */
+        }
       }).catch(error => console.log(error));
+
+    // return credStatus;
   }
 
   authNewUser = () => {
@@ -106,15 +124,14 @@ class SignUp extends React.Component {
     const { newEmail, newPassword } = this.state;
     const userInformation = {
       email: newEmail,
-      password: newPassword
+      password: newPassword,
     };
 
-    var formBody = this.jsonToFormData(userInformation);
+    const formBody = this.jsonToFormData(userInformation);
 
     serverApi.fetchApi('auth', formBody, 'application/x-www-form-urlencoded', '')
       .then((responseJson) => {
         const { token } = responseJson.data;
-        console.log(token);
 
         deviceStorage.saveItem('id_token', token);
         login([token, '']);
@@ -122,37 +139,90 @@ class SignUp extends React.Component {
       }).catch(error => console.log(error));
   }
 
-  handleSignUp = () => {
-    switch (this.verifyRequiredCredentials()) {
-      case 'emptyField':
-        Alert.alert('All fields must not be empty');
-        break;
-      case 'missMatch':
-        Alert.alert('Passwords must match');
-        break;
-      case 'invalidEmail':
-        Alert.alert('Email is invalid (missing @)');
-        break;
-      case 'approved':
-        this.createNewUser();
-        break;
-      default:
-        break;
+  handleSignUpReponse(response) {
+    const respErrors = [];
+    const { _message, errors } = response;
+
+    if (_message === 'User validation failed') {
+      if (errors.hasOwnProperty('email')) {
+        respErrors.push('email');
+      }
+      if (errors.hasOwnProperty('username')) {
+        respErrors.push('username');
+      }
     }
+
+    return respErrors;
   }
 
-  verifyRequiredCredentials = () => {
-    const { newUsername, newPassword, newPasswordConfirm } = this.state;
-    if (newUsername.trim() === '' || newPassword.trim() === '' || newPasswordConfirm.trim() === '') return 'emptyField';
-    if (newPassword !== newPasswordConfirm) return 'missMatch';
-    return 'approved';
+  jsonToFormData(details) {
+    let formBody = [];
+    for (const property in details) {
+      const encodedKey = encodeURIComponent(property);
+      const encodedValue = encodeURIComponent(details[property]);
+      formBody.push(`${encodedKey}=${encodedValue}`);
+    }
+    formBody = formBody.join('&');
+
+    return formBody;
+  }
+
+  verifyRequiredCredentials(sendToServer) {
+    const {
+      newUsername, newEmail, newPassword, newPasswordConfirm, clicked,
+    } = this.state;
+    const credStatus = {
+      newUsername: '', newEmail: '', newPassword: '', newPasswordConfirm: '',
+    };
+    let numErr = 0;
+    if (newUsername.trim() === '') {
+      credStatus.newUsername = '`Username´ has to be specified';
+      numErr += 1;
+    }
+    if (newEmail.trim() === '') {
+      credStatus.newEmail = '`Email´ has to be specified';
+      numErr += 1;
+    } else if (!newEmail.includes('@')) {
+      credStatus.newEmail = '`Email´ has to be a valid email-adress';
+      numErr += 1;
+    }
+    if (newPassword.trim() === '') {
+      credStatus.newPassword = '`Password´ has to be specified';
+      numErr += 1;
+    }
+    if (newPasswordConfirm.trim() === '') {
+      credStatus.newPasswordConfirm = '`Password´ has to be confirmed';
+      numErr += 1;
+    }
+    if (newPassword !== newPasswordConfirm) {
+      credStatus.newPasswordConfirm = '`Password´ has to be matching';
+      numErr += 1;
+    }
+
+    if (numErr === 0 && sendToServer) {
+      this.createNewUser();
+    }
+
+    if (!clicked) {
+      this.setState({ clicked: true });
+    }
+    return credStatus;
   }
 
   render() {
-    const { username, email, phoneNumber, password } = this.state;
+    const {
+      username, email, phoneNumber, password, clicked,
+    } = this.state;
+    let credStatus = {};
+    if (clicked) {
+      credStatus = this.verifyRequiredCredentials(false);
+    }
     return (
       <View style={styles.container}>
-        <Text>FILL IN YOUR SHIT!</Text>
+        <Image style={styles.logo} source={logo} />
+        <View style={styles.logoTextCont}>
+          <Text style={styles.logoText}> Cykelinspektionen </Text>
+        </View>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputs}
@@ -162,6 +232,9 @@ class SignUp extends React.Component {
             onChangeText={text => this.setState({ newUsername: text })}
           />
         </View>
+        {!!clicked && credStatus.newUsername !== '' && (
+          <Text style={{ color: 'red' }}>{credStatus.newUsername}</Text>
+        )}
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputs}
@@ -172,6 +245,9 @@ class SignUp extends React.Component {
             onChangeText={text => this.setState({ newEmail: text })}
           />
         </View>
+        {!!clicked && credStatus.newEmail !== '' && (
+          <Text style={{ color: 'red' }}>{credStatus.newEmail}</Text>
+        )}
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputs}
@@ -192,6 +268,9 @@ class SignUp extends React.Component {
             onChangeText={text => this.setState({ newPassword: text })}
           />
         </View>
+        {!!clicked && credStatus.newPassword !== '' && (
+          <Text style={{ color: 'red' }}>{credStatus.newPassword}</Text>
+        )}
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputs}
@@ -202,12 +281,14 @@ class SignUp extends React.Component {
             onChangeText={text => this.setState({ newPasswordConfirm: text })}
           />
         </View>
-
+        {!!clicked && credStatus.newPasswordConfirm !== '' && (
+          <Text style={{ color: 'red' }}>{credStatus.newPasswordConfirm}</Text>
+        )}
         <TouchableHighlight
           style={[styles.buttonContainer, styles.loginButton]}
-          onPress={this.handleSignUp}
+          onPress={() => this.verifyRequiredCredentials(true)}
         >
-          <Text style={styles.loginText}>Sign up</Text>
+          <Text style={styles.loginText}>Register</Text>
         </TouchableHighlight>
       </View>
     );

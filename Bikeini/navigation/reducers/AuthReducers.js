@@ -41,7 +41,7 @@ const authState = (state = AUTH_STATE, action) => {
     case DELETE_JWT_FAILURE:
       return { ...state, deletingJwt: false, error: action.payload };
     case DELETE_JWT_SUCCES:
-      return { ...state, deletingJwt: false };
+      return { ...state, deletingJwt: false, jwt: [] };
     case LOAD_JWT_BEGIN:
       return { ...state, loadingJwt: true };
     case LOAD_JWT_FAILURE:

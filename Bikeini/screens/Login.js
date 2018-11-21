@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import * as authActions from '../navigation/actions/AuthActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
+import * as jwtActions from '../navigation/actions/JwtActions';
 // import serverApi from '../utilities/serverApi';
 
 // import deviceStorage from '../utilities/deviceStorage';
@@ -71,7 +72,7 @@ class Login extends React.Component {
 
   componentDidUpdate() {
     const {
-      authState, profileState, navigation, deleteJWTInit, loadProfileInit,
+      authState, profileState, navigation, loadProfileInit,
     } = this.props;
 
     if (
@@ -80,11 +81,10 @@ class Login extends React.Component {
       && !profileState.profileLoaded
       && !profileState.loadingProfile
       && !profileState.error
-      && !authState.isLoggedIn) {
+      && !authState.isLoggedIn
+      && !authState.deletingJwt) {
       // Might not work!...will probably not work!
-      if (!loadProfileInit(authState.jwt[0])) {
-        deleteJWTInit();
-      }
+      loadProfileInit(authState.jwt[0]);
     } else if (profileState.profileLoaded && profileState.location.length) {
       navigation.navigate('TempPage');
     } else if (profileState.profileLoaded && !profileState.location.length) {
@@ -102,7 +102,7 @@ class Login extends React.Component {
   render() {
     const { email, password } = this.state;
     const { navigation, authState, profileState } = this.props;
-    //console.log(authState, profileState);
+    // console.log(authState, profileState);
     if (authState.loadingJwt || profileState.loadingProfile || authState.authorizing) {
       return (
         <View style={styles.container}>
@@ -174,7 +174,6 @@ Login.propTypes = {
   }).isRequired,
   loadJWTInit: PropTypes.func.isRequired,
   loadProfileInit: PropTypes.func.isRequired,
-  deleteJWTInit: PropTypes.func.isRequired,
   loginInit: PropTypes.func.isRequired,
 };
 
@@ -184,7 +183,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...authActions, ...profileActions },
+  { ...authActions, ...profileActions, ...jwtActions },
   dispatch,
 );
 

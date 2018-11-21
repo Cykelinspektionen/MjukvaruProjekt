@@ -2,6 +2,7 @@ import {
   SET_LOCATION, SET_PROFILE_STATE, LOAD_PROFILE_BEGIN, LOAD_PROFILE_SUCCES, LOAD_PROFILE_FAILURE,
 } from './types';
 import serverApi from '../../utilities/serverApi';
+import { deleteJWTInit } from './JwtActions';
 
 export const setLocation = location => (
   {
@@ -37,6 +38,18 @@ export const loadProfileFailure = error => (
   }
 );
 
+function handleProfileData(data) {
+  return (dispatch) => {
+    console.log(data);
+    if (data.status === 'error') {
+      dispatch(deleteJWTInit());
+      dispatch(loadProfileFailure(data.message));
+    } else {
+      dispatch(loadProfileSucces(data));
+    }
+  };
+}
+
 export function loadProfileInit(jwt) {
-  return serverApi.getDispatch('users/getuser/', jwt, loadProfileBegin, loadProfileFailure, loadProfileSucces);
+  return serverApi.getDispatch('users/getuser/', jwt, loadProfileBegin, loadProfileFailure, handleProfileData);
 }

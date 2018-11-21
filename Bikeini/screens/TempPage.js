@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 
-import * as authActions from '../navigation/actions/AuthActions';
+import * as jwtActions from '../navigation/actions/JwtActions';
 
 
 const styles = StyleSheet.create({
@@ -41,7 +41,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...authActions },
+  { ...jwtActions },
   dispatch,
 );
 

@@ -1,23 +1,42 @@
+"""
+Split dataset into training, test and validation data
+"""
+
+
 import os
 import shutil
 import numpy as np
 
-def split_dataset_into_test_and_train_sets(all_data_dir, training_data_dir, testing_data_dir, testing_data_pct):
-    # Recreate testing and training directories
-    if testing_data_dir.count('/') > 1:
+def split_dataset_into_test_and_train_sets(all_data_dir, training_data_dir, testing_data_dir, validation_data_dir, testing_data_pct, validation_data_pct):
+    # Recreate testing, validation and training directories
+    print (testing_data_dir.count('/'))
+    if os.path.isdir(testing_data_dir):
         shutil.rmtree(testing_data_dir, ignore_errors=False)
         os.makedirs(testing_data_dir)
         print("Successfully cleaned directory " + testing_data_dir)
     else:
-        print("Refusing to delete testing data directory " + testing_data_dir + " as we prevent you from doing stupid things!")
+        os.makedirs(testing_data_dir)
+        print("Refusing to delete testing data directory " + testing_data_dir)
 
-    if training_data_dir.count('/') > 1:
+    if os.path.isdir(training_data_dir):
         shutil.rmtree(training_data_dir, ignore_errors=False)
         os.makedirs(training_data_dir)
         print("Successfully cleaned directory " + training_data_dir)
     else:
-        print("Refusing to delete testing data directory " + training_data_dir + " as we prevent you from doing stupid things!")
+        print("Refusing to delete testing data directory " + training_data_dir)
+        os.makedirs(training_data_dir)
 
+    if os.path.isdir(validation_data_dir):
+        shutil.rmtree(validation_data_dir, ignore_errors = False)
+        os.makedirs(validation_data_dir)
+        print("Successfully cleaned directory " + validation_data_dir)
+    else:
+        print("Refusing to delete testing data directory " + validation_data_dir)
+        os.makedirs(validation_data_dir)
+
+
+    #split images
+    num_validation_files = 0
     num_training_files = 0
     num_testing_files = 0
 
@@ -29,6 +48,8 @@ def split_dataset_into_test_and_train_sets(all_data_dir, training_data_dir, test
         if category_name == os.path.basename(all_data_dir):
             continue
 
+        #Create subddirs
+        validation_data_category_dir = validation_data_dir + '/' + category_name
         training_data_category_dir = training_data_dir + '/' + category_name
         testing_data_category_dir = testing_data_dir + '/' + category_name
 
@@ -38,11 +59,20 @@ def split_dataset_into_test_and_train_sets(all_data_dir, training_data_dir, test
         if not os.path.exists(testing_data_category_dir):
             os.mkdir(testing_data_category_dir)
 
+        if not os.path.exists(validation_data_category_dir):
+            os.mkdir(validation_data_category_dir)
+        
+        #Add files
         for file in files:
             input_file = os.path.join(subdir, file)
-            if np.random.rand(1) < testing_data_pct:
+            rand = np.random.rand(1)
+
+            if rand < testing_data_pct:
                 shutil.copy(input_file, testing_data_dir + '/' + category_name + '/' + file)
                 num_testing_files += 1
+            elif rand >= testing_data_pct and rand < validation_data_pct+testing_data_pct:
+                shutil.copy(input_file, validation_data_dir + '/'+ category_name + '/' + file)
+                num_validation_files +=1
             else:
                 shutil.copy(input_file, training_data_dir + '/' + category_name + '/' + file)
                 num_training_files += 1
@@ -52,6 +82,7 @@ def split_dataset_into_test_and_train_sets(all_data_dir, training_data_dir, test
 
 tpath = 'C://Users/dippson2/MjukvaruProjekt/bfr/dataset/training2'
 vpath = 'C://Users/dippson2/MjukvaruProjekt/bfr/dataset/validation'
+test_path = 'C://Users/dippson2/MjukvaruProjekt/bfr/dataset/testing'
 path = 'C:/Users/dippson2/MjukvaruProjekt/bfr/dataset/training/'
 for idir in os.listdir(path):
     
@@ -63,4 +94,4 @@ for idir in os.listdir(path):
     if not os.path.exists(newSubDir):
         os.makedirs(vpath +"/" + idir)
     
-    split_dataset_into_test_and_train_sets(path + idir, 'C:/Users/dippson2/MjukvaruProjekt/bfr/dataset/training2/' + idir, 'C:/Users/dippson2/MjukvaruProjekt/bfr/dataset/validation/' + idir, 0.3)
+    split_dataset_into_test_and_train_sets(path +'/'+ idir, tpath +"/" +idir,test_path +'/'+ idir ,vpath +'/'+ idir, 0.1, 0.25)

@@ -40,7 +40,6 @@ export const loadProfileFailure = error => (
 
 function handleProfileData(data) {
   return (dispatch) => {
-    console.log(data);
     if (data.status === 'error') {
       dispatch(deleteJWTInit());
       dispatch(loadProfileFailure(data.message));

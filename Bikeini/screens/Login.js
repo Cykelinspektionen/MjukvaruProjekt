@@ -8,9 +8,6 @@ import { bindActionCreators } from 'redux';
 import * as authActions from '../navigation/actions/AuthActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as jwtActions from '../navigation/actions/JwtActions';
-// import serverApi from '../utilities/serverApi';
-
-// import deviceStorage from '../utilities/deviceStorage';
 
 
 const styles = StyleSheet.create({
@@ -83,7 +80,6 @@ class Login extends React.Component {
       && !profileState.error
       && !authState.isLoggedIn
       && !authState.deletingJwt) {
-      // Might not work!...will probably not work!
       loadProfileInit(authState.jwt[0]);
     } else if (profileState.profileLoaded && profileState.location.length) {
       navigation.navigate('TempPage');
@@ -102,7 +98,6 @@ class Login extends React.Component {
   render() {
     const { email, password } = this.state;
     const { navigation, authState, profileState } = this.props;
-    // console.log(authState, profileState);
     if (authState.loadingJwt || profileState.loadingProfile || authState.authorizing) {
       return (
         <View style={styles.container}>
@@ -153,8 +148,6 @@ Login.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
-  // login: PropTypes.func.isRequired,
-  // setLocation: PropTypes.func.isRequired,
   authState: PropTypes.shape({
     isLoggedIn: PropTypes.bool.isRequired,
     username: PropTypes.string.isRequired,

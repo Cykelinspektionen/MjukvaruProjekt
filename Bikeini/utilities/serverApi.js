@@ -3,7 +3,37 @@
 // Use 'localhost' when using external device on Home-Network
 // and local IP-address when on Uni-network! :)
 
+// Handle HTTP errors since fetch won't.
+function handleErrors(response) {
+  if (!response.ok) {
+    throw Error(response.statusText);
+  }
+  return response;
+}
+
 const serverApi = {
+
+  getDispatch(urlEnd, jwt, dispatchBegin, dispatchSucces, dispatchFailure) {
+    return (dispatch) => {
+      dispatch(dispatchBegin());
+      return fetch(`https://bikeify.herokuapp.com/${urlEnd}`, {
+	    method: 'GET',
+        headers: {
+          'x-access-token': jwt,
+        },
+      })
+        .then(handleErrors)
+        .then(response => response.json())
+        .then((json) => {
+          console.log(json);
+          dispatch(dispatchSucces(json));
+          return json;
+        })
+        .catch(error => dispatch(dispatchFailure(error)));
+    };
+  },
+
+
   fetchApi(_urlEnd, _body, _contentType, _jwt) {
     // application/x-www-form-urlencoded ??
     // const formBody = Object.entries(_body).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
@@ -15,18 +45,13 @@ const serverApi = {
         'x-access-token': _jwt,
       },
     })
-      .then((response) => {
-        try {
-          response.json();
-        } catch (error) {
-          console.error(error);
-        }
-      });
+      .then(handleErrors)
+      .then(response => response.json());
   },
 
   get(_urlEnd, _jwt) {
     return fetch(`https://bikeify.herokuapp.com/${_urlEnd}`, {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'x-access-token': _jwt,
       },

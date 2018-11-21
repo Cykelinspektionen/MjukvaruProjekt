@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import * as authActions from '../navigation/actions/AuthActions';
+import * as profileActions from '../navigation/actions/ProfileActions';
 import serverApi from '../utilities/serverApi';
 
 import deviceStorage from '../utilities/deviceStorage';
@@ -63,12 +64,28 @@ class Login extends React.Component {
 
     this.deleteJWT = deviceStorage.deleteJWT.bind(this);
     this.loadJWT = deviceStorage.loadJWT.bind(this);
-    this.loadJWT();
+  }
+
+
+  componentDidMount() {
+    const { loadJWTInit } = this.props;
+    loadJWTInit();
+  }
+
+  componentDidUpdate() {
+    const { authState, profileState } = this.props;
+    if (!authState.loadingJwt && authState.jwt[0] && !profileState.profileLoaded && !profileState.loadingProfile && !profileState.error) {
+      const { loadProfileInit } = this.props;
+      console.log('jwt to send:', authState.jwt[0]);
+      loadProfileInit(authState.jwt[0]);
+    } else if (profileState.error) {
+      console.log(profileState.errorMsg);
+    }
   }
 
   logInUser = () => {
     const { email, password } = this.state;
-    const { navigation, login } = this.props;
+    const { navigation, login, setLocation } = this.props;
     // navigation.navigate('Browser');
     serverApi.fetchApi('auth/', {
       email,
@@ -78,18 +95,19 @@ class Login extends React.Component {
         console.log(responseJson);
         if (responseJson.error) {
           Alert.alert(responseJson.message);
-          return;
           // TODO: Show failure to user better!
-        } if (responseJson.status === 'success') {
-          // deviceStorage.saveItem('id_token', responseJson.token);
-          console.log(responseJson);
-          // login(responseJson.token);
-          // console.log(this.props.authState);
+        } else if (responseJson.status === 'success') {
+          deviceStorage.saveItem('id_token', responseJson.data.token);
+          login(responseJson.data.token);
+          if (responseJson.data.user.location) {
+            setLocation(responseJson.data.user.location);
+            navigation.navigate('Browser');
+          } else {
+            navigation.navigate('Location');
+          }
         } else {
           Alert.alert('Unknown failure');
         }
-        // Check for failure!
-        // navigation.navigate('TempPage'); */
       }).catch(error => console.log(error));
   }
 
@@ -98,24 +116,71 @@ class Login extends React.Component {
     authActions.logout();
   }
 
+  getUserData = () => {
+    const { jwt } = this.state;
+    const { navigation } = this.props;
+    serverApi.get('users/getuserinfo/', jwt)
+      .then((responseJson) => {
+        console.log(responseJson);
+        profileActions.setProfile(responseJson);
+        if (responseJson.location) {
+          navigation.navigate('Browser');
+        } else {
+          navigation.navigate('Location');
+        }
+      }).catch(error => console.log(error));
+  }
+
   render() {
-    const { email, password } = this.state;
-    const { navigation, authState } = this.props;
+    const { email, password, jwt } = this.state;
+    const { navigation, authState, profileState } = this.props;
 
     // VERY TEMPORARY TESTING SOLUTION!
     // it looks horrible but it used for testing that storing
     // using AsyncStorage is actually working! :)
-    if (authState.jwt.length) {
+    /*
+    console.log(authState, this.state);
+    if (jwt) {
+      console.log('test');
+      // this.getUserData();
+    }
+*/
+    if (authState.loadingJwt) {
+      console.log('loading jwt');
       return (
-        <View style={styles.container}>
-          <Text> Already logged in fam </Text>
-          <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.logOutUser}>
-            <Text style={styles.loginText}>Log me out fam</Text>
-          </TouchableHighlight>
+        <View>
+          <Text>Loading...</Text>
         </View>
       );
     }
 
+    if (!authState.loadingJwt && authState.jwt[0] && profileState.loadingProfile) {
+      console.log('loading profile', profileState);
+      return (
+        <View>
+          <Text>Loading...</Text>
+        </View>
+      );
+    }
+
+    if (!authState.loadingJwt && authState.jwt[0] && !profileState.profileLoaded && !profileState.loadingProfile) {
+      console.log('loaded jwt, initi load profile', profileState);
+      return (
+        <View>
+          <Text>Loading...</Text>
+        </View>
+      );
+    }
+
+    if (profileState.profileLoaded) {
+      console.log('Done');
+      return (
+        <View>
+          <Text>DONE...</Text>
+        </View>
+      );
+    }
+    console.log(authState, profileState);
     return (
       <View style={styles.container}>
         <Text>
@@ -159,15 +224,24 @@ Login.propTypes = {
     navigate: PropTypes.func.isRequired,
   }).isRequired,
   login: PropTypes.func.isRequired,
+  setLocation: PropTypes.func.isRequired,
+  authState: PropTypes.shape({
+    isLoggedIn: PropTypes.bool.isRequired,
+    username: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired,
+    jwt: PropTypes.array.isRequired,
+  }).isRequired,
+  loadJWTInit: PropTypes.func.isRequired,
+  loadProfileInit: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { authState } = state;
-  return { authState };
+  const { authState, profileState } = state;
+  return { authState, profileState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...authActions },
+  { ...authActions, ...profileActions },
   dispatch,
 );
 

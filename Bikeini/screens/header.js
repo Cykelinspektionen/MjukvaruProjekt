@@ -1,7 +1,7 @@
 const headerStyle = {
   title: 'Bikeini',
   headerTitleStyle: {
-    fontFamily: 'Noteworthy',
+    fontFamily: 'CustomFont',
     fontSize: 26,
   },
   headerTintColor: '#44ccad',

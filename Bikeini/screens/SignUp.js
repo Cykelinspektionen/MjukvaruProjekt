@@ -99,7 +99,7 @@ class SignUp extends React.Component {
     return serverApi.fetchApi('auth/adduser', formBody, 'application/x-www-form-urlencoded', '')
       .then((responseJson) => {
         const responseErr = this.handleSignUpReponse(responseJson);
-        console.log(responseJson);
+
         if (responseErr.length === 0) {
           this.authNewUser();
         } else {
@@ -125,7 +125,6 @@ class SignUp extends React.Component {
 
     serverApi.fetchApi('auth', formBody, 'application/x-www-form-urlencoded', '')
       .then((responseJson) => {
-        console.log(responseJson);
         const { token } = responseJson.data;
 
         const createdUserInformation = {
@@ -133,7 +132,7 @@ class SignUp extends React.Component {
           username: newUsername,
           email: newEmail,
           phone_number: parseInt(newPhoneNumber, 10),
-          create_time: '', // Ask Fredrik what he uses before PR!
+          create_time: '',
           game_score: 0,
           loadingProfile: false,
           profileLoaded: true,
@@ -163,7 +162,6 @@ class SignUp extends React.Component {
 
   jsonToFormData(details) {
     const formBody = Object.entries(details).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
-
     return formBody;
   }
 

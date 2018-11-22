@@ -58,8 +58,8 @@ class Browser extends React.Component {
 
     this.state = {
       showMissing: true,
-      missingBicycles: [],
-      foundBicycles: [],
+      missingBicycles: '',
+      foundBicycles: '',
       showFilter: false,
     };
   }
@@ -70,7 +70,7 @@ class Browser extends React.Component {
 
   handleServerBicycles = () => {
     const { authState } = this.props;
-    const { jwt } = authState;
+    const { jwt } = authState;;
 
     const foundBicycles = [];
     const missingBicycles = [];
@@ -80,6 +80,7 @@ class Browser extends React.Component {
         for (let i = 0; i < responseJson.length; i += 1) {
           foundBicycles.push(responseJson[i]);
         }
+        this.setState({foundBicycles});
       }).catch(error => console.log(error));
 
     serverApi.get('bikes/getstolenbikes/', jwt[0])
@@ -87,9 +88,8 @@ class Browser extends React.Component {
         for (let i = 0; i < responseJson.length; i += 1) {
           missingBicycles.push(responseJson[i]);
         }
+        this.setState({missingBicycles});
       }).catch(error => console.log(error));
-
-    this.setState({ missingBicycles, foundBicycles });
   }
 
   keyExtractor = item => item._id;
@@ -104,11 +104,14 @@ class Browser extends React.Component {
 
   renderHeader = () => {
     const { showMissing } = this.state;
+    const { profileState } = this.props;
+    const { location } = profileState;
+
     if (showMissing) {
       return (
         <View style={styles.header}>
           <Text style={styles.headerText}>
-            Missing bikes in &#34;region&#34;
+            Missing bikes in {location}
           </Text>
         </View>
       );
@@ -116,7 +119,7 @@ class Browser extends React.Component {
     return (
       <View style={styles.header}>
         <Text style={styles.headerText}>
-            Found bikes in &#34;region&#34;
+            Found bikes in {location}
         </Text>
       </View>
     );
@@ -155,16 +158,18 @@ class Browser extends React.Component {
     }
 
 
-    return (
-      <View style={styles.browserList}>
-        <FlatList
-          data={foundBicycles}
-          extraData={this.state}
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderItem}
-        />
-      </View>
-    );
+    else {
+      return (
+        <View style={styles.browserList}>
+          <FlatList
+            data={foundBicycles}
+            extraData={this.state}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderItem}
+          />
+        </View>
+      );
+    }
   }
 
   changeFilterStatus = () => {

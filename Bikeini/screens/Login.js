@@ -61,7 +61,6 @@ class Login extends React.Component {
     };
   }
 
-
   componentDidMount() {
     const { loadJWTInit } = this.props;
     loadJWTInit();

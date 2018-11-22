@@ -21,7 +21,7 @@ const deviceStorage = {
         console.log('found:', value);
         login(value);
 	        this.setState({
-	          jwt: value,
+	          jwt: [value, ''],
 	          loading: false,
         });
 	      } else {

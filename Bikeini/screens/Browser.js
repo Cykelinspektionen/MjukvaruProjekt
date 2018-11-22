@@ -3,6 +3,7 @@ import {
   StyleSheet, Text, View, FlatList, TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
@@ -57,12 +58,10 @@ class Browser extends React.Component {
 
     this.state = {
       showMissing: true,
-      missingBicycles: [],
-      foundBicycles: [],
+      missingBicycles: '',
+      foundBicycles: '',
       showFilter: false,
     };
-
-    this.search = this.search.bind(this);
   }
 
   componentDidMount() {
@@ -81,6 +80,7 @@ class Browser extends React.Component {
         for (let i = 0; i < responseJson.length; i += 1) {
           foundBicycles.push(responseJson[i]);
         }
+        this.setState({ foundBicycles });
       }).catch(error => console.log(error));
 
     serverApi.get('bikes/getstolenbikes/', jwt[0])
@@ -88,9 +88,8 @@ class Browser extends React.Component {
         for (let i = 0; i < responseJson.length; i += 1) {
           missingBicycles.push(responseJson[i]);
         }
+        this.setState({ missingBicycles });
       }).catch(error => console.log(error));
-
-    this.setState({ missingBicycles, foundBicycles });
   }
 
   keyExtractor = item => item._id;
@@ -106,12 +105,15 @@ class Browser extends React.Component {
   renderHeader = () => {
     const { showMissing } = this.state;
     const { profileState } = this.props;
-    const { region } = profileState;
+    const { location } = profileState;
+
     if (showMissing) {
       return (
         <View style={styles.header}>
           <Text style={styles.headerText}>
-            Missing bikes in &#34;region&#34;
+            Missing bikes in
+            {' '}
+            {location}
           </Text>
         </View>
       );
@@ -119,7 +121,9 @@ class Browser extends React.Component {
     return (
       <View style={styles.header}>
         <Text style={styles.headerText}>
-            Found bikes in &#34;region&#34;
+            Found bikes in
+          {' '}
+          {location}
         </Text>
       </View>
     );
@@ -176,9 +180,6 @@ class Browser extends React.Component {
     this.setState({ showFilter: !showFilter });
   }
 
-  search(searchOptions) {
-  }
-
   render() {
     const header = this.renderHeader();
     const filter = this.renderFilter();
@@ -202,6 +203,26 @@ class Browser extends React.Component {
     );
   }
 }
+
+Browser.propTypes = {
+  authState: PropTypes.shape({
+    isLoggedIn: PropTypes.bool.isRequired,
+    username: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired,
+    jwt: PropTypes.array.isRequired,
+  }).isRequired,
+  profileState: PropTypes.shape({
+    location: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    phone_number: PropTypes.number.isRequired,
+    create_time: PropTypes.string.isRequired,
+    game_score: PropTypes.number.isRequired,
+    loadingProfile: PropTypes.bool.isRequired,
+    profileLoaded: PropTypes.bool.isRequired,
+    errorMsg: PropTypes.string.isRequired,
+  }).isRequired,
+};
 
 const mapStateToProps = (state) => {
   // Add connection to ProfileReducer to get 'Region'

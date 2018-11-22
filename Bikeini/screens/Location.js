@@ -80,8 +80,8 @@ checkItem = (item) => {
 };
 
 sendLocationToServer = () => {
-  const { setLocation, loginState } = this.props;
-  serverApi.fetchApi('setLocation', setLocation, 'multipart/form-data', loginState.jwt[0]);
+  const { setLocation, authState } = this.props;
+  serverApi.fetchApi('setLocation', setLocation, 'multipart/form-data', authState.jwt[0]);
 }
 
 render() {
@@ -123,7 +123,7 @@ Location.propTypes = {
     navigate: PropTypes.func.isRequired,
   }).isRequired,
   setLocation: PropTypes.func.isRequired,
-  loginState: PropTypes.shape({
+  authState: PropTypes.shape({
     isLoggedIn: PropTypes.bool.isRequired,
     username: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired,
@@ -132,8 +132,8 @@ Location.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  const { profileState, loginState } = state;
-  return { profileState, loginState };
+  const { profileState, authState } = state;
+  return { profileState, authState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(

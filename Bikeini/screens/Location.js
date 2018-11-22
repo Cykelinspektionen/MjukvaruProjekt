@@ -54,38 +54,38 @@ const styles = StyleSheet.create({
   },
 });
 
-let checkedCity = '';
-
 class Location extends React.Component {
   constructor() {
     super();
     this.state = {
-      checked: [],
+      checked: '',
     };
   }
 
 checkItem = (item) => {
-  const { setLocation } = this.props;
   const { checked } = this.state;
-  if (!checked.includes(item)) {
-    this.setState({ checked: [item] });
-    checkedCity = item;
-  } else if (checkedCity === item) {
-    this.setState({ checked: checked.filter(a => a !== item) });
-    checkedCity = '';
-  } else {
-    this.setState({ checked: checked.filter(a => a !== item) });
+  if (checked !== item) {
+    this.setState({ checked: item });
+  } else if (checked === item) {
+    this.setState({ checked: '' });
   }
-  setLocation(item);
 };
 
 sendLocationToServer = () => {
-  const { setLocation, authState } = this.props;
-  serverApi.fetchApi('setLocation', setLocation, 'multipart/form-data', authState.jwt[0]);
+  const { checked } = this.state;
+  if (!checked.length) {
+    // TODO: MUst select city
+    return;
+  }
+  const { authState, setLocation } = this.props;
+  const body = JSON.stringify({ location: checked });
+  serverApi.fetchApi('users/updateuser/', body, 'application/json', authState.jwt[0]);
+  setLocation(checked);
 }
 
 render() {
   const { checked } = this.state;
+  console.log('Check: ', checked);
   return (
     <View style={styles.container}>
       <Image style={styles.logo} source={logo} />
@@ -128,6 +128,17 @@ Location.propTypes = {
     username: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired,
     jwt: PropTypes.array.isRequired,
+  }).isRequired,
+  profileState: PropTypes.shape({
+    location: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    phone_number: PropTypes.number.isRequired,
+    create_time: PropTypes.string.isRequired,
+    game_score: PropTypes.number.isRequired,
+    loadingProfile: PropTypes.bool.isRequired,
+    profileLoaded: PropTypes.bool.isRequired,
+    errorMsg: PropTypes.string.isRequired,
   }).isRequired,
 };
 

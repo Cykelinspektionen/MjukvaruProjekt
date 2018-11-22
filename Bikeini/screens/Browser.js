@@ -172,7 +172,6 @@ class Browser extends React.Component {
     const header = this.renderHeader();
     const filter = this.renderFilter();
     const list = this.renderList();
-    // console.log('profileState',this.props.profileState);
     return (
       <View style={styles.container}>
         {header}

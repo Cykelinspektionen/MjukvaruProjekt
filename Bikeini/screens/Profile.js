@@ -113,7 +113,7 @@ class Profile extends React.Component {
                 <Text style={styles.UserInfo}>Name </Text>
                 <Text style={styles.UserInfo}>Location </Text>
                 <Text style={styles.UserInfo}>Email address </Text>
-                <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console-log('pressed: Edit user')}>
+                <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
                   <Text style={styles.greenButtonText}>EDIT USER</Text>
                 </TouchableHighlight>
               </View>

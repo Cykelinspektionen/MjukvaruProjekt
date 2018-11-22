@@ -5,6 +5,7 @@ import {
   UPLOAD_IMG_FAILURE,
   UPLOAD_IMG_SUCCES,
 } from '../actions/types';
+// !addBikeState.uriSet && !addBikeState.uploadingImg && !addBikeState.imgUploaded
 
 const ADD_BIKE_STATE = {
   newBikeID: '',
@@ -13,6 +14,7 @@ const ADD_BIKE_STATE = {
   uploadingImg: false,
   imgUploaded: false,
   error: '',
+  uploadDisabled: true,
 };
 
 const addBikeReducers = (state = ADD_BIKE_STATE, action) => {
@@ -22,6 +24,7 @@ const addBikeReducers = (state = ADD_BIKE_STATE, action) => {
         ...state,
         imgToUploadUri: action.payload,
         uriSet: true,
+        uploadDisabled: false,
         imgUploaded: false,
       };
     case REMOVE_IMG_URI:
@@ -29,13 +32,19 @@ const addBikeReducers = (state = ADD_BIKE_STATE, action) => {
         ...state,
         imgToUploadUri: '',
         uriSet: false,
+        uploadDisabled: true,
+
       };
     case UPLOAD_IMG_BEGIN:
-      return { ...state, uploadingImg: true };
+      return { ...state, uploadingImg: true, uploadDisabled: true };
     case UPLOAD_IMG_FAILURE:
-      return { ...state, uploadingImg: false, error: action.payload };
+      return {
+        ...state, uploadingImg: false, error: action.payload, uploadDisabled: false,
+      };
     case UPLOAD_IMG_SUCCES:
-      return { ...state, uploadingImg: false, imgUploaded: true };
+      return {
+        ...state, uploadingImg: false, imgUploaded: true, uploadDisabled: true,
+      };
     default:
       return state;
   }

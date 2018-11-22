@@ -301,17 +301,14 @@ class AddBike extends React.Component {
     this.setState({ radios });
   }
 
-  uploadImage = () => {
-    const { addBikeState, imgUploadInit, authState } = this.props;
-    const { bikeData } = this.state;
-    imgUploadInit(addBikeState.imgToUploadUri, bikeData.addType, authState.jwt[0]);
-  }
-
   render() {
-    const { addBikeState, navigation } = this.props;
+    const {
+      authState, addBikeState, navigation, clearImgUri, uploadBikeToServer, imgUploadInit,
+    } = this.props;
     const {
       bikeData, radios, Color,
     } = this.state;
+    console.log(addBikeState);
     return (
       <ScrollView style={styles.background}>
         <View style={styles.container}>
@@ -349,10 +346,10 @@ class AddBike extends React.Component {
               styles.smallButtonContainer,
               styles.actionButton,
               styles.greenButton,
-              addBikeState.uriSet ? [] : [styles.buttonDisabled],
+              !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
             ]}
-            disabled={!addBikeState.uriSet}
-            onPress={() => this.uploadImage()}
+            disabled={addBikeState.uploadDisabled}
+            onPress={() => imgUploadInit(addBikeState.imgToUploadUri, bikeData.addType, authState.jwt[0])}
           >
             <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
           </TouchableHighlight>
@@ -481,8 +478,8 @@ class AddBike extends React.Component {
               }
               this.sendBikeToServer();
               this.setBikeData('imageOfBike', null);
-              const { clearImgUri } = this.props;
               clearImgUri();
+              uploadBikeToServer();
             // navigation.navigate('PREVIEW ADS!')
             }}
           >
@@ -510,6 +507,7 @@ AddBike.propTypes = {
   }).isRequired,
   clearImgUri: PropTypes.func.isRequired,
   imgUploadInit: PropTypes.func.isRequired,
+  uploadBikeToServer: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {

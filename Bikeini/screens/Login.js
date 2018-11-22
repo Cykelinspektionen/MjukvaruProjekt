@@ -43,10 +43,10 @@ const styles = StyleSheet.create({
     width: 250,
     borderRadius: 30,
   },
-  loginButton: {
-    backgroundColor: '#00b5ec',
+  greenButton: {
+    backgroundColor: '#44ccad',
   },
-  loginText: {
+  greenButtonText: {
     color: 'white',
   },
 });
@@ -132,12 +132,12 @@ class Login extends React.Component {
           />
         </View>
 
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={this.logInUser}>
-          <Text style={styles.loginText}>Login</Text>
+        <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={this.logInUser}>
+          <Text style={styles.greenButtonText}>Login</Text>
         </TouchableHighlight>
 
-        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={() => navigation.navigate('SignUp')}>
-          <Text style={styles.loginText}>Sign up</Text>
+        <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={() => navigation.navigate('SignUp')}>
+          <Text style={styles.greenButtonText}>Sign up</Text>
         </TouchableHighlight>
       </View>
     );

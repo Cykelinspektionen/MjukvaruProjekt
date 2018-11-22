@@ -1,8 +1,12 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View,
+  StyleSheet, Text, View, Image,
 } from 'react-native';
 import PropTypes from 'prop-types';
+
+const commentIcon = require('../assets/images/comment.png');
+const locationIcon = require('../assets/images/location.png');
+const stockBicycle = require('../assets/images/stockBicycle.png');
 
 const styles = StyleSheet.create({
   item: {
@@ -15,8 +19,8 @@ const styles = StyleSheet.create({
   },
   image: {
     alignSelf: 'center',
-    width: '20%',
-    height: '80%',
+    width: 90,
+    height: 90,
     marginLeft: '3%',
     backgroundColor: 'blue',
   },
@@ -40,8 +44,7 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     right: '5%',
-    borderWidth: 1,
-    backgroundColor: 'white',
+    marginBottom: 10,
   },
   locationTag: {
     position: 'absolute',
@@ -49,7 +52,7 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     right: '13%',
-    backgroundColor: 'black',
+    marginBottom: 10,
   },
 });
 
@@ -58,7 +61,7 @@ export default class Item extends React.PureComponent {
     const { description, model } = this.props;
     return (
       <View style={styles.item}>
-        <View style={styles.image} />
+        <Image style={styles.image} source={stockBicycle} />
         <View style={styles.textView}>
           <Text style={styles.description}>
             {description}
@@ -67,8 +70,8 @@ export default class Item extends React.PureComponent {
             {model}
           </Text>
         </View>
-        <View style={styles.commentsTag} />
-        <View style={styles.locationTag} />
+        <Image style={styles.commentsTag} source={commentIcon} />
+        <Image style={styles.locationTag} source={locationIcon} />
       </View>
     );
   }

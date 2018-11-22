@@ -3,6 +3,7 @@ import {
   StyleSheet, Text, View, FlatList, TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
@@ -56,8 +57,6 @@ class Browser extends React.Component {
       foundBicycles: [],
       showFilter: false,
     };
-
-    this.search = this.search.bind(this);
   }
 
   componentDidMount() {
@@ -100,8 +99,6 @@ class Browser extends React.Component {
 
   renderHeader = () => {
     const { showMissing } = this.state;
-    const { profileState } = this.props;
-    const { region } = profileState;
     if (showMissing) {
       return (
         <View style={styles.header}>
@@ -171,9 +168,6 @@ class Browser extends React.Component {
     this.setState({ showFilter: !showFilter });
   }
 
-  search(searchOptions) {
-  }
-
   render() {
     const header = this.renderHeader();
     const filter = this.renderFilter();
@@ -198,6 +192,26 @@ class Browser extends React.Component {
     );
   }
 }
+
+Browser.propTypes = {
+  authState: PropTypes.shape({
+    isLoggedIn: PropTypes.bool.isRequired,
+    username: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired,
+    jwt: PropTypes.array.isRequired,
+  }).isRequired,
+  profileState: PropTypes.shape({
+    location: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    phone_number: PropTypes.number.isRequired,
+    create_time: PropTypes.string.isRequired,
+    game_score: PropTypes.number.isRequired,
+    loadingProfile: PropTypes.bool.isRequired,
+    profileLoaded: PropTypes.bool.isRequired,
+    errorMsg: PropTypes.string.isRequired,
+  }).isRequired,
+};
 
 const mapStateToProps = (state) => {
   // Add connection to ProfileReducer to get 'Region'

@@ -7,7 +7,8 @@ import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import * as authActions from '../navigation/actions/AuthActions';
 import serverApi from '../utilities/serverApi';
-import deviceStorage from '../utilities/deviceStorage';
+import * as profileActions from '../navigation/actions/ProfileActions';
+import * as jwtActions from '../navigation/actions/JwtActions';
 
 const logo = require('../assets/images/biker.png');
 
@@ -84,13 +85,13 @@ class SignUp extends React.Component {
     const {
       newUsername, newEmail, newPhoneNumber, newPassword,
     } = this.state;
-    const standardLocation = 'Uppsala';
+
     const userInformation = {
       username: newUsername,
       password: newPassword,
       email: newEmail,
-      phone_number: newPhoneNumber,
-      location: standardLocation,
+      phone_number: parseInt(newPhoneNumber, 10),
+      location: '',
     };
 
     const formBody = this.jsonToFormData(userInformation);
@@ -98,30 +99,23 @@ class SignUp extends React.Component {
     return serverApi.fetchApi('auth/adduser', formBody, 'application/x-www-form-urlencoded', '')
       .then((responseJson) => {
         const responseErr = this.handleSignUpReponse(responseJson);
-
+        console.log(responseJson);
         if (responseErr.length === 0) {
           this.authNewUser();
         } else {
           Alert.alert('Username and/or email has to be unique!');
-          /*
-          for(let i = 0; i < responseErr.length; i += 1) {
-            if(responseErr[i] === 'username') {
-              credStatus.newUsername = "Username has to be unique!";
-            }
-            if(responseErr[i] === 'email') {
-              credStatus.newEmail = "Email has to be unique!";
-            }
-          }
-          */
         }
       }).catch(error => console.log(error));
-
-    // return credStatus;
   }
 
   authNewUser = () => {
-    const { login, navigation } = this.props;
-    const { newEmail, newPassword } = this.state;
+    const {
+      newUsername, newEmail, newPhoneNumber, newPassword,
+    } = this.state;
+    const {
+      navigation, loadProfileSucces, storeJWTInit,
+    } = this.props;
+
     const userInformation = {
       email: newEmail,
       password: newPassword,
@@ -131,11 +125,23 @@ class SignUp extends React.Component {
 
     serverApi.fetchApi('auth', formBody, 'application/x-www-form-urlencoded', '')
       .then((responseJson) => {
+        console.log(responseJson);
         const { token } = responseJson.data;
 
-        deviceStorage.saveItem('id_token', token);
-        login([token, '']);
-        navigation.navigate('Browser');
+        const createdUserInformation = {
+          location: '',
+          username: newUsername,
+          email: newEmail,
+          phone_number: parseInt(newPhoneNumber, 10),
+          create_time: '', // Ask Fredrik what he uses before PR!
+          game_score: 0,
+          loadingProfile: false,
+          profileLoaded: true,
+        };
+
+        loadProfileSucces(createdUserInformation);
+        storeJWTInit(token);
+        navigation.navigate('Location');
       }).catch(error => console.log(error));
   }
 
@@ -156,13 +162,7 @@ class SignUp extends React.Component {
   }
 
   jsonToFormData(details) {
-    let formBody = [];
-    for (const property in details) {
-      const encodedKey = encodeURIComponent(property);
-      const encodedValue = encodeURIComponent(details[property]);
-      formBody.push(`${encodedKey}=${encodedValue}`);
-    }
-    formBody = formBody.join('&');
+    const formBody = Object.entries(details).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
 
     return formBody;
   }
@@ -299,17 +299,35 @@ SignUp.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
-  login: PropTypes.func.isRequired,
+  authState: PropTypes.shape({
+    isLoggedIn: PropTypes.bool.isRequired,
+    username: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired,
+    jwt: PropTypes.array.isRequired,
+  }).isRequired,
+  profileState: PropTypes.shape({
+    location: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+    phone_number: PropTypes.number.isRequired,
+    create_time: PropTypes.string.isRequired,
+    game_score: PropTypes.number.isRequired,
+    loadingProfile: PropTypes.bool.isRequired,
+    profileLoaded: PropTypes.bool.isRequired,
+    errorMsg: PropTypes.string.isRequired,
+  }).isRequired,
+  storeJWTInit: PropTypes.func.isRequired,
+  loadProfileSucces: PropTypes.func.isRequired,
 };
 
 
 const mapStateToProps = (state) => {
-  const { signUpState, authState } = state;
-  return { signUpState, authState };
+  const { authState, profileState } = state;
+  return { authState, profileState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...authActions },
+  { ...authActions, ...profileActions, ...jwtActions },
   dispatch,
 );
 

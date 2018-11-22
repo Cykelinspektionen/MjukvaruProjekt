@@ -1,9 +1,12 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View,
+  StyleSheet, Text, View, TouchableHighlight,
 } from 'react-native';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
+
+import * as jwtActions from '../navigation/actions/JwtActions';
 
 
 const styles = StyleSheet.create({
@@ -17,31 +20,29 @@ const styles = StyleSheet.create({
 
 class TempPage extends React.PureComponent {
   render() {
-    // This is so weird, following is considered correct according to ESlint running airbnb, why?
-    const { loginState } = this.props;
-    const { jwt } = loginState;
+    const { deleteJWTInit } = this.props;
     return (
       <View style={styles.container}>
-        <Text>
-          {jwt}
-        </Text>
+        <TouchableHighlight style={[styles.buttonContainer, styles.loginButton]} onPress={deleteJWTInit}>
+          <Text style={styles.loginText}>DeleteJWT</Text>
+        </TouchableHighlight>
       </View>
     );
   }
 }
 
 TempPage.propTypes = {
-  loginState: PropTypes.shape({
-    isLoggedIn: PropTypes.bool.isRequired,
-    username: PropTypes.string.isRequired,
-    password: PropTypes.string.isRequired,
-    jwt: PropTypes.string.isRequired,
-  }).isRequired,
+  deleteJWTInit: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { loginState } = state;
-  return { loginState };
+  const { profileState, authState } = state;
+  return { profileState, authState };
 };
 
-export default connect(mapStateToProps)(TempPage);
+const mapDispatchToProps = dispatch => bindActionCreators(
+  { ...jwtActions },
+  dispatch,
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(TempPage);

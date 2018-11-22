@@ -162,7 +162,6 @@ Login.propTypes = {
     game_score: PropTypes.number.isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
-    errorMsg: PropTypes.string.isRequired,
   }).isRequired,
   loadJWTInit: PropTypes.func.isRequired,
   loadProfileInit: PropTypes.func.isRequired,

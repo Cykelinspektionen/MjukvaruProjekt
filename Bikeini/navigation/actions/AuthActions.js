@@ -53,7 +53,8 @@ function handleUserData(json) {
 }
 
 export function loginInit(email, password) {
-  const body = { email, password };
+  let body = { email, password };
+  body = JSON.stringify(body);
   return serverApi.postDispatch(
     'auth/',
     body,

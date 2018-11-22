@@ -6,8 +6,9 @@ import { Alert } from 'react-native';
 
 // Handle HTTP errors since fetch won't.
 function handleErrors(response) {
+  console.log(response);
   if (!response.ok) {
-    throw Error(response.statusText);
+    throw Error(response.status);
   }
   return response;
 }
@@ -41,7 +42,7 @@ const serverApi = {
       dispatch(dispatchBegin());
       return fetch(`https://bikeify.herokuapp.com/${urlEnd}`, {
         method: 'POST',
-        body: JSON.stringify(body),
+        body,
         headers: {
           'Content-Type': contentType,
           'x-access-token': jwt,
@@ -90,6 +91,7 @@ const serverApi = {
       },
     // Authorization: 'Bearer ' + 'SECRET_OAUTH2_TOKEN_IF_AUTH' },
     })
+      .then(handleErrors)
       .then(response => response.json());
   },
 };

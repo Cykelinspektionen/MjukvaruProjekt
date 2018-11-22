@@ -1,4 +1,13 @@
-import { NEW_IMG_URI, SET_NEW_ID, REMOVE_IMG_URI } from './types';
+import {
+  NEW_IMG_URI,
+  SET_NEW_ID,
+  REMOVE_IMG_URI,
+  UPLOAD_IMG_BEGIN,
+  UPLOAD_IMG_FAILURE,
+  UPLOAD_IMG_SUCCES,
+} from './types';
+import serverApi from '../../utilities/serverApi';
+
 
 export const saveImageToState = uri => (
   {
@@ -19,3 +28,42 @@ export const clearImgUri = () => (
     type: REMOVE_IMG_URI,
   }
 );
+
+export const imgUploadBegin = () => (
+  {
+    type: UPLOAD_IMG_BEGIN,
+  }
+);
+
+export const imgUploadFailure = error => (
+  {
+    type: UPLOAD_IMG_FAILURE,
+    payload: error,
+  }
+);
+
+export const imgUploadSuccess = () => (
+  {
+    type: UPLOAD_IMG_SUCCES,
+  }
+);
+
+export function imgUploadInit(imgUri, addType, jwt) {
+  const file = {
+    uri: imgUri,
+    type: 'image/jpg',
+    name: `${addType}.jpg`,
+  };
+  const formBody = new FormData();
+  formBody.append('image', file);
+  console.log(formBody);
+  return serverApi.postDispatch(
+    'bikes/preaddbike/',
+    formBody,
+    'multipart/form-data',
+    jwt,
+    imgUploadBegin,
+    imgUploadFailure,
+    imgUploadSuccess,
+  );
+}

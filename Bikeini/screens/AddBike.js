@@ -44,6 +44,9 @@ const styles = StyleSheet.create({
     width: 150,
     borderRadius: 5,
   },
+  buttonDisabled: {
+    opacity: 0.2,
+  },
   actionButton: {
     backgroundColor: '#00b5ec',
   },
@@ -298,6 +301,12 @@ class AddBike extends React.Component {
     this.setState({ radios });
   }
 
+  uploadImage = () => {
+    const { addBikeState, imgUploadInit, authState } = this.props;
+    const { bikeData } = this.state;
+    imgUploadInit(addBikeState.imgToUploadUri, bikeData.addType, authState.jwt[0]);
+  }
+
   render() {
     const { addBikeState, navigation } = this.props;
     const {
@@ -335,6 +344,18 @@ class AddBike extends React.Component {
               </View>
             </View>
           </View>
+          <TouchableHighlight
+            style={[
+              styles.smallButtonContainer,
+              styles.actionButton,
+              styles.greenButton,
+              addBikeState.uriSet ? [] : [styles.buttonDisabled],
+            ]}
+            disabled={!addBikeState.uriSet}
+            onPress={() => this.uploadImage()}
+          >
+            <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
+          </TouchableHighlight>
           <TextInput
             style={styles.inputs}
             placeholder="Frame number"
@@ -488,6 +509,7 @@ AddBike.propTypes = {
     jwt: PropTypes.array.isRequired,
   }).isRequired,
   clearImgUri: PropTypes.func.isRequired,
+  imgUploadInit: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {

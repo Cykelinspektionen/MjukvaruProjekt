@@ -70,7 +70,7 @@ class Browser extends React.Component {
 
   handleServerBicycles = () => {
     const { authState } = this.props;
-    const { jwt } = authState;;
+    const { jwt } = authState;
 
     const foundBicycles = [];
     const missingBicycles = [];
@@ -80,7 +80,7 @@ class Browser extends React.Component {
         for (let i = 0; i < responseJson.length; i += 1) {
           foundBicycles.push(responseJson[i]);
         }
-        this.setState({foundBicycles});
+        this.setState({ foundBicycles });
       }).catch(error => console.log(error));
 
     serverApi.get('bikes/getstolenbikes/', jwt[0])
@@ -88,7 +88,7 @@ class Browser extends React.Component {
         for (let i = 0; i < responseJson.length; i += 1) {
           missingBicycles.push(responseJson[i]);
         }
-        this.setState({missingBicycles});
+        this.setState({ missingBicycles });
       }).catch(error => console.log(error));
   }
 
@@ -111,7 +111,9 @@ class Browser extends React.Component {
       return (
         <View style={styles.header}>
           <Text style={styles.headerText}>
-            Missing bikes in {location}
+            Missing bikes in
+            {' '}
+            {location}
           </Text>
         </View>
       );
@@ -119,7 +121,9 @@ class Browser extends React.Component {
     return (
       <View style={styles.header}>
         <Text style={styles.headerText}>
-            Found bikes in {location}
+            Found bikes in
+          {' '}
+          {location}
         </Text>
       </View>
     );
@@ -158,18 +162,16 @@ class Browser extends React.Component {
     }
 
 
-    else {
-      return (
-        <View style={styles.browserList}>
-          <FlatList
-            data={foundBicycles}
-            extraData={this.state}
-            keyExtractor={this.keyExtractor}
-            renderItem={this.renderItem}
-          />
-        </View>
-      );
-    }
+    return (
+      <View style={styles.browserList}>
+        <FlatList
+          data={foundBicycles}
+          extraData={this.state}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderItem}
+        />
+      </View>
+    );
   }
 
   changeFilterStatus = () => {

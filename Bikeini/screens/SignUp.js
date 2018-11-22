@@ -144,15 +144,15 @@ class SignUp extends React.Component {
       }).catch(error => console.log(error));
   }
 
-  handleSignUpReponse(response) {
+  handleSignUpReponse = (response) => {
     const respErrors = [];
     const { _message, errors } = response;
 
     if (_message === 'User validation failed') {
-      if (errors.hasOwnProperty('email')) {
+      if (errors.email) {
         respErrors.push('email');
       }
-      if (errors.hasOwnProperty('username')) {
+      if (errors.username) {
         respErrors.push('username');
       }
     }
@@ -160,7 +160,7 @@ class SignUp extends React.Component {
     return respErrors;
   }
 
-  jsonToFormData(details) {
+  jsonToFormData = (details) => {
     const formBody = Object.entries(details).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
     return formBody;
   }

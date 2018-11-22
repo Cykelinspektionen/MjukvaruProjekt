@@ -5,6 +5,9 @@ Created on Thu May 17 11:00:04 2018
 @author: dippson2
 """
 
+#{'black': 0, 'blue': 1, 'gray': 2, 'green': 3, 'orange': 4, 'pink': 5, 'purple': 6, 'red': 7, 'silver': 8, 'white': 9, 'yellow': 10}
+
+
 from keras.models import load_model
 import numpy as np
 from random import randrange
@@ -12,7 +15,7 @@ import os, cv2
 import matplotlib.pyplot as plt
 
 import matplotlib.image as mpimg
-model = load_model('models/rack/Adam_5_epochs_4layers.h5')
+model = load_model('models/rack/Adam_10_epochs_4layers.h5')
 
 path = '../dataset/testing/rack'
 right = 0

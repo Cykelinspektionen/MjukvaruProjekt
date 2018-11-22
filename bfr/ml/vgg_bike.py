@@ -12,7 +12,7 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
  
 # Only allow a x% of the GPU memory to be allocated
-config.gpu_options.per_process_gpu_memory_fraction = 0.91
+config.gpu_options.per_process_gpu_memory_fraction = 0.8
  
 # Create a session with the above options specified.
 k.tensorflow_backend.set_session(tf.Session(config=config))
@@ -21,8 +21,8 @@ k.tensorflow_backend.set_session(tf.Session(config=config))
 
 
 #dirs
-train_dir = '../dataset/training2/rack/'
-validation_dir = '../dataset/validation/rack/'
+train_dir = '../dataset/training2/colors/'
+validation_dir = '../dataset/validation/colors/'
 
 #set img training size
 image_size = 256
@@ -51,7 +51,7 @@ model.add(vgg_conv)
 model.add(layers.Flatten())
 model.add(layers.Dense(1024, activation='relu'))
 model.add(layers.Dropout(0.5))
-model.add(layers.Dense(2, activation='softmax'))
+model.add(layers.Dense(11, activation='softmax'))
  
 # Show a summary of the model. Check the number of trainable parameters
 model.summary()
@@ -84,9 +84,8 @@ validation_generator = data_generator.flow_from_directory(train_dir,
 train_datagen = ImageDataGenerator(
       rescale=1./255,
       rotation_range=20,
-      zca_whitening=True,
       zoom_range = 0.2,
-      shear_range = 0.2
+      shear_range = 0.2,
       width_shift_range = 0.1,
       height_shift_range = 0.1,
       horizontal_flip=True,
@@ -103,7 +102,7 @@ for batch in datagen.flow(img_arr, batch_size=1, save_to_dir='path/to/save', sav
 validation_datagen = ImageDataGenerator(rescale=1./255)
  
 # Change the batchsize according to your system RAM
-train_batchsize = 25
+train_batchsize = 15
 val_batchsize = 5
  
 train_generator = train_datagen.flow_from_directory(
@@ -127,7 +126,7 @@ print(validation_generator.class_indices)
 		
 # Compile the model
 model.compile(loss='categorical_crossentropy', # (ln(output 1) + ln(output 2) 
-              optimizer=optimizers.RMSprop(lr=1e-4), # Test adam and SGD(prefarable in fine-tuning)
+              optimizer=optimizers.Adam(lr=1e-4), # Test adam and SGD(prefarable in fine-tuning)
               metrics=['acc']) # like loss function but not used during training
 			  
 # Train the model
@@ -140,27 +139,27 @@ history = model.fit_generator(
       verbose=1)
  
 # Save the model
-model.save('./models/t2.h5')
+model.save('./models/colors/Adam_5_epochs_4layers_colors.h5')
 
 print("klar!")
 
-# acc = history.history['acc']
-# val_acc = history.history['val_acc']
-# loss = history.history['loss']
-# val_loss = history.history['val_loss']
+acc = history.history['acc']
+val_acc = history.history['val_acc']
+loss = history.history['loss']
+val_loss = history.history['val_loss']
  
-# epochs = range(len(acc))
+epochs = range(len(acc))
  
-# plt.plot(epochs, acc, 'b', label='Training acc')
-# plt.plot(epochs, val_acc, 'r', label='Validation acc')
-# plt.title('Training and validation accuracy')
-# plt.legend()
+plt.plot(epochs, acc, 'b', label='Training acc')
+plt.plot(epochs, val_acc, 'r', label='Validation acc')
+plt.title('Training and validation accuracy')
+plt.legend()
  
-# plt.figure()
+plt.figure()
  
-# plt.plot(epochs, loss, 'b', label='Training loss')
-# plt.plot(epochs, val_loss, 'r', label='Validation loss')
-# plt.title('Training and validation loss')
-# plt.legend()
+plt.plot(epochs, loss, 'b', label='Training loss')
+plt.plot(epochs, val_loss, 'r', label='Validation loss')
+plt.title('Training and validation loss')
+plt.legend()
  
-# plt.show()
+plt.show()

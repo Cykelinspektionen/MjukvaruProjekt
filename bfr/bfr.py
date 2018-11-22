@@ -12,22 +12,31 @@ import cv2
 
 
 #Paths
-PATH_BIKEDETECTION_MODEL = 'C:/Users/dippson2/MjukvaruProjekt/bfr/ml/models/resnet50_coco_best_v2.0.1.h5'
-PATH_RACKDETECTION_MODEL = 'C:/Users/dippson2/MjukvaruProjekt/bfr/ml/models/rack/Adam_5_epochs_4layers_88.59.h5'
+MODELS_PATH = 'C:/Users/dippson2/MjukvaruProjekt/bfr/ml/models/
+PATH_BIKEDETECTION_MODEL = MODELS_PATH + 'resnet50_coco_best_v2.0.1.h5'
+PATH_RACKDETECTION_MODEL = MODELS_PATH + 'rack/Adam_10_epochs_4layers.h5' 
+PATH_LAMPDETECTION_MODEL = MODELS_PATH + 'lamp/Adam_3_epochs_4layers_lamp.h5'
+PATH_FRAMEDETECTION_MODEL = MODELS_PATH + 'frame/Adam_5_epochs_4layers_frame.h5'
+PATH_BASKETDETECTION_MODEL = MODELS_PATH + 'basket/Adam_5_epochs_4layers_bakset.h5'
 
 #Models
 RACKDETECTION_MODEL = load_model(PATH_RACKDETECTION_MODEL)
+LAMPDETECTION_MODEL = load_model(PATH_LAMPDETECTION_MODEL)
+BASKETDETECTION_MODEL = load_model(PATH_BASKETDETECTION_MODEL)
+FRAMEDETECTION_MODEL = load_model(PATH_FRAMEDETECTION_MODEL)
 
 #ReturnObject
 returnObject = {
     "bikefound": False,
-    "rack": ""
-
+    "rack": "",
+    "basket": "",
+    "frame": "",
+    "color": "",
+    "lamp": ""
 }
 
 
 #Detect bike on image
-execution_path = os.getcwd()
 detector = ObjectDetection()
 detector.setModelTypeAsRetinaNet()
 detector.setModelPath(PATH_BIKEDETECTION_MODEL)
@@ -43,6 +52,7 @@ if len(detections) != 0:
 else:
     print("Found to many or to few bikes on image")
     print("Bikes found: " + str(len(detections)))
+    #send returnObject
     sys.exit(1)
 
 

@@ -1,11 +1,12 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, ScrollView, Image, FlatList, TouchableOpacity, Item,
+  StyleSheet, Text, View, ScrollView, Image, FlatList, TouchableOpacity, TouchableHighlight,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import headerStyle from './header';
 import serverApi from '../utilities/serverApi';
+import Item from '../components/Item';
 
 const profilePic = require('../assets/images/biker.png');
 
@@ -33,6 +34,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     margin: 20,
   },
+  categories: {
+    fontSize: 24,
+    margin: 10,
+  },
+  UserInfo: {
+    fontSize: 18,
+  },
+  greenButton: {
+    backgroundColor: '#44ccad',
+  },
+  greenButtonText: {
+    color: 'white',
+  },
+  editButtonContainer: {
+    height: 32,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    width: 100,
+    borderRadius: 5,
+  },
+  actionButton: {
+    backgroundColor: '#00b5ec',
+  },
 });
 
 class Profile extends React.Component {
@@ -40,11 +66,15 @@ class Profile extends React.Component {
       ...headerStyle,
     };
 
-    constructor() {
-      super();
+    constructor(props) {
+      super(props);
       this.state = {
-        yourBicycles: [],
+        yourBicycles: '',
       };
+    }
+
+    componentDidMount() {
+      this.getItemFromServer();
     }
 
     getItemFromServer = () => {
@@ -53,7 +83,7 @@ class Profile extends React.Component {
 
       const yourBicycles = [];
 
-      serverApi.get('/bikes/getmybikes/', jwt[0])
+      serverApi.get('bikes/getmybikes/', jwt[0])
         .then((responseJson) => {
           for (let i = 0; i < responseJson.length; i += 1) {
             yourBicycles.push(responseJson[i]);
@@ -61,6 +91,8 @@ class Profile extends React.Component {
           this.setState({ yourBicycles });
         }).catch(error => console.log(error));
     }
+
+    keyExtractor = item => item._id;
 
     renderItem = ({ item }) => (
       <TouchableOpacity
@@ -78,18 +110,22 @@ class Profile extends React.Component {
             <View style={styles.rowContainer}>
               <Image style={styles.profile} source={profilePic} />
               <View style={styles.columnContainer}>
-                <Text>Name: </Text>
-                <Text>Location: </Text>
+                <Text style={styles.UserInfo}>Name </Text>
+                <Text style={styles.UserInfo}>Location </Text>
+                <Text style={styles.UserInfo}>Email address </Text>
+                <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console-log('pressed: Edit user')}>
+                  <Text style={styles.greenButtonText}>EDIT USER</Text>
+                </TouchableHighlight>
               </View>
             </View>
-            <Text>Your missing bikes:</Text>
+            <Text style={styles.categories}>Your missing bikes:</Text>
             <FlatList
               data={yourBicycles}
-              keyExtractor={item => item._id}
+              keyExtractor={this.keyExtractor}
               extraData={this.state}
               renderItem={this.renderItem}
             />
-            <Text>Bikes you have submitted tips about:</Text>
+            <Text style={styles.categories}>Bikes you have submitted tips about:</Text>
           </View>
         </ScrollView>
       );

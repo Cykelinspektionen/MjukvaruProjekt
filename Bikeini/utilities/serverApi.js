@@ -85,7 +85,6 @@ const serverApi = {
   get(_urlEnd, _jwt) {
     return fetch(`https://bikeify.herokuapp.com/${_urlEnd}`, {
       method: 'GET',
-      
       headers: {
         'x-access-token': _jwt,
       },

@@ -183,7 +183,6 @@ class Browser extends React.Component {
     const header = this.renderHeader();
     const filter = this.renderFilter();
     const list = this.renderList();
-
     return (
       <View style={styles.container}>
         {header}

@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
+import headerStyle from './header';
 
 const styles = StyleSheet.create({
   container: {
@@ -48,6 +49,10 @@ const styles = StyleSheet.create({
 });
 
 class Browser extends React.Component {
+  static navigationOptions = {
+    ...headerStyle,
+  };
+
   constructor(props) {
     super(props);
 

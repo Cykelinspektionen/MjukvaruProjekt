@@ -230,7 +230,7 @@ class SignUp extends React.Component {
             onChangeText={text => this.setState({ newUsername: text })}
           />
         </View>
-        {!!clicked && credStatus.newUsername !== '' && (
+        {clicked && credStatus.newUsername !== '' && (
           <Text style={{ color: 'red' }}>{credStatus.newUsername}</Text>
         )}
         <View style={styles.inputContainer}>
@@ -243,7 +243,7 @@ class SignUp extends React.Component {
             onChangeText={text => this.setState({ newEmail: text })}
           />
         </View>
-        {!!clicked && credStatus.newEmail !== '' && (
+        {clicked && credStatus.newEmail !== '' && (
           <Text style={{ color: 'red' }}>{credStatus.newEmail}</Text>
         )}
         <View style={styles.inputContainer}>
@@ -266,7 +266,7 @@ class SignUp extends React.Component {
             onChangeText={text => this.setState({ newPassword: text })}
           />
         </View>
-        {!!clicked && credStatus.newPassword !== '' && (
+        {clicked && credStatus.newPassword !== '' && (
           <Text style={{ color: 'red' }}>{credStatus.newPassword}</Text>
         )}
         <View style={styles.inputContainer}>
@@ -279,7 +279,7 @@ class SignUp extends React.Component {
             onChangeText={text => this.setState({ newPasswordConfirm: text })}
           />
         </View>
-        {!!clicked && credStatus.newPasswordConfirm !== '' && (
+        {clicked && credStatus.newPasswordConfirm !== '' && (
           <Text style={{ color: 'red' }}>{credStatus.newPasswordConfirm}</Text>
         )}
         <TouchableHighlight

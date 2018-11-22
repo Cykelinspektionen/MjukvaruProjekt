@@ -5,6 +5,7 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import TabBarIcon from '../assets/TabBarIcon';
 import Browser from '../screens/Browser';
 import AddBike from '../screens/AddBike';
+import Profile from '../screens/Profile';
 
 const BrowserStack = createStackNavigator({ Browser });
 
@@ -36,8 +37,24 @@ NewStack.navigationOptions = {
   ),
 };
 
+const ProfileStack = createStackNavigator({ Profile });
+
+ProfileStack.navigationOptions = {
+  tabBarLabel: 'Profile',
+  tabBarOptions: {
+    activeTintColor: '#44ccad',
+  },
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
+    />
+  ),
+};
+
 
 export default createBottomTabNavigator({
   BrowserStack,
   NewStack,
+  ProfileStack,
 });

@@ -95,11 +95,15 @@ class Browser extends React.Component {
   keyExtractor = item => item._id;
 
   renderItem = ({ item }) => {
-    //onPress={() => console.log(`pressed: ${item.description}`)}
+    // console.log(item);
+    // navigation.navigate('BikeInformation', {id: item._id})
     const { navigation } = this.props;
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('BikeInformation', {id: item._id})}
+        onPress={() => {
+          console.log(item);
+          navigation.navigate('BikeInformation', { data: item });
+        }}
       >
         <Item description={item.description} model={item.model} />
       </TouchableOpacity>
@@ -209,9 +213,9 @@ class Browser extends React.Component {
 }
 
 Browser.propTypes = {
-navigation: PropTypes.shape({
-  navigate: PropTypes.func.isRequired,
-}).isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
   authState: PropTypes.shape({
     isLoggedIn: PropTypes.bool.isRequired,
     username: PropTypes.string.isRequired,

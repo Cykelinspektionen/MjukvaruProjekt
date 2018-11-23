@@ -70,6 +70,7 @@ class Login extends React.Component {
     const {
       authState, profileState, navigation, loadProfileInit,
     } = this.props;
+    // console.log(profileState, authState);
 
     if (
       !authState.loadingJwt
@@ -78,7 +79,9 @@ class Login extends React.Component {
       && !profileState.loadingProfile
       && !profileState.error
       && !authState.isLoggedIn
-      && !authState.deletingJwt) {
+      && !authState.deletingJwt
+      && !authState.error) {
+      // console.log('LOADING PROFILE');
       loadProfileInit(authState.jwt[0]);
     } else if (profileState.profileLoaded && profileState.location.length) {
       navigation.navigate('Browser');
@@ -162,6 +165,7 @@ Login.propTypes = {
     game_score: PropTypes.number.isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
+    error: PropTypes.string.isRequired,
   }).isRequired,
   loadJWTInit: PropTypes.func.isRequired,
   loadProfileInit: PropTypes.func.isRequired,

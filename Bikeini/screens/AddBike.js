@@ -9,7 +9,6 @@ import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
 import { ImagePicker } from 'expo';
 import permissions from '../utilities/permissions';
-import serverApi from '../utilities/serverApi';
 import headerStyle from './header';
 
 import * as addBikeActions from '../navigation/actions/AddBikeActions';
@@ -87,12 +86,12 @@ class AddBike extends React.Component {
         brand: '',
         model: '',
         color: '',
-        frame_number: null,
+        frame_number: 0,
         antitheft_code: '',
         description: '',
         location: {
-          Lat: null,
-          Long: null,
+          Lat: 0,
+          Long: 0,
         },
         keywords: {
           frameType: 'MALE',
@@ -107,7 +106,6 @@ class AddBike extends React.Component {
           winter_tires: false,
           light: false,
         },
-        imageOfBike: null,
       },
       radios: {
         type: [
@@ -266,18 +264,6 @@ class AddBike extends React.Component {
     }
   };
 
-  sendBikeToServer = () => {
-    const { addBikeState, authState } = this.props;
-    const { bikeData } = this.state;
-    const bikeImgData = {
-      uri: addBikeState.uriSet,
-      name: `${bikeData.addType}.jpg`,
-      type: 'image/jpg',
-    };
-    this.setBikeData('imageOfBike', bikeImgData);
-    serverApi.fetchApi('bikes/addbike', bikeData, 'multipart/form-data', authState.jwt[0]);
-  }
-
   setBikeData = (attr, value, setKeyword) => {
     const { bikeData } = this.state;
     if (setKeyword) {
@@ -303,12 +289,11 @@ class AddBike extends React.Component {
 
   render() {
     const {
-      authState, addBikeState, navigation, clearImgUri, uploadBikeToServer, imgUploadInit,
+      authState, addBikeState, navigation, uploadBikeToServer, imgUploadInit,
     } = this.props;
     const {
       bikeData, radios, Color,
     } = this.state;
-    console.log(addBikeState);
     return (
       <ScrollView style={styles.background}>
         <View style={styles.container}>
@@ -349,7 +334,7 @@ class AddBike extends React.Component {
               !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
             ]}
             disabled={addBikeState.uploadDisabled}
-            onPress={() => imgUploadInit(addBikeState.imgToUploadUri, bikeData.addType, authState.jwt[0])}
+            onPress={() => imgUploadInit(addBikeState.imgToUploadUri, bikeData.type, authState.jwt[0])}
           >
             <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
           </TouchableHighlight>
@@ -469,18 +454,14 @@ class AddBike extends React.Component {
                 Alert.alert('Picture is mandatory!');
                 return;
               }
-              // this.sendBikeToServer();
-              const stolen = radios.addType[0].selected;
+              const stolen = radios.type[0].selected;
               if (stolen) {
-              // SET PREVIEW STATE TO SHOW STOLEN
+              // TODO: SET PREVIEW STATE TO SHOW STOLEN
               } else {
-              // SET PREVIEW STATE TO SHOW FOUND
+              // TODO: SET PREVIEW STATE TO SHOW FOUND
               }
-              this.sendBikeToServer();
-              this.setBikeData('imageOfBike', null);
-              clearImgUri();
-              uploadBikeToServer();
-            // navigation.navigate('PREVIEW ADS!')
+              uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
+              navigation.navigate('Browser');
             }}
           >
             <Text style={styles.greenButtonText}>Submit</Text>
@@ -505,7 +486,6 @@ AddBike.propTypes = {
     password: PropTypes.string.isRequired,
     jwt: PropTypes.array.isRequired,
   }).isRequired,
-  clearImgUri: PropTypes.func.isRequired,
   imgUploadInit: PropTypes.func.isRequired,
   uploadBikeToServer: PropTypes.func.isRequired,
 };

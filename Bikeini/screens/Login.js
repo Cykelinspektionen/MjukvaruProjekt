@@ -70,8 +70,6 @@ class Login extends React.Component {
     const {
       authState, profileState, navigation, loadProfileInit,
     } = this.props;
-    // console.log(profileState, authState);
-
     if (
       !authState.loadingJwt
       && authState.jwt[0]
@@ -81,7 +79,6 @@ class Login extends React.Component {
       && !authState.isLoggedIn
       && !authState.deletingJwt
       && !authState.error) {
-      // console.log('LOADING PROFILE');
       loadProfileInit(authState.jwt[0]);
     } else if (profileState.profileLoaded && profileState.location.length) {
       navigation.navigate('Browser');

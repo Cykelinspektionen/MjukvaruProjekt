@@ -85,7 +85,6 @@ sendLocationToServer = () => {
 
 render() {
   const { checked } = this.state;
-  console.log('Check: ', checked);
   return (
     <View style={styles.container}>
       <Image style={styles.logo} source={logo} />

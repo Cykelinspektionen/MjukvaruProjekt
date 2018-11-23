@@ -243,6 +243,15 @@ class AddBike extends React.Component {
     this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
   }
 
+
+  componentDidUpdate() {
+    const { addBikeState, navigation, setBikePosted } = this.props;
+    if (addBikeState.bikePosted) {
+      setBikePosted(false);
+      navigation.navigate('Browser');
+    }
+  }
+
   startCameraRoll = () => {
     this.cameraRollPermission(this.pickImage);
   }
@@ -294,6 +303,13 @@ class AddBike extends React.Component {
     const {
       bikeData, radios, Color,
     } = this.state;
+    if (addBikeState.uploadingBike) {
+      return (
+        <View style={styles.container}>
+          <Text>Posting Ad...</Text>
+        </View>
+      );
+    }
     return (
       <ScrollView style={styles.background}>
         <View style={styles.container}>
@@ -356,14 +372,14 @@ class AddBike extends React.Component {
             style={styles.inputs}
             placeholder="Brand"
             underlineColorAndroid="transparent"
-            value={bikeData.description}
+            value={bikeData.brand}
             onChangeText={text => this.setBikeData('brand', text)}
           />
           <TextInput
             style={styles.inputs}
             placeholder="Model"
             underlineColorAndroid="transparent"
-            value={bikeData.description}
+            value={bikeData.model}
             onChangeText={text => this.setBikeData('model', text)}
           />
           <TextInput
@@ -454,14 +470,7 @@ class AddBike extends React.Component {
                 Alert.alert('Picture is mandatory!');
                 return;
               }
-              const stolen = radios.type[0].selected;
-              if (stolen) {
-              // TODO: SET PREVIEW STATE TO SHOW STOLEN
-              } else {
-              // TODO: SET PREVIEW STATE TO SHOW FOUND
-              }
               uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
-              navigation.navigate('Browser');
             }}
           >
             <Text style={styles.greenButtonText}>Submit</Text>
@@ -478,6 +487,7 @@ AddBike.propTypes = {
   }).isRequired,
   addBikeState: PropTypes.shape({
     imgToUploadUri: PropTypes.string.isRequired,
+    bikePosted: PropTypes.bool.isRequired,
   }).isRequired,
   authState: PropTypes.shape({
     isLoggedIn: PropTypes.bool.isRequired,
@@ -487,6 +497,7 @@ AddBike.propTypes = {
   }).isRequired,
   imgUploadInit: PropTypes.func.isRequired,
   uploadBikeToServer: PropTypes.func.isRequired,
+  setBikePosted: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {

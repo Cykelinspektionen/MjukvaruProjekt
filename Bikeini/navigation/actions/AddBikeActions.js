@@ -6,6 +6,7 @@ import {
   UPLOAD_BIKE_BEGIN,
   UPLOAD_BIKE_FAILURE,
   UPLOAD_BIKE_SUCCESS,
+  SET_BIKE_POSTED,
 } from './types';
 import serverApi from '../../utilities/serverApi';
 
@@ -54,12 +55,17 @@ export const bikeUploadSuccess = () => (
   }
 );
 
+export const setBikePosted = bool => (
+  {
+    type: SET_BIKE_POSTED,
+    payload: bool,
+  }
+);
 
 export function imgUploadInit(imgUri, addType, jwt) {
   const file = {
     uri: imgUri,
     type: 'image/jpg',
-    // TODO: FIX NAME!!!
     name: `${addType}.jpg`,
   };
   const formBody = new FormData();
@@ -76,22 +82,19 @@ export function imgUploadInit(imgUri, addType, jwt) {
   );
 }
 
+
 export function uploadBikeToServer(imgUri, bikeData2, jwt) {
   const bikeData = bikeData2;
   const file = {
     uri: imgUri,
     type: 'image/jpg',
-    // TODO: FIX NAME!!!
     name: `${bikeData.type}.jpg`,
   };
   const formBody = new FormData();
   formBody.append('image', file);
-  // Object.entries(bikeData).map(([key, value]) => formBody.append(key, value));
-  // Object.entries(bikeData.location).map(([key, value]) => formBody.append('location', value));
-  // Object.entries(bikeData.keywords).map(([key, value]) => formBody.append('keywords', value));
   formBody.append('json', JSON.stringify(bikeData));
   return serverApi.postDispatch(
-    'bikes/addbike/',
+    'bikes/addbike2/',
     formBody,
     'multipart/form-data',
     jwt,

@@ -6,6 +6,7 @@ import {
   UPLOAD_BIKE_BEGIN,
   UPLOAD_BIKE_FAILURE,
   UPLOAD_BIKE_SUCCESS,
+  SET_BIKE_POSTED,
 } from '../actions/types';
 // !addBikeState.uriSet && !addBikeState.uploadingImg && !addBikeState.imgUploaded
 
@@ -16,6 +17,8 @@ const ADD_BIKE_STATE = {
   imgUploaded: false,
   error: '',
   uploadDisabled: true,
+  uploadingBike: false,
+  bikePosted: false,
 };
 
 const addBikeReducers = (state = ADD_BIKE_STATE, action) => {
@@ -55,7 +58,10 @@ const addBikeReducers = (state = ADD_BIKE_STATE, action) => {
         imgToUploadUri: '',
         uriSet: false,
         uploadDisabled: true,
+        bikePosted: true,
       };
+    case SET_BIKE_POSTED:
+      return { ...state, bikePosted: action.payload };
     default:
       return state;
   }

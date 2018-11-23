@@ -90,7 +90,7 @@ export function uploadBikeToServer(imgUri, bikeData2, jwt) {
   // Object.entries(bikeData.location).map(([key, value]) => formBody.append('location', value));
   // Object.entries(bikeData.keywords).map(([key, value]) => formBody.append('keywords', value));
   formBody.append('json', JSON.stringify(bikeData));
-  return serverApi.postDispatchLocal(
+  return serverApi.postDispatch(
     'bikes/addbike/',
     formBody,
     'multipart/form-data',

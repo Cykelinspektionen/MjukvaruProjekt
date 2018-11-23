@@ -477,7 +477,6 @@ AddBike.propTypes = {
     navigate: PropTypes.func.isRequired,
   }).isRequired,
   addBikeState: PropTypes.shape({
-    newBikeID: PropTypes.string.isRequired,
     imgToUploadUri: PropTypes.string.isRequired,
   }).isRequired,
   authState: PropTypes.shape({

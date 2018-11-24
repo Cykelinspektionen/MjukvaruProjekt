@@ -75,7 +75,7 @@ class Browser extends React.Component {
     const foundBicycles = [];
     const missingBicycles = [];
 
-    serverApi.get('bikes/getfoundbikes/', jwt[0])
+    serverApi.fetchApi('bikes/getfoundbikes/', jwt[0])
       .then((responseJson) => {
         for (let i = 0; i < responseJson.length; i += 1) {
           foundBicycles.push(responseJson[i]);
@@ -95,9 +95,8 @@ class Browser extends React.Component {
   keyExtractor = item => item._id;
 
   renderItem = ({ item }) => {
-    // console.log(item);
-    // navigation.navigate('BikeInformation', {id: item._id})
     const { navigation } = this.props;
+    item.showComments = true;
     return (
       <TouchableOpacity
         onPress={() => {
@@ -105,7 +104,7 @@ class Browser extends React.Component {
           navigation.navigate('BikeInformation', { data: item });
         }}
       >
-        <Item description={item.description} model={item.model} />
+        <Item description={item.description} model={item.model} image_url={item.image_url} />
       </TouchableOpacity>
     );
   }

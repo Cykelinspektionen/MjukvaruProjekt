@@ -73,13 +73,14 @@ const styles = StyleSheet.create({
 
 export default class Comment extends React.PureComponent {
   render() {
-    // const { description, model } = this.props;
+    const { text, userId } = this.props;
+
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={userPlaceholder} />
         <View style={styles.textView}>
           <Text style={styles.description}>
-            Jag tror att jag såg din cykel på stationen idag 12.15, cykelställen på vänster sida, tredje raden
+            {text}
           </Text>
         </View>
         <View style={styles.answer}>

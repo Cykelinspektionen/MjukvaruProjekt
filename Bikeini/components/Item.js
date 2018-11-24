@@ -58,10 +58,12 @@ const styles = StyleSheet.create({
 
 export default class Item extends React.PureComponent {
   render() {
-    const { description, model } = this.props;
+    const { description, model, image_url } = this.props;
+    const imgSource = image_url ? { uri: image_url } : stockBicycle;
+
     return (
       <View style={styles.item}>
-        <Image style={styles.image} source={stockBicycle} />
+        <Image style={styles.image} source={imgSource} />
         <View style={styles.textView}>
           <Text style={styles.description}>
             {description}

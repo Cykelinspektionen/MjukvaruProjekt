@@ -87,16 +87,35 @@ class BikeInformation extends React.Component {
     super(props);
 
     this.state = {
-      comments: [{ text: 'No comments yet! Be the first to make a comment! :)', userId: '1', _id: '1' }],
+      comments: [{
+        body: 'No comments yet! Be the first to make a comment! :)', author: '1', date: '1', _id: '1',
+      }],
       matchingBikes: [],
       text: '',
     };
   }
 
   componentDidMount() {
-    const { showComments } = this.props.navigation.state.params.data;
+    const { data } = this.props.navigation.state.params;
+    const { showComments } = data;
     const { authState } = this.props;
-    const { _id } = this.props.navigation.state.params.data;
+    const { jwt } = authState;
+
+    if (showComments) {
+      this.fetchComments();
+    } else {
+      const formBody = this.jsonToFormData(data);
+
+      serverApi.fetchApi('bikes/getmatchingbikes', formBody, 'multipart/form-data', jwt[0])
+        .then((responseJson) => {
+        }).catch(error => console.log(error));
+    }
+  }
+
+  fetchComments = () => {
+    const { data } = this.props.navigation.state.params;
+    const { authState } = this.props;
+    const { _id } = data;
     const { jwt } = authState;
 
     const bikeInformation = {
@@ -105,28 +124,25 @@ class BikeInformation extends React.Component {
 
     const formBody = this.jsonToFormData(bikeInformation);
 
-    if (showComments) {
-      serverApi.fetchApi('bikes/getcomments', formBody, 'application/x-www-form-urlencoded', jwt[0])
-        .then((responseJson) => {
-          console.log(responseJson);
-          this.setState({ comments: responseJson });
-        }).catch(error => console.log(error));
-    } else {
-      // fetch 'similair bikes'
-    }
+    serverApi.fetchApi('bikes/getcomments', formBody, 'application/x-www-form-urlencoded', jwt[0])
+      .then((responseJson) => {
+        this.setState({ comments: responseJson });
+      }).catch(error => console.log(error));
   }
 
   keyExtractor = item => item._id;
 
   renderItem = ({ item }) => {
-    const { text, userId, _id } = item;
+    const {
+      body, author, date, _id,
+    } = item;
     return (
       <TouchableOpacity
         onPress={() => {
           // navigation.navigate('BikeInformation', {data: item})
         }}
       >
-        <Comment text={text} userId={userId} _id={_id} />
+        <Comment body={body} author={author} date={date} _id={_id} />
       </TouchableOpacity>
     );
   }
@@ -183,8 +199,10 @@ class BikeInformation extends React.Component {
 
     // serverApi.fetchApi('auth', formBody, 'application/x-www-form-urlencoded', '')
     serverApi.fetchApi('bikes/addcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
-      .then((responseJson) => {
-        this.setState({ text: '' });
+      .then(() => {
+        this.setState({ text: '' }, () => {
+          this.fetchComments();
+        });
       }).catch(error => console.log(error));
   }
 

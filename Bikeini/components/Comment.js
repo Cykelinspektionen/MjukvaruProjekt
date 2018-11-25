@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
   },
   textView: {
     flex: 1,
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
     flexDirection: 'column',
     marginBottom: '5%',
     marginLeft: '5%',
@@ -73,19 +73,28 @@ const styles = StyleSheet.create({
 
 export default class Comment extends React.PureComponent {
   render() {
-    const { text, userId } = this.props;
+    const { body, author, date } = this.props;
+    const dateRaw = date.split('-');
+    let day = `${dateRaw[2]}`;
+    day = day.split('T');
+    const dateClean = `${day[0]}/${dateRaw[1]}`;
 
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={userPlaceholder} />
         <View style={styles.textView}>
-          <Text style={styles.description}>
-            {text}
+          <Text>
+            {author}
+            {', '}
+            {dateClean}
           </Text>
+          <Text>{' '}</Text>
+          <Text style={styles.description}>{body}</Text>
         </View>
         <View style={styles.answer}>
           <Text style={styles.answerText}>Answer</Text>
         </View>
+
         <Image style={styles.locationTag} source={locationIcon} />
         <Image style={styles.thumbDownTag} source={thumbDownIcon} />
         <Image style={styles.thumbUpTag} source={thumbUpIcon} />
@@ -95,6 +104,8 @@ export default class Comment extends React.PureComponent {
 }
 
 Comment.propTypes = {
-  text: PropTypes.string.isRequired,
-  userId: PropTypes.string.isRequired,
+  body: PropTypes.string.isRequired,
+  author: PropTypes.string.isRequired,
+  date: PropTypes.string.isRequired,
+  _id: PropTypes.string.isRequired,
 };

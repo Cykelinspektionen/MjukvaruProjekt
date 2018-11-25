@@ -87,7 +87,7 @@ class BikeInformation extends React.Component {
     super(props);
 
     this.state = {
-      comments: [{ text: 'En kommentar', userId: '1', _id: '1' }],
+      comments: [{ text: 'No comments yet! Be the first to make a comment! :)', userId: '1', _id: '1' }],
       matchingBikes: [],
       text: '',
     };
@@ -123,7 +123,6 @@ class BikeInformation extends React.Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          console.log(item);
           // navigation.navigate('BikeInformation', {data: item})
         }}
       >
@@ -168,9 +167,6 @@ class BikeInformation extends React.Component {
     const { authState } = this.props;
     const { _id } = this.props.navigation.state.params.data;
     const { jwt } = authState;
-    // const { userId } = 'tempId123';
-
-    console.log(jwt[0]);
 
     const commentInformation = {
       bikeId: _id,
@@ -184,12 +180,11 @@ class BikeInformation extends React.Component {
     }
 
     const formBody = this.jsonToFormData(commentInformation);
-    console.log(formBody);
 
     // serverApi.fetchApi('auth', formBody, 'application/x-www-form-urlencoded', '')
     serverApi.fetchApi('bikes/addcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
-        console.log(responseJson);
+        this.setState({ text: '' });
       }).catch(error => console.log(error));
   }
 
@@ -239,7 +234,6 @@ class BikeInformation extends React.Component {
           <View style={styles.send}>
             <TouchableOpacity
               onPress={() => {
-                console.log(text);
                 this.sendComment();
               }}
             >

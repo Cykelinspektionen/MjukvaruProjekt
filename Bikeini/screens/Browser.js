@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   browserList: {
     flex: 1,
     alignSelf: 'flex-start',
-    marginTop: '10%',
+    marginTop: '1%',
     marginLeft: '10%',
     width: '88%',
   },
@@ -51,6 +51,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     marginTop: '1%',
     right: 10,
+  },
+  breakLine: {
+    width: '100%',
+    height: '1%',
+    marginTop: '1%',
+    borderWidth: 0,
+    borderBottomWidth: 1,
   },
 });
 
@@ -145,10 +152,6 @@ class Browser extends React.Component {
     this.setState(prevState => ({
       showMissing: !prevState.showMissing,
     }));
-  }
-
-  search(searchOptions) {
-    console.log(searchOptions);
   }
 
   renderFilter = () => {
@@ -248,6 +251,10 @@ class Browser extends React.Component {
     this.setState({ showFilter: !showFilter });
   }
 
+  search(searchOptions) {
+    console.log(searchOptions);
+  }
+
   render() {
     const header = this.renderHeader();
     const filterHeader = this.renderFilterHeader();
@@ -259,6 +266,7 @@ class Browser extends React.Component {
         {header}
         {switchArrow}
         {filterHeader}
+        <View style={styles.breakLine} />
         {filter}
         {list}
       </View>

@@ -126,7 +126,9 @@ class BikeInformation extends React.Component {
 
     serverApi.fetchApi('bikes/getcomments', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
-        this.setState({ comments: responseJson });
+        if (responseJson.length > 0) {
+          this.setState({ comments: responseJson });
+        }
       }).catch(error => console.log(error));
   }
 

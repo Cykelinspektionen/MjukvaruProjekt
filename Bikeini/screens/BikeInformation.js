@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert,
+  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -94,6 +94,7 @@ class BikeInformation extends React.Component {
       }],
       matchingBikes: [],
       text: '',
+      currentBike: '',
     };
   }
 
@@ -105,35 +106,22 @@ class BikeInformation extends React.Component {
     const { showComments } = data;
 
     if (showComments) {
-      this.fetchComments();
+      this.setState({currentBike: data}, () => {
+        this.fetchComments();
+      });
     } else {
-      this.fetchSimilarBikes();
-    }
-  }
-
-  componentDidUpdate() {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
-    const { showComments } = data;
-
-    if (showComments) {
-      this.fetchComments();
-    } else {
-      this.fetchSimilarBikes();
+      this.setState({currentBike: data}, () => {
+        this.fetchSimilarBikes();
+      });
     }
   }
 
   fetchSimilarBikes = () => {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
+    const { currentBike } = this.state;
     const { authState } = this.props;
     const { jwt } = authState;
 
-    const formBody = this.jsonToFormData(data);
+    const formBody = this.jsonToFormData(currentBike);
 
     // multipart/form-data
     serverApi.fetchApi('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
@@ -146,12 +134,8 @@ class BikeInformation extends React.Component {
   }
 
   fetchComments = () => {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
-    const { authState } = this.props;
-    const { _id } = data;
+    const { currentBike } = this.state;
+    const { _id } = currentBike;
     const { jwt } = authState;
 
     const bikeInformation = {
@@ -172,12 +156,7 @@ class BikeInformation extends React.Component {
   keyExtractor = item => item._id;
 
   renderItem = ({ item }) => {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
-    const { showComments } = data;
-
+    const { showComments } = this.state.currentBike.showComments;
 
     if (showComments) {
       const {
@@ -195,7 +174,7 @@ class BikeInformation extends React.Component {
 
 
     const {
-      description, model, image_url,
+      title, description, brand, model, color, image_url, city, neighborhood, _id,
     } = item;
     const bikeData = item;
     bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
@@ -203,7 +182,9 @@ class BikeInformation extends React.Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate('BikeInformation', { data: bikeData });
+          this.setState({currentBike: item}, () => {
+            this.fetchSimilarBikes();
+          });
         }}
       >
         <Item description={description} model={model} image_url={image_url} />
@@ -212,12 +193,8 @@ class BikeInformation extends React.Component {
   }
 
   renderList = () => {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
-    const { showComments } = data;
-    const { comments, matchingBikes } = this.state;
+    const { comments, matchingBikes, currentBike } = this.state;
+    const { showComments } = currentBike;
 
     if (showComments) {
       return (
@@ -247,13 +224,9 @@ class BikeInformation extends React.Component {
   }
 
   sendComment = () => {
-    const { text } = this.state;
+    const { text, currentBike } = this.state;
+    const { _id } = currentBike;
     const { authState } = this.props;
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
-    const { _id } = data;
     const { jwt } = authState;
 
     const commentInformation = {
@@ -278,12 +251,8 @@ class BikeInformation extends React.Component {
   }
 
   renderCommentField = () => {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
-    const { showComments } = data;
-    const { text } = this.state;
+    const { text, currentBike } = this.state;
+    const { showComments } = currentBike;
 
     if (showComments) {
       return (
@@ -312,13 +281,10 @@ class BikeInformation extends React.Component {
   }
 
   render() {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
+    const { currentBike } = this.state;
     const {
       title, location, description, brand, color, image_url,
-    } = data;
+    } = currentBike;
     // const { city, neighborhood } = location;    <- Ingen cykel har samma data-format .....
     const city = location;
     const neighborhood = location;

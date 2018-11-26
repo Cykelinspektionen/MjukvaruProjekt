@@ -74,6 +74,7 @@ class Browser extends React.Component {
       missingBicycles: '',
       foundBicycles: '',
       showFilter: false,
+      isFetching: false,
     };
   }
 
@@ -93,7 +94,7 @@ class Browser extends React.Component {
         for (let i = 0; i < responseJson.length; i += 1) {
           foundBicycles.push(responseJson[i]);
         }
-        this.setState({ foundBicycles });
+        this.setState({ foundBicycles: foundBicycles, isFetching: false });
       }).catch(error => console.log(error));
 
     serverApi.get('bikes/getstolenbikes/', jwt[0])
@@ -101,7 +102,7 @@ class Browser extends React.Component {
         for (let i = 0; i < responseJson.length; i += 1) {
           missingBicycles.push(responseJson[i]);
         }
-        this.setState({ missingBicycles });
+        this.setState({ missingBicycles: missingBicycles, isFetching: false });
       }).catch(error => console.log(error));
   }
 
@@ -114,6 +115,7 @@ class Browser extends React.Component {
     return (
       <TouchableOpacity
         onPress={() => {
+          console.log(bikeData);
           navigation.navigate('BikeInformation', { data: bikeData });
         }}
       >
@@ -165,6 +167,12 @@ class Browser extends React.Component {
     return null;
   }
 
+  onRefresh = () => {
+     this.setState({ isFetching: true }, () => {
+       this.handleServerBicycles()
+     });
+  }
+
   renderList = () => {
     const { showMissing, missingBicycles, foundBicycles } = this.state;
 
@@ -173,6 +181,8 @@ class Browser extends React.Component {
         <View style={styles.browserList}>
           <FlatList
             data={missingBicycles}
+            onRefresh={this.onRefresh}
+            refreshing={this.state.isFetching}
             extraData={this.state}
             keyExtractor={this.keyExtractor}
             renderItem={this.renderItem}

@@ -4,6 +4,8 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
@@ -23,28 +25,39 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: '300',
   },
   filter: {
     alignSelf: 'flex-start',
+    flexDirection: 'row',
     marginTop: '5%',
     marginLeft: '13%',
   },
   browserList: {
     flex: 1,
     alignSelf: 'flex-start',
-    marginTop: '10%',
+    marginTop: '1%',
     marginLeft: '10%',
     width: '88%',
   },
-  showType: {
+  showTypeLeft: {
     alignSelf: 'flex-start',
     position: 'absolute',
-    marginTop: '8%',
-    marginLeft: 10,
-    backgroundColor: 'black',
-    width: 20,
-    height: 60,
+    marginTop: '1%',
+    left: 10,
+  },
+  showTypeRight: {
+    alignSelf: 'flex-end',
+    position: 'absolute',
+    marginTop: '1%',
+    right: 10,
+  },
+  breakLine: {
+    width: '100%',
+    height: '1%',
+    marginTop: '1%',
+    borderWidth: 0,
+    borderBottomWidth: 1,
   },
 });
 
@@ -94,13 +107,20 @@ class Browser extends React.Component {
 
   keyExtractor = item => item._id;
 
-  renderItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => console.log(`pressed: ${item.description}`)}
-    >
-      <Item description={item.description} model={item.model} />
-    </TouchableOpacity>
-  );
+  renderItem = ({ item }) => {
+    const { navigation } = this.props;
+    const bikeData = item;
+    bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('BikeInformation', { data: bikeData });
+        }}
+      >
+        <Item description={item.description} model={item.model} image_url={item.image_url} />
+      </TouchableOpacity>
+    );
+  }
 
   renderHeader = () => {
     const { showMissing } = this.state;
@@ -174,29 +194,80 @@ class Browser extends React.Component {
     );
   }
 
+  renderSwitchType = () => {
+    const { showMissing } = this.state;
+
+    if (showMissing) {
+      return (
+        <TouchableOpacity
+          style={styles.showTypeRight}
+          onPress={this.switchPageType}
+        >
+          <Icon name="md-arrow-dropright" size={80} color="black" />
+        </TouchableOpacity>
+      );
+    }
+
+
+    return (
+      <TouchableOpacity
+        style={styles.showTypeLeft}
+        onPress={this.switchPageType}
+      >
+        <Icon name="md-arrow-dropleft" size={80} color="black" />
+      </TouchableOpacity>
+    );
+  }
+
+  renderFilterHeader = () => {
+    const { showFilter } = this.state;
+
+    if (showFilter) {
+      return (
+        <TouchableOpacity
+          style={styles.filter}
+          onPress={this.changeFilterStatus}
+        >
+          <Text style={{ fontSize: 16 }}>Filter  </Text>
+          <Icon name="md-arrow-dropup" size={30} color="black" />
+        </TouchableOpacity>
+      );
+    }
+
+
+    return (
+      <TouchableOpacity
+        style={styles.filter}
+        onPress={this.changeFilterStatus}
+      >
+        <Text style={{ fontSize: 16 }}>Filter  </Text>
+        <Icon name="md-arrow-dropdown" size={30} color="black" />
+      </TouchableOpacity>
+    );
+  }
+
   changeFilterStatus = () => {
     const { showFilter } = this.state;
 
     this.setState({ showFilter: !showFilter });
   }
 
+  search(searchOptions) {
+    console.log(searchOptions);
+  }
+
   render() {
     const header = this.renderHeader();
+    const filterHeader = this.renderFilterHeader();
     const filter = this.renderFilter();
     const list = this.renderList();
+    const switchArrow = this.renderSwitchType();
     return (
       <View style={styles.container}>
         {header}
-        <TouchableOpacity
-          style={styles.showType}
-          onPress={this.switchPageType}
-        />
-        <TouchableOpacity
-          style={styles.filter}
-          onPress={this.changeFilterStatus}
-        >
-          <Text>Filter * </Text>
-        </TouchableOpacity>
+        {switchArrow}
+        {filterHeader}
+        <View style={styles.breakLine} />
         {filter}
         {list}
       </View>
@@ -205,6 +276,9 @@ class Browser extends React.Component {
 }
 
 Browser.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
   authState: PropTypes.shape({
     isLoggedIn: PropTypes.bool.isRequired,
     username: PropTypes.string.isRequired,

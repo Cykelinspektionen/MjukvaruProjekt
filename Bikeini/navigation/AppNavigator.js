@@ -5,6 +5,7 @@ import TempPage from '../screens/TempPage';
 import SignUp from '../screens/SignUp';
 import Camera from '../screens/Camera';
 import Location from '../screens/Location';
+import BikeInformation from '../screens/BikeInformation'
 
 const AppNavigator = createStackNavigator({
   Login: { screen: Login },
@@ -12,6 +13,7 @@ const AppNavigator = createStackNavigator({
   SignUp: { screen: SignUp },
   Camera: { screen: Camera },
   Location: { screen: Location },
+  BikeInformation: { screen: BikeInformation },
   TabNavigator,
 },
 {

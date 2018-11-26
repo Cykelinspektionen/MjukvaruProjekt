@@ -106,7 +106,7 @@ class Profile extends React.Component {
             navigation.navigate('BikeInformation', { data: bikeData });
           }}
         >
-          <Item description={item.description} model={item.model} image_url={item.image_url}/>
+          <Item description={item.description} model={item.model} image_url={item.image_url} />
         </TouchableOpacity>
       );
     }
@@ -172,7 +172,7 @@ Profile.propTypes = {
     game_score: PropTypes.number.isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
-    errorMsg: PropTypes.string.isRequired,
+    error: PropTypes.string.isRequired,
   }).isRequired,
 };
 

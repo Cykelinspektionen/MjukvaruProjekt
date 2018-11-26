@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  StyleSheet, Text, View, ScrollView, Image,
+  StyleSheet, Text, View, ScrollView, Image, FlatList, TouchableOpacity, Item,
 } from 'react-native';
 import headerStyle from './header';
+import serverApi from '../utilities/serverApi';
 
 const profilePic = require('../assets/images/biker.png');
 
@@ -49,12 +50,73 @@ class Gamification extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
+        topPlayersSwe: '',
       };
+    }
+
+    componentDidMount() {
+      this.handleServerTopPlayers();
+    }
+
+      handleServerTopPlayers = () => {
+        const { authState } = this.props;
+        const { jwt } = authState;
+
+        const topPlayersSwe = [];
+        const topScore = {
+          limit: 10,
+        };
+
+        const formBody = this.jsonToFormData(topScore);
+
+        serverApi.fetchApi('users/gethighscores/', formBody, 'application/x-www-form-urlencoded', jwt[0])
+          .then((responseJson) => {
+            for (let i = 0; i < responseJson.length; i += 1) {
+              topPlayersSwe.push(responseJson[i]);
+            }
+            this.setState({ topPlayersSwe });
+          }).catch(error => console.log(error));
+      }
+
+      keyExtractor = item => item._id;
+
+      renderItem = ({ item }) => {
+        const { navigation } = this.props;
+        const bikeData = item;
+        bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
+        return (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('BikeInformation', { data: bikeData });
+            }}
+          >
+            <Item description={item.description} model={item.model} image_url={item.image_url} />
+          </TouchableOpacity>
+        );
+      }
+
+    renderSweList = () => {
+      console.log('haaaaaaae');
+      const { topPlayersSwe } = this.state;
+      console.log('hej', topPlayersSwe);
+
+      return (
+        <View style={styles.browserList}>
+          <FlatList
+            data={topPlayersSwe}
+            extraData={this.state}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderItem}
+          />
+        </View>
+      );
     }
 
     render() {
       const { profileState } = this.props;
       const { location } = profileState;
+      const { game_score } = profileState;
+      const { sweList } = this.renderSweList;
       return (
         <ScrollView style={styles.background}>
           <View style={styles.container} />
@@ -72,6 +134,8 @@ class Gamification extends React.Component {
               </Text>
               <Text style={styles.UserInfo}>
                 Total points earned:
+                {' '}
+                {game_score}
               </Text>
             </View>
           </View>
@@ -81,6 +145,9 @@ class Gamification extends React.Component {
             {location}
           </Text>
           <Text style={styles.categories}>Toplist in Sweden</Text>
+          <View>
+            {sweList}
+          </View>
         </ScrollView>
       );
     }
@@ -102,7 +169,7 @@ Gamification.propTypes = {
     game_score: PropTypes.number.isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
-    errorMsg: PropTypes.string.isRequired,
+    error: PropTypes.string.isRequired,
   }).isRequired,
 };
 

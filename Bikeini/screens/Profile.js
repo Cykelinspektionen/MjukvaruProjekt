@@ -104,15 +104,30 @@ class Profile extends React.Component {
 
     render() {
       const { yourBicycles } = this.state;
+      const { profileState } = this.props;
+      const { username } = profileState;
+      const { location } = profileState;
+      const { email } = profileState;
+
+
       return (
         <ScrollView style={styles.background}>
           <View style={styles.container}>
             <View style={styles.rowContainer}>
               <Image style={styles.profile} source={profilePic} />
               <View style={styles.columnContainer}>
-                <Text style={styles.UserInfo}>Name </Text>
-                <Text style={styles.UserInfo}>Location </Text>
-                <Text style={styles.UserInfo}>Email address </Text>
+                <Text style={styles.UserInfo}>
+                  {''}
+                  {username}
+                </Text>
+                <Text style={styles.UserInfo}>
+                  {''}
+                  {location}
+                </Text>
+                <Text style={styles.UserInfo}>
+                  {''}
+                  {email}
+                </Text>
                 <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
                   <Text style={styles.greenButtonText}>EDIT USER</Text>
                 </TouchableHighlight>

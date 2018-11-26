@@ -5,10 +5,12 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import serverApi from '../utilities/serverApi';
 
-import Comment from '../components/Comment';
+import serverApi from '../utilities/serverApi';
 import * as jwtActions from '../navigation/actions/JwtActions';
+
+import Item from '../components/Item';
+import Comment from '../components/Comment';
 
 const stockBicycle = require('../assets/images/stockBicycle.png');
 
@@ -96,24 +98,43 @@ class BikeInformation extends React.Component {
   }
 
   componentDidMount() {
-    const { data } = this.props.navigation.state.params;
+    const { navigation } = this.props;
+    const { state } = navigation;
+    const { params } = state;
+    const { data } = params;
     const { showComments } = data;
-    const { authState } = this.props;
-    const { jwt } = authState;
 
     if (showComments) {
       this.fetchComments();
     } else {
-      const formBody = this.jsonToFormData(data);
-
-      serverApi.fetchApi('bikes/getmatchingbikes', formBody, 'multipart/form-data', jwt[0])
-        .then((responseJson) => {
-        }).catch(error => console.log(error));
+      this.fetchSimilarBikes();
     }
   }
 
+  fetchSimilarBikes = () => {
+    const { navigation } = this.props;
+    const { state } = navigation;
+    const { params } = state;
+    const { data } = params;
+    const { authState } = this.props;
+    const { jwt } = authState;
+
+    const formBody = this.jsonToFormData(data);
+
+    // multipart/form-data
+    serverApi.fetchApi('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
+      .then((responseJson) => {
+        if (responseJson.length > 0) {
+          this.setState({ matchingBikes: responseJson });
+        }
+      }).catch(error => console.log(error));
+  }
+
   fetchComments = () => {
-    const { data } = this.props.navigation.state.params;
+    const { navigation } = this.props;
+    const { state } = navigation;
+    const { params } = state;
+    const { data } = params;
     const { authState } = this.props;
     const { _id } = data;
     const { jwt } = authState;
@@ -135,22 +156,51 @@ class BikeInformation extends React.Component {
   keyExtractor = item => item._id;
 
   renderItem = ({ item }) => {
+    const { navigation } = this.props;
+    const { state } = navigation;
+    const { params } = state;
+    const { data } = params;
+    const { showComments } = data;
+
+
+    if (showComments) {
+      const {
+        body, author, date, _id,
+      } = item;
+
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            // navigation.navigate('BikeInformation', {data: item})
+          }}
+        >
+          <Comment body={body} author={author} date={date} _id={_id} />
+        </TouchableOpacity>
+      );
+    }
+
+
     const {
-      body, author, date, _id,
+      description, model, image_url,
     } = item;
+
     return (
       <TouchableOpacity
         onPress={() => {
           // navigation.navigate('BikeInformation', {data: item})
         }}
       >
-        <Comment body={body} author={author} date={date} _id={_id} />
+        <Item description={description} model={model} image_url={image_url} />
       </TouchableOpacity>
     );
   }
 
   renderList = () => {
-    const { showComments } = this.props.navigation.state.params.data;
+    const { navigation } = this.props;
+    const { state } = navigation;
+    const { params } = state;
+    const { data } = params;
+    const { showComments } = data;
     const { comments, matchingBikes } = this.state;
 
     if (showComments) {
@@ -183,7 +233,11 @@ class BikeInformation extends React.Component {
   sendComment = () => {
     const { text } = this.state;
     const { authState } = this.props;
-    const { _id } = this.props.navigation.state.params.data;
+    const { navigation } = this.props;
+    const { state } = navigation;
+    const { params } = state;
+    const { data } = params;
+    const { _id } = data;
     const { jwt } = authState;
 
     const commentInformation = {
@@ -208,9 +262,45 @@ class BikeInformation extends React.Component {
       }).catch(error => console.log(error));
   }
 
-  render() {
+  renderCommentField = () => {
+    const { navigation } = this.props;
+    const { state } = navigation;
+    const { params } = state;
+    const { data } = params;
+    const { showComments } = data;
     const { text } = this.state;
-    const { data } = this.props.navigation.state.params;
+
+    if (showComments) {
+      return (
+        <View style={styles.commentInputContainer}>
+          <TextInput
+            style={styles.commentInput}
+            onChangeText={newText => this.setState({ text: newText })}
+            value={text}
+            placeholder="Add comment..."
+          />
+          <View style={styles.send}>
+            <TouchableOpacity
+              onPress={() => {
+                this.sendComment();
+              }}
+            >
+              <Text style={styles.sendText}>Send</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    }
+
+
+    return null;
+  }
+
+  render() {
+    const { navigation } = this.props;
+    const { state } = navigation;
+    const { params } = state;
+    const { data } = params;
     const {
       title, location, description, brand, color, image_url,
     } = data;
@@ -218,6 +308,7 @@ class BikeInformation extends React.Component {
     const city = location;
     const neighborhood = location;
     const list = this.renderList();
+    const commentField = this.renderCommentField();
     const imgSource = image_url ? { uri: image_url } : stockBicycle;
     return (
       <View style={styles.container}>
@@ -244,23 +335,7 @@ class BikeInformation extends React.Component {
         <View style={styles.listContainer}>
           {list}
         </View>
-        <View style={styles.commentInputContainer}>
-          <TextInput
-            style={styles.commentInput}
-            onChangeText={newText => this.setState({ text: newText })}
-            value={text}
-            placeholder="Add comment..."
-          />
-          <View style={styles.send}>
-            <TouchableOpacity
-              onPress={() => {
-                this.sendComment();
-              }}
-            >
-              <Text style={styles.sendText}>Send</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        {commentField}
       </View>
     );
   }

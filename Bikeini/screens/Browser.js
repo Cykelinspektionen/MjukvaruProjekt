@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     marginLeft: '13%',
   },
   headerText: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '300',
   },
   filter: {
@@ -88,7 +88,7 @@ class Browser extends React.Component {
     const foundBicycles = [];
     const missingBicycles = [];
 
-    serverApi.fetchApi('bikes/getfoundbikes/', jwt[0])
+    serverApi.get('bikes/getfoundbikes/', jwt[0])
       .then((responseJson) => {
         for (let i = 0; i < responseJson.length; i += 1) {
           foundBicycles.push(responseJson[i]);
@@ -109,11 +109,12 @@ class Browser extends React.Component {
 
   renderItem = ({ item }) => {
     const { navigation } = this.props;
-    item.showComments = true;
+    const bikeData = item;
+    bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
     return (
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate('BikeInformation', { data: item });
+          navigation.navigate('BikeInformation', { data: bikeData });
         }}
       >
         <Item description={item.description} model={item.model} image_url={item.image_url} />
@@ -202,7 +203,7 @@ class Browser extends React.Component {
           style={styles.showTypeRight}
           onPress={this.switchPageType}
         >
-          <Icon name="md-arrow-dropright" size={130} color="black" />
+          <Icon name="md-arrow-dropright" size={80} color="black" />
         </TouchableOpacity>
       );
     }
@@ -213,7 +214,7 @@ class Browser extends React.Component {
         style={styles.showTypeLeft}
         onPress={this.switchPageType}
       >
-        <Icon name="md-arrow-dropleft" size={130} color="black" />
+        <Icon name="md-arrow-dropleft" size={80} color="black" />
       </TouchableOpacity>
     );
   }

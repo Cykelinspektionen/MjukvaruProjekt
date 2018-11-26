@@ -170,9 +170,7 @@ class BikeInformation extends React.Component {
 
       return (
         <TouchableOpacity
-          onPress={() => {
-            // navigation.navigate('BikeInformation', {data: item})
-          }}
+          onPress={() => {}}
         >
           <Comment body={body} author={author} date={date} _id={_id} />
         </TouchableOpacity>
@@ -186,9 +184,7 @@ class BikeInformation extends React.Component {
 
     return (
       <TouchableOpacity
-        onPress={() => {
-          // navigation.navigate('BikeInformation', {data: item})
-        }}
+        onPress={() => {}}
       >
         <Item description={description} model={model} image_url={image_url} />
       </TouchableOpacity>
@@ -253,7 +249,6 @@ class BikeInformation extends React.Component {
 
     const formBody = this.jsonToFormData(commentInformation);
 
-    // serverApi.fetchApi('auth', formBody, 'application/x-www-form-urlencoded', '')
     serverApi.fetchApi('bikes/addcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then(() => {
         this.setState({ text: '' }, () => {

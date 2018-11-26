@@ -1,7 +1,7 @@
 import {
   SET_LOCATION,
   LOAD_PROFILE_BEGIN,
-  LOAD_PROFILE_SUCCES,
+  LOAD_PROFILE_SUCCESS,
   LOAD_PROFILE_FAILURE,
 } from '../actions/types';
 
@@ -14,7 +14,7 @@ const PROFILE_INITIAL_STATE = {
   game_score: 0,
   loadingProfile: false,
   profileLoaded: false,
-  errorMsg: '',
+  error: '',
 };
 
 const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
@@ -29,9 +29,9 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         ...state,
         loadingProfile: false,
         profileLoaded: false,
-        errorMsg: action.payload,
+        error: action.payload,
       };
-    case LOAD_PROFILE_SUCCES:
+    case LOAD_PROFILE_SUCCESS:
       return {
         ...state,
         location: action.payload.location,

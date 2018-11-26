@@ -6,15 +6,16 @@ import { Alert } from 'react-native';
 
 // Handle HTTP errors since fetch won't.
 function handleErrors(response) {
+  // console.log(response);
   if (!response.ok) {
-    throw Error(response.statusText);
+    throw Error(response.status);
   }
   return response;
 }
 
 const serverApi = {
 
-  getDispatch(urlEnd, jwt, dispatchBegin, dispatchFailure, dispatchSucces) {
+  getDispatch(urlEnd, jwt, dispatchBegin, dispatchFailure, dispatchSuccess) {
     return (dispatch) => {
       dispatch(dispatchBegin());
       return fetch(`https://bikeify.herokuapp.com/${urlEnd}`, {
@@ -26,22 +27,23 @@ const serverApi = {
         .then(handleErrors)
         .then(response => response.json())
         .then((json) => {
-          dispatch(dispatchSucces(json));
+          dispatch(dispatchSuccess(json));
           return true;
         })
         .catch((error) => {
-          dispatch(dispatchFailure(error));
+          console.log('GET:', error);
+          dispatch(dispatchFailure(String(error)));
           return false;
         });
     };
   },
 
-  postDispatch(urlEnd, body, contentType, jwt, dispatchBegin, dispatchFailure, dispatchSucces) {
+  postDispatch(urlEnd, body, contentType, jwt, dispatchBegin, dispatchFailure, dispatchSuccess) {
     return (dispatch) => {
       dispatch(dispatchBegin());
       return fetch(`https://bikeify.herokuapp.com/${urlEnd}`, {
         method: 'POST',
-        body: JSON.stringify(body),
+        body,
         headers: {
           'Content-Type': contentType,
           'x-access-token': jwt,
@@ -55,17 +57,16 @@ const serverApi = {
           } else if (json.status === 'error') {
             Alert.alert(json.message);
           }
-          dispatch(dispatchSucces(json));
+          dispatch(dispatchSuccess(json));
           return json;
         })
         .catch((error) => {
-          console.log('GET:', error);
-          dispatch(dispatchFailure(error));
+          console.log('POST:', error);
+          dispatch(dispatchFailure(String(error)));
           return false;
         });
     };
   },
-
 
   fetchApi(_urlEnd, _body, _contentType, _jwt) {
     // application/x-www-form-urlencoded ??
@@ -90,6 +91,7 @@ const serverApi = {
       },
     // Authorization: 'Bearer ' + 'SECRET_OAUTH2_TOKEN_IF_AUTH' },
     })
+      .then(handleErrors)
       .then(response => response.json());
   },
 };

@@ -1,5 +1,9 @@
 import {
-  SET_LOCATION, SET_PROFILE_STATE, LOAD_PROFILE_BEGIN, LOAD_PROFILE_SUCCES, LOAD_PROFILE_FAILURE,
+  SET_LOCATION,
+  SET_PROFILE_STATE,
+  LOAD_PROFILE_BEGIN,
+  LOAD_PROFILE_SUCCESS,
+  LOAD_PROFILE_FAILURE,
 } from './types';
 import serverApi from '../../utilities/serverApi';
 import { deleteJWTInit } from './JwtActions';
@@ -24,9 +28,9 @@ export const loadProfileBegin = () => (
   }
 );
 
-export const loadProfileSucces = data => (
+export const loadProfileSuccess = data => (
   {
-    type: LOAD_PROFILE_SUCCES,
+    type: LOAD_PROFILE_SUCCESS,
     payload: data,
   }
 );
@@ -44,7 +48,7 @@ function handleProfileData(data) {
       dispatch(deleteJWTInit());
       dispatch(loadProfileFailure(data.message));
     } else {
-      dispatch(loadProfileSucces(data));
+      dispatch(loadProfileSuccess(data));
     }
   };
 }

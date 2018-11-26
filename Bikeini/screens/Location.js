@@ -85,7 +85,6 @@ sendLocationToServer = () => {
 
 render() {
   const { checked } = this.state;
-  console.log('Check: ', checked);
   return (
     <View style={styles.container}>
       <Image style={styles.logo} source={logo} />
@@ -138,7 +137,7 @@ Location.propTypes = {
     game_score: PropTypes.number.isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
-    errorMsg: PropTypes.string.isRequired,
+    error: PropTypes.string.isRequired,
   }).isRequired,
 };
 

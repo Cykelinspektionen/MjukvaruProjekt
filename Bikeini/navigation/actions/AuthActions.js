@@ -3,10 +3,10 @@ import {
   LOGOUT,
   LOGIN_BEGIN,
   LOGIN_FAILURE,
-  LOGIN_SUCCES,
+  LOGIN_SUCCESS,
 } from './types';
 import serverApi from '../../utilities/serverApi';
-import { loadProfileSucces } from './ProfileActions';
+import { loadProfileSuccess } from './ProfileActions';
 import { storeJWTInit } from './JwtActions';
 
 export const login = credentials => (
@@ -38,7 +38,7 @@ export const loginFailure = error => (
 
 export const loginSuccess = () => (
   {
-    type: LOGIN_SUCCES,
+    type: LOGIN_SUCCESS,
   }
 );
 
@@ -46,14 +46,15 @@ function handleUserData(json) {
   return (dispatch) => {
     if (json) {
       dispatch(storeJWTInit(json.data.token));
-      dispatch(loadProfileSucces(json.data.user));
+      dispatch(loadProfileSuccess(json.data.user));
     }
     dispatch(loginSuccess());
   };
 }
 
 export function loginInit(email, password) {
-  const body = { email, password };
+  let body = { email, password };
+  body = JSON.stringify(body);
   return serverApi.postDispatch(
     'auth/',
     body,

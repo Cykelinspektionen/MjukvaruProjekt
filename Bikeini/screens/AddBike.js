@@ -9,7 +9,6 @@ import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
 import { ImagePicker } from 'expo';
 import permissions from '../utilities/permissions';
-import serverApi from '../utilities/serverApi';
 import headerStyle from './header';
 
 import * as addBikeActions from '../navigation/actions/AddBikeActions';
@@ -43,6 +42,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: 150,
     borderRadius: 5,
+  },
+  buttonDisabled: {
+    opacity: 0.2,
   },
   actionButton: {
     backgroundColor: '#00b5ec',
@@ -84,27 +86,26 @@ class AddBike extends React.Component {
         brand: '',
         model: '',
         color: '',
-        frame_number: null,
+        frame_number: 0,
         antitheft_code: '',
         description: '',
         location: {
-          Lat: null,
-          Long: null,
+          Lat: 0,
+          Long: 0,
         },
         keywords: {
           frameType: 'MALE',
           child: false,
-          sport: false,
+          sport: true,
           tandem: false,
-          basket: false,
-          rack: false,
-          mudguard: false,
-          chain_protection: false,
-          net: false,
-          winter_tires: false,
-          light: false,
+          basket: true,
+          rack: true,
+          mudguard: true,
+          chain_protection: true,
+          net: true,
+          winter_tires: true,
+          light: true,
         },
-        imageOfBike: null,
       },
       radios: {
         type: [
@@ -242,6 +243,15 @@ class AddBike extends React.Component {
     this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
   }
 
+
+  componentDidUpdate() {
+    const { addBikeState, navigation, setBikePosted } = this.props;
+    if (addBikeState.bikePosted) {
+      setBikePosted(false);
+      navigation.navigate('Browser');
+    }
+  }
+
   startCameraRoll = () => {
     this.cameraRollPermission(this.pickImage);
   }
@@ -262,18 +272,6 @@ class AddBike extends React.Component {
       saveImageToState(result.uri);
     }
   };
-
-  sendBikeToServer = () => {
-    const { addBikeState, authState } = this.props;
-    const { bikeData } = this.state;
-    const bikeImgData = {
-      uri: addBikeState.uriSet,
-      name: `${bikeData.addType}.jpg`,
-      type: 'image/jpg',
-    };
-    this.setBikeData('imageOfBike', bikeImgData);
-    serverApi.fetchApi('bikes/addbike', bikeData, 'multipart/form-data', authState.jwt[0]);
-  }
 
   setBikeData = (attr, value, setKeyword) => {
     const { bikeData } = this.state;
@@ -299,10 +297,19 @@ class AddBike extends React.Component {
   }
 
   render() {
-    const { addBikeState, navigation } = this.props;
+    const {
+      authState, addBikeState, navigation, uploadBikeToServer, imgUploadInit,
+    } = this.props;
     const {
       bikeData, radios, Color,
     } = this.state;
+    if (addBikeState.uploadingBike) {
+      return (
+        <View style={styles.container}>
+          <Text>Posting Ad...</Text>
+        </View>
+      );
+    }
     return (
       <ScrollView style={styles.background}>
         <View style={styles.container}>
@@ -335,6 +342,18 @@ class AddBike extends React.Component {
               </View>
             </View>
           </View>
+          <TouchableHighlight
+            style={[
+              styles.smallButtonContainer,
+              styles.actionButton,
+              styles.greenButton,
+              !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
+            ]}
+            disabled={addBikeState.uploadDisabled}
+            onPress={() => imgUploadInit(addBikeState.imgToUploadUri, bikeData.type, authState.jwt[0])}
+          >
+            <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
+          </TouchableHighlight>
           <TextInput
             style={styles.inputs}
             placeholder="Frame number"
@@ -353,14 +372,14 @@ class AddBike extends React.Component {
             style={styles.inputs}
             placeholder="Brand"
             underlineColorAndroid="transparent"
-            value={bikeData.description}
+            value={bikeData.brand}
             onChangeText={text => this.setBikeData('brand', text)}
           />
           <TextInput
             style={styles.inputs}
             placeholder="Model"
             underlineColorAndroid="transparent"
-            value={bikeData.description}
+            value={bikeData.model}
             onChangeText={text => this.setBikeData('model', text)}
           />
           <TextInput
@@ -451,18 +470,7 @@ class AddBike extends React.Component {
                 Alert.alert('Picture is mandatory!');
                 return;
               }
-              // this.sendBikeToServer();
-              const stolen = radios.addType[0].selected;
-              if (stolen) {
-              // SET PREVIEW STATE TO SHOW STOLEN
-              } else {
-              // SET PREVIEW STATE TO SHOW FOUND
-              }
-              this.sendBikeToServer();
-              this.setBikeData('imageOfBike', null);
-              const { clearImgUri } = this.props;
-              clearImgUri();
-            // navigation.navigate('PREVIEW ADS!')
+              uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
             }}
           >
             <Text style={styles.greenButtonText}>Submit</Text>
@@ -478,8 +486,8 @@ AddBike.propTypes = {
     navigate: PropTypes.func.isRequired,
   }).isRequired,
   addBikeState: PropTypes.shape({
-    newBikeID: PropTypes.string.isRequired,
     imgToUploadUri: PropTypes.string.isRequired,
+    bikePosted: PropTypes.bool.isRequired,
   }).isRequired,
   authState: PropTypes.shape({
     isLoggedIn: PropTypes.bool.isRequired,
@@ -487,7 +495,9 @@ AddBike.propTypes = {
     password: PropTypes.string.isRequired,
     jwt: PropTypes.array.isRequired,
   }).isRequired,
-  clearImgUri: PropTypes.func.isRequired,
+  imgUploadInit: PropTypes.func.isRequired,
+  uploadBikeToServer: PropTypes.func.isRequired,
+  setBikePosted: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {

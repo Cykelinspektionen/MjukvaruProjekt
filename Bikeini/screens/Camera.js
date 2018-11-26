@@ -289,7 +289,6 @@ CameraPage.propTypes = {
     navigate: PropTypes.func.isRequired,
   }).isRequired,
   addBikeState: PropTypes.shape({
-    newBikeID: PropTypes.string.isRequired,
     imgToUploadUri: PropTypes.string.isRequired,
   }).isRequired,
   saveImageToState: PropTypes.func.isRequired,

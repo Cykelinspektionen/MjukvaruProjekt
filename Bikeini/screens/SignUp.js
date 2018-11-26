@@ -113,7 +113,7 @@ class SignUp extends React.Component {
       newUsername, newEmail, newPhoneNumber, newPassword,
     } = this.state;
     const {
-      navigation, loadProfileSucces, storeJWTInit,
+      navigation, loadProfileSuccess, storeJWTInit,
     } = this.props;
 
     const userInformation = {
@@ -138,7 +138,7 @@ class SignUp extends React.Component {
           profileLoaded: true,
         };
 
-        loadProfileSucces(createdUserInformation);
+        loadProfileSuccess(createdUserInformation);
         storeJWTInit(token);
         navigation.navigate('Location');
       }).catch(error => console.log(error));
@@ -312,10 +312,10 @@ SignUp.propTypes = {
     game_score: PropTypes.number.isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
-    errorMsg: PropTypes.string.isRequired,
+    error: PropTypes.string.isRequired,
   }).isRequired,
   storeJWTInit: PropTypes.func.isRequired,
-  loadProfileSucces: PropTypes.func.isRequired,
+  loadProfileSuccess: PropTypes.func.isRequired,
 };
 
 

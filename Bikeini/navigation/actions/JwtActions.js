@@ -1,10 +1,10 @@
 import { AsyncStorage } from 'react-native';
 import {
   LOAD_JWT_BEGIN,
-  LOAD_JWT_SUCCES,
+  LOAD_JWT_SUCCESS,
   LOAD_JWT_FAILURE,
   DELETE_JWT_BEGIN,
-  DELETE_JWT_SUCCES,
+  DELETE_JWT_SUCCESS,
   DELETE_JWT_FAILURE,
   STORE_JWT_BEGIN,
   STORE_JWT_FAILURE,
@@ -24,9 +24,9 @@ export const deleteJWTFailure = error => (
   }
 );
 
-export const deleteJWTSucces = () => (
+export const deleteJWTSuccess = () => (
   {
-    type: DELETE_JWT_SUCCES,
+    type: DELETE_JWT_SUCCESS,
   }
 );
 
@@ -43,9 +43,9 @@ export const loadJWTFailure = error => (
   }
 );
 
-export const loadJWTSucces = jwt => (
+export const loadJWTSuccess = jwt => (
   {
-    type: LOAD_JWT_SUCCES,
+    type: LOAD_JWT_SUCCESS,
     payload: jwt,
   }
 );
@@ -86,9 +86,9 @@ export function loadJWTInit() {
     return AsyncStorage.getItem('id_token')
       .then((jwt) => {
         if (jwt !== null) {
-          dispatch(loadJWTSucces(jwt));
+          dispatch(loadJWTSuccess(jwt));
         } else {
-          dispatch(loadJWTSucces(null));
+          dispatch(loadJWTSuccess(null));
         }
       }).catch(error => loadJWTFailure(error));
   };
@@ -99,7 +99,7 @@ export function deleteJWTInit() {
     dispatch(deleteJWTBegin());
     return AsyncStorage.removeItem('id_token')
       .then(() => {
-        dispatch(deleteJWTSucces());
+        dispatch(deleteJWTSuccess());
       }).catch(error => deleteJWTFailure(error));
   };
 }

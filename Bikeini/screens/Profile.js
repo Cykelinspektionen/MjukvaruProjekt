@@ -77,6 +77,10 @@ class Profile extends React.Component {
       this.getItemFromServer();
     }
 
+    componentDidUpdate() {
+      this.getItemFromServer();
+    }
+
     getItemFromServer = () => {
       const { authState } = this.props;
       const { jwt } = authState;
@@ -94,13 +98,22 @@ class Profile extends React.Component {
 
     keyExtractor = item => item._id;
 
-    renderItem = ({ item }) => (
-      <TouchableOpacity
-        onPress={() => console.log(`pressed: ${item.description}`)}
-      >
-        <Item description={item.description} model={item.model} image_url={item.image_url} />
-      </TouchableOpacity>
-    );
+    renderItem = ({ item }) => {
+      const { navigation } = this.props;
+
+      const bikeData = item;
+      bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
+
+      return (
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('BikeInformation', { data: bikeData });
+          }}
+        >
+          <Item description={item.description} model={item.model} image_url={item.image_url} />
+        </TouchableOpacity>
+      );
+    }
 
     render() {
       const { yourBicycles } = this.state;

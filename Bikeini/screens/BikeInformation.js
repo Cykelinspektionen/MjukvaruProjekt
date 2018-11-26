@@ -111,6 +111,20 @@ class BikeInformation extends React.Component {
     }
   }
 
+  componentDidUpdate() {
+    const { navigation } = this.props;
+    const { state } = navigation;
+    const { params } = state;
+    const { data } = params;
+    const { showComments } = data;
+
+    if (showComments) {
+      this.fetchComments();
+    } else {
+      this.fetchSimilarBikes();
+    }
+  }
+
   fetchSimilarBikes = () => {
     const { navigation } = this.props;
     const { state } = navigation;
@@ -125,6 +139,7 @@ class BikeInformation extends React.Component {
     serverApi.fetchApi('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
         if (responseJson.length > 0) {
+          responseJson.reverse();
           this.setState({ matchingBikes: responseJson });
         }
       }).catch(error => console.log(error));
@@ -148,6 +163,7 @@ class BikeInformation extends React.Component {
     serverApi.fetchApi('bikes/getcomments', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
         if (responseJson.length > 0) {
+          responseJson.reverse();
           this.setState({ comments: responseJson });
         }
       }).catch(error => console.log(error));
@@ -181,10 +197,14 @@ class BikeInformation extends React.Component {
     const {
       description, model, image_url,
     } = item;
+    const bikeData = item;
+    bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
 
     return (
       <TouchableOpacity
-        onPress={() => {}}
+        onPress={() => {
+          navigation.navigate('BikeInformation', { data: bikeData });
+        }}
       >
         <Item description={description} model={model} image_url={image_url} />
       </TouchableOpacity>

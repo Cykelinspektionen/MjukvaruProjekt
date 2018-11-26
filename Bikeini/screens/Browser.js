@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, FlatList, TouchableOpacity,
+  StyleSheet, Text, View, FlatList, TouchableOpacity, Platform,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -203,7 +203,7 @@ class Browser extends React.Component {
           style={styles.showTypeRight}
           onPress={this.switchPageType}
         >
-          <Icon name="md-arrow-dropright" size={80} color="black" />
+          <Icon name={Platform.OS === 'ios' ? 'ios-arrow-dropright' : 'md-arrow-dropright'} size={80} color="black" />
         </TouchableOpacity>
       );
     }
@@ -214,7 +214,7 @@ class Browser extends React.Component {
         style={styles.showTypeLeft}
         onPress={this.switchPageType}
       >
-        <Icon name="md-arrow-dropleft" size={80} color="black" />
+        <Icon name={Platform.OS === 'ios' ? 'ios-arrow-dropleft' : 'md-arrow-dropleft'} size={80} color="black" />
       </TouchableOpacity>
     );
   }

@@ -77,10 +77,6 @@ class Profile extends React.Component {
       this.getItemFromServer();
     }
 
-    componentDidUpdate() {
-      this.getItemFromServer();
-    }
-
     getItemFromServer = () => {
       const { authState } = this.props;
       const { jwt } = authState;
@@ -110,7 +106,7 @@ class Profile extends React.Component {
             navigation.navigate('BikeInformation', { data: bikeData });
           }}
         >
-          <Item description={item.description} model={item.model} image_url={item.image_url} />
+          <Item description={item.description} model={item.model} image_url={item.image_url}/>
         </TouchableOpacity>
       );
     }

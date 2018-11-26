@@ -6,6 +6,7 @@ import TabBarIcon from '../assets/TabBarIcon';
 import Browser from '../screens/Browser';
 import AddBike from '../screens/AddBike';
 import Profile from '../screens/Profile';
+import Gamification from '../screens/Gamification';
 
 const BrowserStack = createStackNavigator({ Browser });
 
@@ -37,6 +38,21 @@ NewStack.navigationOptions = {
   ),
 };
 
+const GameStack = createStackNavigator({ Gamification });
+
+GameStack.navigationOptions = {
+  tabBarLabel: 'Game',
+  tabBarOptions: {
+    activeTintColor: '#44ccad',
+  },
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === 'ios' ? 'ios-trophy' : 'md-trophy'}
+    />
+  ),
+};
+
 const ProfileStack = createStackNavigator({ Profile });
 
 ProfileStack.navigationOptions = {
@@ -56,5 +72,6 @@ ProfileStack.navigationOptions = {
 export default createBottomTabNavigator({
   BrowserStack,
   NewStack,
+  GameStack,
   ProfileStack,
 });

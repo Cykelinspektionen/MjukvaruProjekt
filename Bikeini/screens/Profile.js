@@ -98,7 +98,7 @@ class Profile extends React.Component {
       <TouchableOpacity
         onPress={() => console.log(`pressed: ${item.description}`)}
       >
-        <Item description={item.description} model={item.model} />
+        <Item description={item.description} model={item.model} image_url={item.image_url} />
       </TouchableOpacity>
     );
 

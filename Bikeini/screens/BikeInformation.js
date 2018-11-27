@@ -85,8 +85,8 @@ const styles = StyleSheet.create({
 });
 
 class BikeInformation extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
 
     this.state = {
       comments: [{
@@ -94,6 +94,8 @@ class BikeInformation extends React.Component {
       }],
       matchingBikes: [],
       text: '',
+      dataLoaded: false,
+      showComments: false,
     };
   }
 
@@ -103,24 +105,15 @@ class BikeInformation extends React.Component {
     const { params } = state;
     const { data } = params;
     const { showComments } = data;
-
-    if (showComments) {
-      this.fetchComments();
-    } else {
-      this.fetchSimilarBikes();
-    }
+    this.setState({ showComments });
   }
 
   componentDidUpdate() {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
-    const { showComments } = data;
+    const { showComments, dataLoaded } = this.state;
 
-    if (showComments) {
+    if (showComments && !dataLoaded) {
       this.fetchComments();
-    } else {
+    } else if (!dataLoaded) {
       this.fetchSimilarBikes();
     }
   }
@@ -140,7 +133,9 @@ class BikeInformation extends React.Component {
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
-          this.setState({ matchingBikes: responseJson });
+          this.setState({ matchingBikes: responseJson, dataLoaded: true });
+        } else {
+          this.setState({ dataLoaded: true });
         }
       }).catch(error => console.log(error));
   }
@@ -164,7 +159,9 @@ class BikeInformation extends React.Component {
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
-          this.setState({ comments: responseJson });
+          this.setState({ comments: responseJson, dataLoaded: true });
+        } else {
+          this.setState({ dataLoaded: true });
         }
       }).catch(error => console.log(error));
   }
@@ -172,12 +169,8 @@ class BikeInformation extends React.Component {
   keyExtractor = item => item._id;
 
   renderItem = ({ item }) => {
+    const { showComments } = this.state;
     const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
-    const { showComments } = data;
-
 
     if (showComments) {
       const {
@@ -198,7 +191,7 @@ class BikeInformation extends React.Component {
       description, model, image_url,
     } = item;
     const bikeData = item;
-    bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
+    bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
 
     return (
       <TouchableOpacity
@@ -212,12 +205,7 @@ class BikeInformation extends React.Component {
   }
 
   renderList = () => {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
-    const { showComments } = data;
-    const { comments, matchingBikes } = this.state;
+    const { showComments, comments, matchingBikes } = this.state;
 
     if (showComments) {
       return (
@@ -278,12 +266,7 @@ class BikeInformation extends React.Component {
   }
 
   renderCommentField = () => {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
-    const { showComments } = data;
-    const { text } = this.state;
+    const { showComments, text } = this.state;
 
     if (showComments) {
       return (
@@ -312,6 +295,7 @@ class BikeInformation extends React.Component {
   }
 
   render() {
+    const { dataLoaded } = this.state;
     const { navigation } = this.props;
     const { state } = navigation;
     const { params } = state;
@@ -322,6 +306,14 @@ class BikeInformation extends React.Component {
     // const { city, neighborhood } = location;    <- Ingen cykel har samma data-format .....
     const city = location;
     const neighborhood = location;
+    if (!dataLoaded) {
+      console.log('loading');
+      return (
+        <View style={styles.container}>
+          <Text>Loading...</Text>
+        </View>
+      );
+    }
     const list = this.renderList();
     const commentField = this.renderCommentField();
     const imgSource = image_url ? { uri: image_url } : stockBicycle;
@@ -375,7 +367,7 @@ BikeInformation.propTypes = {
     game_score: PropTypes.number.isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
-    errorMsg: PropTypes.string.isRequired,
+    error: PropTypes.string.isRequired,
   }).isRequired,
 };
 

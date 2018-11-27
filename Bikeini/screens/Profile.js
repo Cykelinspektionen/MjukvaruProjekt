@@ -92,7 +92,10 @@ class Profile extends React.Component {
         }).catch(error => console.log(error));
     }
 
-    keyExtractor = item => item._id;
+    keyExtractor = (item) => {
+      const { _id } = item;
+      return _id;
+    };
 
     renderItem = ({ item }) => {
       const { navigation } = this.props;
@@ -106,7 +109,7 @@ class Profile extends React.Component {
             navigation.navigate('BikeInformation', { data: bikeData });
           }}
         >
-          <Item description={item.description} model={item.model} image_url={item.image_url} />
+          <Item description={item.description} model={item.model} imageUrl={item.image_url || ''} />
         </TouchableOpacity>
       );
     }

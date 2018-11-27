@@ -166,7 +166,10 @@ class BikeInformation extends React.Component {
       }).catch(error => console.log(error));
   }
 
-  keyExtractor = item => item._id;
+  keyExtractor = (item) => {
+    const { _id } = item;
+    return _id;
+  };
 
   renderItem = ({ item }) => {
     const { showComments } = this.state;
@@ -188,18 +191,17 @@ class BikeInformation extends React.Component {
 
 
     const {
-      description, model, image_url,
+      description, model,
     } = item;
     const bikeData = item;
     bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
-
     return (
       <TouchableOpacity
         onPress={() => {
           navigation.navigate('BikeInformation', { data: bikeData });
         }}
       >
-        <Item description={description} model={model} image_url={image_url} />
+        <Item description={description} model={model} imageUrl={item.image_url || ''} />
       </TouchableOpacity>
     );
   }
@@ -301,7 +303,7 @@ class BikeInformation extends React.Component {
     const { params } = state;
     const { data } = params;
     const {
-      title, location, description, brand, color, image_url,
+      title, location, description, brand, color,
     } = data;
     // const { city, neighborhood } = location;    <- Ingen cykel har samma data-format .....
     const city = location;
@@ -316,7 +318,7 @@ class BikeInformation extends React.Component {
     }
     const list = this.renderList();
     const commentField = this.renderCommentField();
-    const imgSource = image_url ? { uri: image_url } : stockBicycle;
+    const imgSource = data.image_url ? { uri: data.image_url } : stockBicycle;
     return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>

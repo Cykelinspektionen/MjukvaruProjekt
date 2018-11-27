@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
 
 export default class Item extends React.PureComponent {
   render() {
-    const { description, model, image_url } = this.props;
-    const imgSource = image_url ? { uri: image_url } : stockBicycle;
+    const { description, model, imageUrl } = this.props;
+    const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
 
     return (
       <View style={styles.item}>
@@ -82,4 +82,5 @@ export default class Item extends React.PureComponent {
 Item.propTypes = {
   description: PropTypes.string.isRequired,
   model: PropTypes.string.isRequired,
+  imageUrl: PropTypes.string.isRequired,
 };

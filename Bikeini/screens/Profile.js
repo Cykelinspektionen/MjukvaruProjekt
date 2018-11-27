@@ -106,7 +106,7 @@ class Profile extends React.Component {
             navigation.navigate('BikeInformation', { data: bikeData });
           }}
         >
-          <Item description={item.description} model={item.model} image_url={item.image_url}/>
+          <Item description={item.description} model={item.model} image_url={item.image_url} />
         </TouchableOpacity>
       );
     }

@@ -40,6 +40,25 @@ const styles = StyleSheet.create({
   UserInfo: {
     fontSize: 18,
   },
+  scoreList: {
+    alignSelf: 'flex-start',
+    marginTop: '1%',
+    marginLeft: '3%',
+    width: '88%',
+  },
+  topName: {
+    fontSize: 18,
+    marginLeft: 15,
+    marginBottom: 3,
+  },
+  topScore: {
+    fontSize: 18,
+    marginBottom: 3,
+    position: 'absolute',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    right: '5%',
+  },
 });
 
 class Gamification extends React.Component {
@@ -64,36 +83,20 @@ class Gamification extends React.Component {
 
         const topPlayersSwe = [];
         const topScore = {
-          limit: 10,
+          limit: 5,
         };
+        const formBody = JSON.stringify(topScore);
 
-        const formBody = this.jsonToFormData(topScore);
-
-        serverApi.fetchApi('users/gethighscores/', formBody, 'application/x-www-form-urlencoded', jwt[0])
+        serverApi.fetchApi('users/gethighscores/', formBody, 'application/json', jwt[0])
           .then((responseJson) => {
             for (let i = 0; i < responseJson.length; i += 1) {
               topPlayersSwe.push(responseJson[i]);
             }
             this.setState({ topPlayersSwe });
+            console.log(topPlayersSwe);
           }).catch(error => console.log(error));
       }
 
-      keyExtractor = item => item._id;
-
-      renderItem = ({ item }) => {
-        const { navigation } = this.props;
-        const bikeData = item;
-        bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
-        return (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('BikeInformation', { data: bikeData });
-            }}
-          >
-            <Item description={item.description} model={item.model} image_url={item.image_url} />
-          </TouchableOpacity>
-        );
-      }
 
     renderSweList = () => {
       console.log('haaaaaaae');
@@ -101,12 +104,25 @@ class Gamification extends React.Component {
       console.log('hej', topPlayersSwe);
 
       return (
-        <View style={styles.browserList}>
+        <View style={styles.scoreList}>
           <FlatList
             data={topPlayersSwe}
             extraData={this.state}
-            keyExtractor={this.keyExtractor}
-            renderItem={this.renderItem}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View style={styles.rowContainer}>
+                <Text style={styles.topName}>
+                  {index + 1}
+                .
+                  {item.username}
+
+                </Text>
+                <Text style={styles.topScore}>
+                  {item.game_score}
+p
+                </Text>
+              </View>
+            )}
           />
         </View>
       );
@@ -116,7 +132,6 @@ class Gamification extends React.Component {
       const { profileState } = this.props;
       const { location } = profileState;
       const { game_score } = profileState;
-      const { sweList } = this.renderSweList;
       return (
         <ScrollView style={styles.background}>
           <View style={styles.container} />
@@ -146,7 +161,7 @@ class Gamification extends React.Component {
           </Text>
           <Text style={styles.categories}>Toplist in Sweden</Text>
           <View>
-            {sweList}
+            {this.renderSweList()}
           </View>
         </ScrollView>
       );

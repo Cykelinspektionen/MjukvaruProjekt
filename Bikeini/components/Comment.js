@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 const locationIcon = require('../assets/images/location.png');
 const thumbUpIcon = require('../assets/images/thumbup.png');
 const thumbDownIcon = require('../assets/images/thumbdown.png');
+const FoundBike = require('../assets/images/FoundBike.png');
 const userPlaceholder = require('../assets/images/userPlaceholder.jpg');
 
 const styles = StyleSheet.create({
@@ -40,23 +41,31 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'flex-end',
     width: 25,
-    height: 25,
-    right: '16%',
+    height: 27,
+    right: '23%',
     bottom: 6,
   },
   thumbDownTag: {
     position: 'absolute',
     alignSelf: 'flex-end',
     width: 25,
-    height: 25,
-    right: '9%',
+    height: 27,
+    right: '16%',
     bottom: 6,
   },
   thumbUpTag: {
     position: 'absolute',
     alignSelf: 'flex-end',
     width: 25,
-    height: 25,
+    height: 27,
+    right: '9%',
+    bottom: 6,
+  },
+  FoundTag: {
+    position: 'absolute',
+    alignSelf: 'flex-end',
+    width: 28,
+    height: 27,
     right: '1%',
     bottom: 6,
   },
@@ -98,6 +107,7 @@ export default class Comment extends React.PureComponent {
         <Image style={styles.locationTag} source={locationIcon} />
         <Image style={styles.thumbDownTag} source={thumbDownIcon} />
         <Image style={styles.thumbUpTag} source={thumbUpIcon} />
+        <Image style={styles.FoundTag} source={FoundBike} />
       </View>
     );
   }

@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  StyleSheet, Text, View, ScrollView, Image,
+  StyleSheet, Text, View, ScrollView, Image, FlatList,
 } from 'react-native';
 import headerStyle from './header';
+import serverApi from '../utilities/serverApi';
 
 const profilePic = require('../assets/images/biker.png');
 
@@ -39,6 +40,25 @@ const styles = StyleSheet.create({
   UserInfo: {
     fontSize: 18,
   },
+  scoreList: {
+    alignSelf: 'flex-start',
+    marginTop: '1%',
+    marginLeft: '3%',
+    width: '88%',
+  },
+  topName: {
+    fontSize: 18,
+    marginLeft: 15,
+    marginBottom: 3,
+  },
+  topScore: {
+    fontSize: 18,
+    marginBottom: 3,
+    position: 'absolute',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    right: '5%',
+  },
 });
 
 class Gamification extends React.Component {
@@ -49,12 +69,65 @@ class Gamification extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
+        topPlayersSwe: '',
       };
+    }
+
+    componentDidMount() {
+      this.handleServerTopPlayers();
+    }
+
+      handleServerTopPlayers = () => {
+        const { authState } = this.props;
+        const { jwt } = authState;
+
+        const topPlayersSwe = [];
+        const topScore = {
+          limit: 5,
+        };
+        const formBody = JSON.stringify(topScore);
+
+        serverApi.fetchApi('users/gethighscores/', formBody, 'application/json', jwt[0])
+          .then((responseJson) => {
+            for (let i = 0; i < responseJson.length; i += 1) {
+              topPlayersSwe.push(responseJson[i]);
+            }
+            this.setState({ topPlayersSwe });
+          }).catch(error => console.log(error));
+      }
+
+
+    renderSweList = () => {
+      const { topPlayersSwe } = this.state;
+      return (
+        <View style={styles.scoreList}>
+          <FlatList
+            data={topPlayersSwe}
+            extraData={this.state}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View style={styles.rowContainer}>
+                <Text style={styles.topName}>
+                  {index + 1}
+                .
+                  {item.username}
+
+                </Text>
+                <Text style={styles.topScore}>
+                  {item.game_score}
+p
+                </Text>
+              </View>
+            )}
+          />
+        </View>
+      );
     }
 
     render() {
       const { profileState } = this.props;
       const { location } = profileState;
+      const { game_score } = profileState;
       return (
         <ScrollView style={styles.background}>
           <View style={styles.container} />
@@ -65,22 +138,27 @@ class Gamification extends React.Component {
                 Founded Bikes:
               </Text>
               <Text style={styles.UserInfo}>
-                Helpfull tips:
+                Helpful tips:
               </Text>
               <Text style={styles.UserInfo}>
                 Your stolen Bikes:
               </Text>
               <Text style={styles.UserInfo}>
                 Total points earned:
+                {' '}
+                {game_score}
               </Text>
             </View>
           </View>
           <Text style={styles.categories}>
-            Toplist in
+            Top list in
             {' '}
             {location}
           </Text>
-          <Text style={styles.categories}>Toplist in Sweden</Text>
+          <Text style={styles.categories}>Top list in Sweden</Text>
+          <View>
+            {this.renderSweList()}
+          </View>
         </ScrollView>
       );
     }
@@ -102,7 +180,7 @@ Gamification.propTypes = {
     game_score: PropTypes.number.isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
-    errorMsg: PropTypes.string.isRequired,
+    error: PropTypes.string.isRequired,
   }).isRequired,
 };
 

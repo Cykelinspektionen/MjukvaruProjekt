@@ -83,26 +83,22 @@ class Browser extends React.Component {
   }
 
   handleServerBicycles = () => {
-    const { authState } = this.props;
+    const { authState, profileState } = this.props;
     const { jwt } = authState;
+    const { location } = profileState;
 
-    const foundBicycles = [];
-    const missingBicycles = [];
+    let formData = `type=FOUND&location.city=${location}`;
 
-    serverApi.get('bikes/getfoundbikes/', jwt[0])
+    serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
-        for (let i = 0; i < responseJson.length; i += 1) {
-          foundBicycles.push(responseJson[i]);
-        }
-        this.setState({ foundBicycles: foundBicycles, isFetching: false });
+        this.setState({ foundBicycles: responseJson.message });
       }).catch(error => console.log(error));
 
-    serverApi.get('bikes/getstolenbikes/', jwt[0])
+    formData = `type=STOLEN&location.city=${location}`;
+
+    serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
-        for (let i = 0; i < responseJson.length; i += 1) {
-          missingBicycles.push(responseJson[i]);
-        }
-        this.setState({ missingBicycles: missingBicycles, isFetching: false });
+        this.setState({ missingBicycles: responseJson.message });
       }).catch(error => console.log(error));
   }
 
@@ -168,13 +164,15 @@ class Browser extends React.Component {
   }
 
   onRefresh = () => {
-     this.setState({ isFetching: true }, () => {
-       this.handleServerBicycles()
-     });
+    this.setState({ isFetching: true }, () => {
+      this.handleServerBicycles();
+    });
   }
 
   renderList = () => {
-    const { showMissing, missingBicycles, foundBicycles } = this.state;
+    const {
+      showMissing, missingBicycles, foundBicycles, isFetching,
+    } = this.state;
 
     if (showMissing) {
       return (
@@ -182,7 +180,7 @@ class Browser extends React.Component {
           <FlatList
             data={missingBicycles}
             onRefresh={this.onRefresh}
-            refreshing={this.state.isFetching}
+            refreshing={isFetching}
             extraData={this.state}
             keyExtractor={this.keyExtractor}
             renderItem={this.renderItem}

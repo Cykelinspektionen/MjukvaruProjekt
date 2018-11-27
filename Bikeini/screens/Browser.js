@@ -120,7 +120,7 @@ class Browser extends React.Component {
           navigation.navigate('BikeInformation', { data: bikeData });
         }}
       >
-        <Item description={item.description} model={item.model} imageUrl={item.image_url || ''} />
+        <Item description={item.description || ''} model={item.model || ''} imageUrl={item.image_url || ''} />
       </TouchableOpacity>
     );
   }

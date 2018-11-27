@@ -1,12 +1,13 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image,
+  StyleSheet, Text, View, Image, TouchableOpacity, Alert,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import serverApi from '../utilities/serverApi';
 
 const locationIcon = require('../assets/images/location.png');
-const thumbUpIcon = require('../assets/images/thumbup.png');
-const thumbDownIcon = require('../assets/images/thumbdown.png');
+const thumbUpIcon = require('../assets/images/thumbupNoBack.png');
+const thumbDownIcon = require('../assets/images/thumbdownNoBack.png');
 const FoundBike = require('../assets/images/FoundBike.png');
 const userPlaceholder = require('../assets/images/userPlaceholder.jpg');
 
@@ -78,16 +79,62 @@ const styles = StyleSheet.create({
   answerText: {
     fontWeight: '700',
   },
+  setGreen: {
+    backgroundColor: 'green',
+  },
+  setRed: {
+    backgroundColor: 'red',
+  },
 });
 
 export default class Comment extends React.PureComponent {
+  constructor() {
+    super();
+    this.state = {
+      thumbDown: false,
+      thumbUp: false,
+    };
+  }
+
+  sendCommentPoints = (points) => {
+    const { author, jwt } = this.props;
+    const formBody = {
+      author, points,
+    };
+
+    console.log(jwt, formBody);
+    serverApi.fetchApi(null, JSON.stringify(formBody), 'application/json', jwt[0]);
+  }
+
+  handleThumbs = (action) => {
+    const { thumbDown, thumbUp } = this.state;
+    switch (action) {
+      case 'UP':
+        if (!thumbUp) {
+          this.sendCommentPoints(1);
+        } else if (thumbUp) {
+          this.sendCommentPoints(-1);
+        }
+        this.setState({ thumbUp: !thumbUp, thumbDown: false });
+        break;
+      case 'DW':
+        if (!thumbDown && thumbUp) {
+          this.sendCommentPoints(-1);
+        }
+        this.setState({ thumbDown: !thumbDown, thumbUp: false });
+        break;
+      default:
+        break;
+    }
+  }
+
   render() {
     const { body, author, date } = this.props;
     const dateRaw = date.split('-');
     let day = `${dateRaw[2]}`;
     day = day.split('T');
     const dateClean = `${day[0]}/${dateRaw[1]}`;
-
+    const { thumbDown, thumbUp } = this.state;
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={userPlaceholder} />
@@ -104,10 +151,42 @@ export default class Comment extends React.PureComponent {
           <Text style={styles.answerText}>Answer</Text>
         </View>
 
-        <Image style={styles.locationTag} source={locationIcon} />
-        <Image style={styles.thumbDownTag} source={thumbDownIcon} />
-        <Image style={styles.thumbUpTag} source={thumbUpIcon} />
-        <Image style={styles.FoundTag} source={FoundBike} />
+        <TouchableOpacity
+          style={styles.locationTag}
+          onPress={() => Alert.alert('Do something!')}
+        >
+          <Image
+            style={styles.locationTag}
+            source={locationIcon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.thumbDownTag}
+          onPress={() => this.handleThumbs('DW')}
+        >
+          <Image
+            style={[styles.thumbDownTag, thumbDown ? styles.setRed : []]}
+            source={thumbDownIcon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.thumbUpTag}
+          onPress={() => this.handleThumbs('UP')}
+        >
+          <Image
+            style={[styles.thumbUpTag, thumbUp ? styles.setGreen : []]}
+            source={thumbUpIcon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.FoundTag}
+          onPress={() => Alert.alert('Do something!')}
+        >
+          <Image
+            style={styles.FoundTag}
+            source={FoundBike}
+          />
+        </TouchableOpacity>
       </View>
     );
   }
@@ -117,5 +196,5 @@ Comment.propTypes = {
   body: PropTypes.string.isRequired,
   author: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
-  _id: PropTypes.string.isRequired,
+  jwt: PropTypes.arrayOf(PropTypes.string).isRequired,
 };

@@ -173,18 +173,19 @@ class BikeInformation extends React.Component {
 
   renderItem = ({ item }) => {
     const { showComments } = this.state;
-    const { navigation } = this.props;
+    const { navigation, authState } = this.props;
 
     if (showComments) {
       const {
-        body, author, date, _id,
+        body, author, date,
       } = item;
-
+      const { jwt } = authState;
+      console.log(item);
       return (
         <TouchableOpacity
           onPress={() => {}}
         >
-          <Comment body={body} author={author} date={date} _id={_id} />
+          <Comment body={body} author={author} date={date} jwt={jwt} />
         </TouchableOpacity>
       );
     }
@@ -201,7 +202,7 @@ class BikeInformation extends React.Component {
           navigation.navigate('BikeInformation', { data: bikeData });
         }}
       >
-        <Item description={description} model={model} imageUrl={item.image_url || ''} />
+        <Item description={description || ''} model={model || ''} imageUrl={item.image_url || ''} />
       </TouchableOpacity>
     );
   }
@@ -306,10 +307,12 @@ class BikeInformation extends React.Component {
       title, location, description, brand, color,
     } = data;
     // const { city, neighborhood } = location;    <- Ingen cykel har samma data-format .....
-    const city = location;
-    const neighborhood = location;
+    // small fix until db can be cleaned
+    const city = location ? location.city : '';
+    const neighborhood = location ? location.neighborhood : '';
+
+
     if (!dataLoaded) {
-      console.log('loading');
       return (
         <View style={styles.container}>
           <Text>Loading...</Text>

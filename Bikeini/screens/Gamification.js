@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  StyleSheet, Text, View, ScrollView, Image, FlatList, TouchableOpacity, Item,
+  StyleSheet, Text, View, ScrollView, Image, FlatList,
 } from 'react-native';
 import headerStyle from './header';
 import serverApi from '../utilities/serverApi';
@@ -93,16 +93,12 @@ class Gamification extends React.Component {
               topPlayersSwe.push(responseJson[i]);
             }
             this.setState({ topPlayersSwe });
-            console.log(topPlayersSwe);
           }).catch(error => console.log(error));
       }
 
 
     renderSweList = () => {
-      console.log('haaaaaaae');
       const { topPlayersSwe } = this.state;
-      console.log('hej', topPlayersSwe);
-
       return (
         <View style={styles.scoreList}>
           <FlatList
@@ -142,7 +138,7 @@ p
                 Founded Bikes:
               </Text>
               <Text style={styles.UserInfo}>
-                Helpfull tips:
+                Helpful tips:
               </Text>
               <Text style={styles.UserInfo}>
                 Your stolen Bikes:
@@ -155,11 +151,11 @@ p
             </View>
           </View>
           <Text style={styles.categories}>
-            Toplist in
+            Top list in
             {' '}
             {location}
           </Text>
-          <Text style={styles.categories}>Toplist in Sweden</Text>
+          <Text style={styles.categories}>Top list in Sweden</Text>
           <View>
             {this.renderSweList()}
           </View>

@@ -106,6 +106,10 @@ export default class Comment extends React.PureComponent {
     serverApi.fetchApi(null, JSON.stringify(formBody), 'application/json', jwt[0]);
   }
 
+  handleFound = () => {
+    Alert.alert('closing ad!')
+  }
+
   handleThumbs = (action) => {
     const { thumbDown, thumbUp } = this.state;
     switch (action) {
@@ -180,7 +184,7 @@ export default class Comment extends React.PureComponent {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.FoundTag}
-          onPress={() => Alert.alert('Do something!')}
+          onPress={() => this.handleFound()}
         >
           <Image
             style={styles.FoundTag}

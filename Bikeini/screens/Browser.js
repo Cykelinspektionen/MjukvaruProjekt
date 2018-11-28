@@ -19,9 +19,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
-    alignSelf: 'flex-start',
-    marginTop: '5%',
-    marginLeft: '13%',
   },
   headerText: {
     fontSize: 22,
@@ -42,13 +39,13 @@ const styles = StyleSheet.create({
   },
   showTypeLeft: {
     alignSelf: 'flex-start',
-    position: 'absolute',
+    position: 'relative',
     marginTop: '1%',
     left: 10,
   },
   showTypeRight: {
     alignSelf: 'flex-end',
-    position: 'absolute',
+    position: 'relative',
     marginTop: '1%',
     right: 10,
   },
@@ -74,6 +71,7 @@ class Browser extends React.Component {
       missingBicycles: '',
       foundBicycles: '',
       showFilter: false,
+      isFetching: false,
     };
   }
 
@@ -82,26 +80,22 @@ class Browser extends React.Component {
   }
 
   handleServerBicycles = () => {
-    const { authState } = this.props;
+    const { authState, profileState } = this.props;
     const { jwt } = authState;
+    const { location } = profileState;
 
-    const foundBicycles = [];
-    const missingBicycles = [];
+    let formData = `type=FOUND&location.city=${location}`;
 
-    serverApi.get('bikes/getfoundbikes/', jwt[0])
+    serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
-        for (let i = 0; i < responseJson.length; i += 1) {
-          foundBicycles.push(responseJson[i]);
-        }
-        this.setState({ foundBicycles });
+        this.setState({ foundBicycles: responseJson.message });
       }).catch(error => console.log(error));
 
-    serverApi.get('bikes/getstolenbikes/', jwt[0])
+    formData = `type=STOLEN&location.city=${location}`;
+
+    serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
-        for (let i = 0; i < responseJson.length; i += 1) {
-          missingBicycles.push(responseJson[i]);
-        }
-        this.setState({ missingBicycles });
+        this.setState({ missingBicycles: responseJson.message });
       }).catch(error => console.log(error));
   }
 
@@ -168,14 +162,24 @@ class Browser extends React.Component {
     return null;
   }
 
+  onRefresh = () => {
+    this.setState({ isFetching: true }, () => {
+      this.handleServerBicycles();
+    });
+  }
+
   renderList = () => {
-    const { showMissing, missingBicycles, foundBicycles } = this.state;
+    const {
+      showMissing, missingBicycles, foundBicycles, isFetching,
+    } = this.state;
 
     if (showMissing) {
       return (
         <View style={styles.browserList}>
           <FlatList
             data={missingBicycles}
+            onRefresh={this.onRefresh}
+            refreshing={isFetching}
             extraData={this.state}
             keyExtractor={this.keyExtractor}
             renderItem={this.renderItem}
@@ -255,11 +259,11 @@ class Browser extends React.Component {
     this.setState({ showFilter: !showFilter });
   }
 
-  /*
-  search(searchOptions) {
+
+  search = (searchOptions) => {
     console.log(searchOptions);
   }
-*/
+
   render() {
     const header = this.renderHeader();
     const filterHeader = this.renderFilterHeader();
@@ -303,7 +307,6 @@ Browser.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  // Add connection to ProfileReducer to get 'Region'
   const { authState, profileState } = state;
   return { authState, profileState };
 };

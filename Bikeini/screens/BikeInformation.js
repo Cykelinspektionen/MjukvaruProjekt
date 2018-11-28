@@ -85,8 +85,14 @@ const styles = StyleSheet.create({
 });
 
 class BikeInformation extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
+    const { navigation } = this.props;
+    const { state } = navigation;
+    const { params } = state;
+    const { data } = params;
+    const { showComments } = data;
 
     this.state = {
       comments: [{
@@ -94,59 +100,41 @@ class BikeInformation extends React.Component {
       }],
       matchingBikes: [],
       text: '',
-      dataLoaded: false,
-      showComments: false,
+      currentBike: data,
+      showComments,
     };
   }
 
   componentDidMount() {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
-    const { showComments } = data;
-    this.setState({ showComments });
-  }
+    const { showComments } = this.state;
 
-  componentDidUpdate() {
-    const { showComments, dataLoaded } = this.state;
-
-    if (showComments && !dataLoaded) {
+    if (showComments) {
       this.fetchComments();
-    } else if (!dataLoaded) {
+    } else {
       this.fetchSimilarBikes();
     }
   }
 
   fetchSimilarBikes = () => {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
+    const { currentBike } = this.state;
     const { authState } = this.props;
     const { jwt } = authState;
 
-    const formBody = this.jsonToFormData(data);
+    const formBody = this.jsonToFormData(currentBike);
 
-    // multipart/form-data
     serverApi.fetchApi('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
-          this.setState({ matchingBikes: responseJson, dataLoaded: true });
-        } else {
-          this.setState({ dataLoaded: true });
+          this.setState({ matchingBikes: responseJson });
         }
       }).catch(error => console.log(error));
   }
 
   fetchComments = () => {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
+    const { currentBike } = this.state;
     const { authState } = this.props;
-    const { _id } = data;
+    const { _id } = currentBike;
     const { jwt } = authState;
 
     const bikeInformation = {
@@ -159,9 +147,7 @@ class BikeInformation extends React.Component {
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
-          this.setState({ comments: responseJson, dataLoaded: true });
-        } else {
-          this.setState({ dataLoaded: true });
+          this.setState({ comments: responseJson });
         }
       }).catch(error => console.log(error));
   }
@@ -173,15 +159,14 @@ class BikeInformation extends React.Component {
 
   renderItem = ({ item }) => {
     const { showComments } = this.state;
-    const { navigation, authState } = this.props;
-
+    const { authState } = this.props;
 
     if (showComments) {
       const {
         body, author, date,
       } = item;
       const { jwt } = authState;
-      console.log(item);
+
       return (
         <TouchableOpacity
           onPress={() => {}}
@@ -191,25 +176,23 @@ class BikeInformation extends React.Component {
       );
     }
 
-
-    const {
-      description, model,
-    } = item;
-    const bikeData = item;
-    bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
     return (
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate('BikeInformation', { data: bikeData });
+          this.setState({ currentBike: item }, () => {
+            this.fetchSimilarBikes();
+          });
         }}
       >
-        <Item description={description || ''} model={model || ''} imageUrl={item.image_url || ''} />
+        <Item description={item.description || ''} model={item.model || ''} imageUrl={item.image_url || ''} />
       </TouchableOpacity>
     );
   }
 
   renderList = () => {
-    const { showComments, comments, matchingBikes } = this.state;
+    const {
+      comments, matchingBikes, showComments,
+    } = this.state;
 
     if (showComments) {
       return (
@@ -239,13 +222,9 @@ class BikeInformation extends React.Component {
   }
 
   sendComment = () => {
-    const { text } = this.state;
+    const { text, currentBike } = this.state;
+    const { _id } = currentBike;
     const { authState } = this.props;
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
-    const { _id } = data;
     const { jwt } = authState;
 
     const commentInformation = {
@@ -270,7 +249,7 @@ class BikeInformation extends React.Component {
   }
 
   renderCommentField = () => {
-    const { showComments, text } = this.state;
+    const { text, showComments } = this.state;
 
     if (showComments) {
       return (
@@ -299,28 +278,14 @@ class BikeInformation extends React.Component {
   }
 
   render() {
-    const { dataLoaded } = this.state;
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
+    const { currentBike } = this.state;
     const {
       title, location, description, brand, color,
-    } = data;
-    // const { city, neighborhood } = location;    <- Ingen cykel har samma data-format .....
-    // small fix until db can be cleaned
-    const city = location ? location.city : '';
-    const neighborhood = location ? location.neighborhood : '';
-    if (!dataLoaded) {
-      return (
-        <View style={styles.container}>
-          <Text>Loading...</Text>
-        </View>
-      );
-    }
+    } = currentBike;
+    const { city, neighborhood } = location;
     const list = this.renderList();
     const commentField = this.renderCommentField();
-    const imgSource = data.image_url ? { uri: data.image_url } : stockBicycle;
+    const imgSource = currentBike.image_url ? { uri: currentBike.image_url } : stockBicycle;
     return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>

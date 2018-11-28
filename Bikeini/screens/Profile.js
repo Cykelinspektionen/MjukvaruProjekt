@@ -59,6 +59,12 @@ const styles = StyleSheet.create({
   actionButton: {
     backgroundColor: '#00b5ec',
   },
+  browserList: {
+    alignSelf: 'flex-start',
+    marginTop: '1%',
+    marginLeft: '10%',
+    width: '88%',
+  },
 });
 
 class Profile extends React.Component {
@@ -100,17 +106,22 @@ class Profile extends React.Component {
 
     renderItem = ({ item }) => {
       const { navigation } = this.props;
-
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
-
       return (
         <TouchableOpacity
           onPress={() => {
+            bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
             navigation.navigate('BikeInformation', { data: bikeData });
           }}
         >
-          <Item description={item.description || ''} model={item.model || ''} imageUrl={item.image_url || ''} />
+          <Item
+            description={item.description || ''}
+            model={item.model || ''}
+            imageUrl={item.image_url || ''}
+            bikeData={bikeData}
+            navigation={navigation}
+          />
         </TouchableOpacity>
       );
     }
@@ -161,12 +172,14 @@ class Profile extends React.Component {
               </View>
             </View>
             <Text style={styles.categories}>Your missing bikes:</Text>
-            <FlatList
-              data={yourBicycles}
-              keyExtractor={this.keyExtractor}
-              extraData={this.state}
-              renderItem={this.renderItem}
-            />
+            <View style={styles.browserList}>
+              <FlatList
+                data={yourBicycles}
+                keyExtractor={this.keyExtractor}
+                extraData={this.state}
+                renderItem={this.renderItem}
+              />
+            </View>
             <Text style={styles.categories}>Bikes you have submitted tips about:</Text>
           </View>
         </ScrollView>

@@ -111,10 +111,17 @@ class Browser extends React.Component {
     return (
       <TouchableOpacity
         onPress={() => {
+          bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
           navigation.navigate('BikeInformation', { data: bikeData });
         }}
       >
-        <Item description={item.description || ''} model={item.model || ''} imageUrl={item.image_url || ''} />
+        <Item
+          description={item.description || ''}
+          model={item.model || ''}
+          imageUrl={item.image_url || ''}
+          bikeData={bikeData}
+          navigation={navigation}
+        />
       </TouchableOpacity>
     );
   }

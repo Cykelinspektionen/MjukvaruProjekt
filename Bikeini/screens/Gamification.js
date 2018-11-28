@@ -170,7 +170,6 @@ p
     render() {
       const { profileState } = this.props;
       const { location } = profileState;
-      const { game_score } = profileState;
       return (
         <ScrollView style={styles.background}>
           <View style={styles.container} />
@@ -189,7 +188,7 @@ p
               <Text style={styles.UserInfo}>
                 Total points earned:
                 {' '}
-                {game_score}
+                {profileState.game_score}
               </Text>
             </View>
           </View>

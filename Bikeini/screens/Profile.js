@@ -105,6 +105,7 @@ class Profile extends React.Component {
     };
 
     renderItem = ({ item }) => {
+      console.log(item)
       const { navigation } = this.props;
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
@@ -112,8 +113,9 @@ class Profile extends React.Component {
       return (
         <TouchableOpacity
           onPress={() => {
+            bikeData.showResolveBike = true;
             bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
-            navigation.navigate('BikeInformation', { data: bikeData });
+            navigation.navigate('BikeInformation', { bikeData });
           }}
         >
           <Item

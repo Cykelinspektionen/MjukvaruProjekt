@@ -91,8 +91,7 @@ class BikeInformation extends React.Component {
     const { navigation } = this.props;
     const { state } = navigation;
     const { params } = state;
-    const { data } = params;
-    const { showComments } = data;
+    const { bikeData } = params;
 
     this.state = {
       comments: [{
@@ -100,15 +99,13 @@ class BikeInformation extends React.Component {
       }],
       matchingBikes: [],
       text: '',
-      currentBike: data,
-      showComments,
+      bikeData,
     };
   }
 
   componentDidMount() {
-    const { showComments } = this.state;
-
-    if (showComments) {
+    const { bikeData } = this.state;
+    if (bikeData.showComments) {
       this.fetchComments();
     } else {
       this.fetchSimilarBikes();
@@ -116,11 +113,11 @@ class BikeInformation extends React.Component {
   }
 
   fetchSimilarBikes = () => {
-    const { currentBike } = this.state;
+    const { bikeData } = this.state;
     const { authState } = this.props;
     const { jwt } = authState;
 
-    const formBody = this.jsonToFormData(currentBike);
+    const formBody = this.jsonToFormData(bikeData);
 
     serverApi.fetchApi('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
@@ -132,13 +129,13 @@ class BikeInformation extends React.Component {
   }
 
   fetchComments = () => {
-    const { currentBike } = this.state;
+    const { bikeData } = this.state;
     const { authState } = this.props;
-    const { _id } = currentBike;
+    const { _id } = bikeData;
     const { jwt } = authState;
 
     const bikeInformation = {
-      bikeId,
+      bikeId: _id,
     };
 
     const formBody = this.jsonToFormData(bikeInformation);
@@ -158,20 +155,29 @@ class BikeInformation extends React.Component {
   };
 
   renderItem = ({ item }) => {
-    const { showComments } = this.state;
+    const {
+      bikeData,
+    } = this.state;
+    const { _id } = bikeData;
     const { authState } = this.props;
 
-    if (showComments) {
+    if (bikeData.showComments) {
       const {
         body, author, date,
       } = item;
       const { jwt } = authState;
-
       return (
         <TouchableOpacity
           onPress={() => {}}
         >
-          <Comment body={body} author={author} date={date} jwt={jwt} showResolveBike={showResolveBike} bikeId={bikeId} />
+          <Comment
+            body={body}
+            author={author}
+            date={date}
+            jwt={jwt}
+            showResolveBike={bikeData.showResolveBike}
+            bikeId={_id}
+          />
         </TouchableOpacity>
       );
     }
@@ -179,22 +185,27 @@ class BikeInformation extends React.Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          this.setState({ currentBike: item }, () => {
+          this.setState({ bikeData: item }, () => {
             this.fetchSimilarBikes();
           });
         }}
       >
-        <Item description={item.description || ''} model={item.model || ''} imageUrl={item.image_url || ''} />
+        <Item
+          description={item.description || ''}
+          model={item.model || ''}
+          imageUrl={item.image_url || ''}
+          bikeData={bikeData}
+        />
       </TouchableOpacity>
     );
   }
 
   renderList = () => {
     const {
-      comments, matchingBikes, showComments,
+      comments, matchingBikes, bikeData,
     } = this.state;
 
-    if (showComments) {
+    if (bikeData.showComments) {
       return (
         <FlatList
           data={comments}
@@ -222,8 +233,8 @@ class BikeInformation extends React.Component {
   }
 
   sendComment = () => {
-    const { text, currentBike } = this.state;
-    const { _id } = currentBike;
+    const { text, bikeData } = this.state;
+    const { _id } = bikeData;
     const { authState } = this.props;
     const { jwt } = authState;
 
@@ -249,9 +260,9 @@ class BikeInformation extends React.Component {
   }
 
   renderCommentField = () => {
-    const { text, showComments } = this.state;
+    const { text, bikeData } = this.state;
 
-    if (showComments) {
+    if (bikeData.showComments) {
       return (
         <View style={styles.commentInputContainer}>
           <TextInput
@@ -278,14 +289,16 @@ class BikeInformation extends React.Component {
   }
 
   render() {
-    const { currentBike } = this.state;
+    const { bikeData } = this.state;
     const {
       title, location, description, brand, color,
-    } = currentBike;
-    const { city, neighborhood } = location;
+    } = bikeData;
+    const city = location ? location.city : '';
+    const neighborhood = location ? location.neighborhood : '';
+
     const list = this.renderList();
     const commentField = this.renderCommentField();
-    const imgSource = currentBike.image_url ? { uri: currentBike.image_url } : stockBicycle;
+    const imgSource = bikeData.image_url ? { uri: bikeData.image_url } : stockBicycle;
     return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>

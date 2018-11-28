@@ -80,7 +80,7 @@ export default class Item extends React.PureComponent {
             style={styles.commentsTag}
             onPress={() => {
               bikeData.showComments = true;
-              navigation.navigate('BikeInformation', { data: bikeData });
+              navigation.navigate('BikeInformation', { bikeData });
             }}
           >
             <Image style={styles.commentsTag} source={commentIcon} />

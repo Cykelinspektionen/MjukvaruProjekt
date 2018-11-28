@@ -90,11 +90,14 @@ class AddBike extends React.Component {
         antitheft_code: '',
         description: '',
         location: {
-          Lat: 0,
-          Long: 0,
+          lat: 0,
+          long: 0,
+          city: '',
+          neighborhood: '',
+          street: '',
         },
         keywords: {
-          frameType: 'MALE',
+          frame_type: 'MALE',
           child: false,
           sport: true,
           tandem: false,
@@ -118,7 +121,7 @@ class AddBike extends React.Component {
             value: 'FOUND',
           },
         ],
-        frameType: [
+        frame_type: [
           {
             label: 'Male',
             value: 'MALE',
@@ -402,8 +405,8 @@ class AddBike extends React.Component {
             flexDirection="row"
           />
           <RadioGroup
-            radioButtons={radios.frameType}
-            onPress={(data) => { this.radioUpdater(data, 'frameType', true); }}
+            radioButtons={radios.frame_type}
+            onPress={(data) => { this.radioUpdater(data, 'frame_type', true); }}
             flexDirection="row"
           />
           <RadioGroup

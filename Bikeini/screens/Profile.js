@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, ScrollView, Image, FlatList, TouchableOpacity, TouchableHighlight, RefreshControl
+  StyleSheet, Text, View, ScrollView, Image, FlatList, TouchableOpacity, TouchableHighlight, RefreshControl,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -89,11 +89,14 @@ class Profile extends React.Component {
           for (let i = 0; i < responseJson.length; i += 1) {
             yourBicycles.push(responseJson[i]);
           }
-          this.setState({ yourBicycles: yourBicycles, isFetching: false });
+          this.setState({ yourBicycles, isFetching: false });
         }).catch(error => console.log(error));
     }
 
-    keyExtractor = item => item._id;
+    keyExtractor = (item) => {
+      const { _id } = item;
+      return _id;
+    };
 
     renderItem = ({ item }) => {
       const { navigation } = this.props;
@@ -107,15 +110,15 @@ class Profile extends React.Component {
             navigation.navigate('BikeInformation', { data: bikeData });
           }}
         >
-          <Item description={item.description} model={item.model} image_url={item.image_url}/>
+          <Item description={item.description || ''} model={item.model || ''} imageUrl={item.image_url || ''} />
         </TouchableOpacity>
       );
     }
 
     onRefresh = () => {
-       this.setState({ isFetching: true }, () => {
-         this.getItemFromServer();
-       });
+      this.setState({ isFetching: true }, () => {
+        this.getItemFromServer();
+      });
     }
 
     render() {
@@ -129,12 +132,13 @@ class Profile extends React.Component {
       return (
         <ScrollView
           style={styles.background}
-          refreshControl={
+          refreshControl={(
             <RefreshControl
               onRefresh={this.onRefresh}
               refreshing={this.state.isFetching}
-              />
-          }>
+            />
+)}
+        >
           <View style={styles.container}>
             <View style={styles.rowContainer}>
               <Image style={styles.profile} source={profilePic} />

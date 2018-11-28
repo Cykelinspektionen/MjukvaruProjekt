@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert
+  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -88,31 +88,30 @@ class BikeInformation extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      comments: [{
-        body: 'No comments yet! Be the first to make a comment! :)', author: '1', date: '1', _id: '1',
-      }],
-      matchingBikes: [],
-      text: '',
-      currentBike: '',
-    };
-  }
-
-  componentDidMount() {
     const { navigation } = this.props;
     const { state } = navigation;
     const { params } = state;
     const { data } = params;
     const { showComments } = data;
 
+    this.state = {
+      comments: [{
+        body: 'No comments yet! Be the first to make a comment! :)', author: '1', date: '1', _id: '1',
+      }],
+      matchingBikes: [],
+      text: '',
+      currentBike: data,
+      showComments,
+    };
+  }
+
+  componentDidMount() {
+    const { showComments } = this.state;
+
     if (showComments) {
-      this.setState({currentBike: data}, () => {
-        this.fetchComments();
-      });
+      this.fetchComments();
     } else {
-      this.setState({currentBike: data}, () => {
-        this.fetchSimilarBikes();
-      });
+      this.fetchSimilarBikes();
     }
   }
 
@@ -123,7 +122,6 @@ class BikeInformation extends React.Component {
 
     const formBody = this.jsonToFormData(currentBike);
 
-    // multipart/form-data
     serverApi.fetchApi('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
         if (responseJson.length > 0) {
@@ -135,6 +133,7 @@ class BikeInformation extends React.Component {
 
   fetchComments = () => {
     const { currentBike } = this.state;
+    const { authState } = this.props;
     const { _id } = currentBike;
     const { jwt } = authState;
 
@@ -156,45 +155,41 @@ class BikeInformation extends React.Component {
   keyExtractor = item => item._id;
 
   renderItem = ({ item }) => {
-    const { showComments } = this.state.currentBike.showComments;
+    const { showComments } = this.state;
+    const { authState } = this.props;
 
     if (showComments) {
       const {
-        body, author, date, _id,
+        body, author, date,
       } = item;
+      const { jwt } = authState;
 
       return (
         <TouchableOpacity
           onPress={() => {}}
         >
-          <Comment body={body} author={author} date={date} _id={_id} />
+          <Comment body={body} author={author} date={date} jwt={jwt} />
         </TouchableOpacity>
       );
     }
 
-
-    const {
-      title, description, brand, model, color, image_url, city, neighborhood, _id,
-    } = item;
-    const bikeData = item;
-    bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
-
     return (
       <TouchableOpacity
         onPress={() => {
-          this.setState({currentBike: item}, () => {
+          this.setState({ currentBike: item }, () => {
             this.fetchSimilarBikes();
           });
         }}
       >
-        <Item description={description} model={model} image_url={image_url} />
+        <Item description={item.description || ''} model={item.model || ''} imageUrl={item.image_url || ''} />
       </TouchableOpacity>
     );
   }
 
   renderList = () => {
-    const { comments, matchingBikes, currentBike } = this.state;
-    const { showComments } = currentBike;
+    const {
+      comments, matchingBikes, showComments,
+    } = this.state;
 
     if (showComments) {
       return (
@@ -251,8 +246,7 @@ class BikeInformation extends React.Component {
   }
 
   renderCommentField = () => {
-    const { text, currentBike } = this.state;
-    const { showComments } = currentBike;
+    const { text, showComments } = this.state;
 
     if (showComments) {
       return (
@@ -285,9 +279,7 @@ class BikeInformation extends React.Component {
     const {
       title, location, description, brand, color, image_url,
     } = currentBike;
-    // const { city, neighborhood } = location;    <- Ingen cykel har samma data-format .....
-    const city = location;
-    const neighborhood = location;
+    const { city, neighborhood } = location;
     const list = this.renderList();
     const commentField = this.renderCommentField();
     const imgSource = image_url ? { uri: image_url } : stockBicycle;

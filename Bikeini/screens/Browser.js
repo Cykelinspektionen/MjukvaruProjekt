@@ -95,7 +95,6 @@ class Browser extends React.Component {
 
     serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
-        console.log(responseJson);
         this.setState({ missingBicycles: responseJson.message });
       }).catch(error => console.log(error));
   }
@@ -260,11 +259,11 @@ class Browser extends React.Component {
     this.setState({ showFilter: !showFilter });
   }
 
-  /*
-  search(searchOptions) {
+
+  search = (searchOptions) => {
     console.log(searchOptions);
   }
-*/
+
   render() {
     const header = this.renderHeader();
     const filterHeader = this.renderFilterHeader();

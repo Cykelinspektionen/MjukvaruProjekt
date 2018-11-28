@@ -102,7 +102,7 @@ class Profile extends React.Component {
 
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
-
+      bikeData.showResolveBike = true;
       return (
         <TouchableOpacity
           onPress={() => {

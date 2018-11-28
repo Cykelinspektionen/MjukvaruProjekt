@@ -114,6 +114,7 @@ class Browser extends React.Component {
     const { navigation } = this.props;
     const bikeData = item;
     bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
+    bikeData.showResolveBike = false;
     return (
       <TouchableOpacity
         onPress={() => {

@@ -96,6 +96,8 @@ class BikeInformation extends React.Component {
       text: '',
       dataLoaded: false,
       showComments: false,
+      showResolveBike: false,
+      bikeId: null,
     };
   }
 
@@ -104,8 +106,8 @@ class BikeInformation extends React.Component {
     const { state } = navigation;
     const { params } = state;
     const { data } = params;
-    const { showComments } = data;
-    this.setState({ showComments });
+    const { showComments, showResolveBike, _id } = data;
+    this.setState({ showComments, showResolveBike, bikeId: _id });
   }
 
   componentDidUpdate() {
@@ -141,16 +143,12 @@ class BikeInformation extends React.Component {
   }
 
   fetchComments = () => {
-    const { navigation } = this.props;
-    const { state } = navigation;
-    const { params } = state;
-    const { data } = params;
     const { authState } = this.props;
-    const { _id } = data;
+    const { bikeId } = this.state;
     const { jwt } = authState;
 
     const bikeInformation = {
-      bikeId: _id,
+      bikeId,
     };
 
     const formBody = this.jsonToFormData(bikeInformation);
@@ -172,7 +170,7 @@ class BikeInformation extends React.Component {
   };
 
   renderItem = ({ item }) => {
-    const { showComments } = this.state;
+    const { showComments, showResolveBike, bikeId } = this.state;
     const { navigation, authState } = this.props;
 
 
@@ -181,12 +179,11 @@ class BikeInformation extends React.Component {
         body, author, date,
       } = item;
       const { jwt } = authState;
-      console.log(item);
       return (
         <TouchableOpacity
           onPress={() => {}}
         >
-          <Comment body={body} author={author} date={date} jwt={jwt} />
+          <Comment body={body} author={author} date={date} jwt={jwt} showResolveBike={showResolveBike} bikeId={bikeId} />
         </TouchableOpacity>
       );
     }

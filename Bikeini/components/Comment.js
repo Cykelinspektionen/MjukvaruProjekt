@@ -39,35 +39,31 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   locationTag: {
-    position: 'absolute',
+    flexDirection: 'row-reverse',
     alignSelf: 'flex-end',
     width: 25,
     height: 27,
-    right: '23%',
     bottom: 6,
   },
   thumbDownTag: {
-    position: 'absolute',
+    flexDirection: 'row-reverse',
     alignSelf: 'flex-end',
     width: 25,
     height: 27,
-    right: '16%',
     bottom: 6,
   },
   thumbUpTag: {
-    position: 'absolute',
+    flexDirection: 'row-reverse',
     alignSelf: 'flex-end',
     width: 25,
     height: 27,
-    right: '9%',
     bottom: 6,
   },
   FoundTag: {
-    position: 'absolute',
+    flexDirection: 'row-reverse',
     alignSelf: 'flex-end',
     width: 28,
     height: 27,
-    right: '1%',
     bottom: 6,
   },
   answer: {
@@ -96,7 +92,7 @@ export default class Comment extends React.PureComponent {
     };
   }
 
-  sendCommentPoints = (points) => {
+  sendPointsToUser = (points) => {
     const { author, jwt } = this.props;
     const formBody = {
       author, points,
@@ -104,8 +100,20 @@ export default class Comment extends React.PureComponent {
     serverApi.fetchApi(null, JSON.stringify(formBody), 'application/json', jwt[0]);
   }
 
+  setBikeToFound = () => {
+    const { jwt, bikeId } = this.props;
+    const formBody = {
+      bikeId,
+      active: false,
+	    type: 'Found',
+
+    };
+    serverApi.fetchApi('bikes/update/', JSON.stringify(formBody), 'application/json', jwt[0]);
+  }
+
   handleFound = () => {
-    Alert.alert('closing ad!');
+    this.sendPointsToUser(5);
+    this.setBikeToFound();
   }
 
   handleThumbs = (action) => {
@@ -113,15 +121,15 @@ export default class Comment extends React.PureComponent {
     switch (action) {
       case 'UP':
         if (!thumbUp) {
-          this.sendCommentPoints(1);
+          this.sendPointsToUser(1);
         } else if (thumbUp) {
-          this.sendCommentPoints(-1);
+          this.sendPointsToUser(-1);
         }
         this.setState({ thumbUp: !thumbUp, thumbDown: false });
         break;
       case 'DW':
         if (!thumbDown && thumbUp) {
-          this.sendCommentPoints(-1);
+          this.sendPointsToUser(-1);
         }
         this.setState({ thumbDown: !thumbDown, thumbUp: false });
         break;
@@ -131,12 +139,28 @@ export default class Comment extends React.PureComponent {
   }
 
   render() {
-    const { body, author, date } = this.props;
+    const {
+      body, author, date, showResolveBike,
+    } = this.props;
     const dateRaw = date.split('-');
     let day = `${dateRaw[2]}`;
     day = day.split('T');
     const dateClean = `${day[0]}/${dateRaw[1]}`;
     const { thumbDown, thumbUp } = this.state;
+    let resolveButton = null;
+    if (showResolveBike) {
+      resolveButton = (
+        <TouchableOpacity
+          style={styles.FoundTag}
+          onPress={() => this.handleFound()}
+        >
+          <Image
+            style={styles.FoundTag}
+            source={FoundBike}
+          />
+        </TouchableOpacity>
+      );
+    }
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={userPlaceholder} />
@@ -180,15 +204,7 @@ export default class Comment extends React.PureComponent {
             source={thumbUpIcon}
           />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.FoundTag}
-          onPress={() => this.handleFound()}
-        >
-          <Image
-            style={styles.FoundTag}
-            source={FoundBike}
-          />
-        </TouchableOpacity>
+        {resolveButton}
       </View>
     );
   }
@@ -199,4 +215,6 @@ Comment.propTypes = {
   author: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   jwt: PropTypes.arrayOf(PropTypes.string).isRequired,
+  showResolveBike: PropTypes.bool.isRequired,
+  bikeId: PropTypes.string.isRequired,
 };

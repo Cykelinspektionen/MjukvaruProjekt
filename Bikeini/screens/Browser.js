@@ -19,9 +19,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
-    alignSelf: 'flex-start',
-    marginTop: '5%',
-    marginLeft: '13%',
+    alignItems: 'center',
   },
   headerText: {
     fontSize: 22,
@@ -98,6 +96,7 @@ class Browser extends React.Component {
 
     serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
+        console.log(responseJson);
         this.setState({ missingBicycles: responseJson.message });
       }).catch(error => console.log(error));
   }

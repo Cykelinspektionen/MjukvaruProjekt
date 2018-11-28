@@ -175,6 +175,7 @@ class BikeInformation extends React.Component {
     const { showComments } = this.state;
     const { navigation, authState } = this.props;
 
+
     if (showComments) {
       const {
         body, author, date,
@@ -310,8 +311,6 @@ class BikeInformation extends React.Component {
     // small fix until db can be cleaned
     const city = location ? location.city : '';
     const neighborhood = location ? location.neighborhood : '';
-
-
     if (!dataLoaded) {
       return (
         <View style={styles.container}>

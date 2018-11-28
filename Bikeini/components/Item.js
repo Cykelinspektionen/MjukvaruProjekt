@@ -88,7 +88,7 @@ export default class Item extends React.PureComponent {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.locationTag}
-            onPress={() => { Alert.alert('Position me biatch'); }}
+            onPress={() => { Alert.alert('Position me blokitch'); }}
           >
             <Image style={styles.locationTag} source={locationIcon} />
           </TouchableOpacity>

@@ -180,7 +180,6 @@ class BikeInformation extends React.Component {
         body, author, date,
       } = item;
       const { jwt } = authState;
-      console.log(item);
       return (
         <TouchableOpacity
           onPress={() => {}}
@@ -199,6 +198,7 @@ class BikeInformation extends React.Component {
     return (
       <TouchableOpacity
         onPress={() => {
+          this.setState({ showComments: true });
           navigation.navigate('BikeInformation', { data: bikeData });
         }}
       >

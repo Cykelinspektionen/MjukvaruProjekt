@@ -64,7 +64,6 @@ export default class Item extends React.PureComponent {
       description, model, imageUrl, bikeData, navigation,
     } = this.props;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
-    console.log('desc: ', description);
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={imgSource} />

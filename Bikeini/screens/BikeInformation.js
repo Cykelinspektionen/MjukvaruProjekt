@@ -166,40 +166,44 @@ class BikeInformation extends React.Component {
       }).catch(error => console.log(error));
   }
 
-  keyExtractor = item => item._id;
+  keyExtractor = (item) => {
+    const { _id } = item;
+    return _id;
+  };
 
   renderItem = ({ item }) => {
     const { showComments } = this.state;
-    const { navigation } = this.props;
+    const { navigation, authState } = this.props;
+
 
     if (showComments) {
       const {
-        body, author, date, _id,
+        body, author, date,
       } = item;
-
+      const { jwt } = authState;
+      console.log(item);
       return (
         <TouchableOpacity
           onPress={() => {}}
         >
-          <Comment body={body} author={author} date={date} _id={_id} />
+          <Comment body={body} author={author} date={date} jwt={jwt} />
         </TouchableOpacity>
       );
     }
 
 
     const {
-      description, model, image_url,
+      description, model,
     } = item;
     const bikeData = item;
     bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
-
     return (
       <TouchableOpacity
         onPress={() => {
           navigation.navigate('BikeInformation', { data: bikeData });
         }}
       >
-        <Item description={description} model={model} image_url={image_url} />
+        <Item description={description || ''} model={model || ''} imageUrl={item.image_url || ''} />
       </TouchableOpacity>
     );
   }
@@ -301,13 +305,13 @@ class BikeInformation extends React.Component {
     const { params } = state;
     const { data } = params;
     const {
-      title, location, description, brand, color, image_url,
+      title, location, description, brand, color,
     } = data;
     // const { city, neighborhood } = location;    <- Ingen cykel har samma data-format .....
-    const city = location;
-    const neighborhood = location;
+    // small fix until db can be cleaned
+    const city = location ? location.city : '';
+    const neighborhood = location ? location.neighborhood : '';
     if (!dataLoaded) {
-      console.log('loading');
       return (
         <View style={styles.container}>
           <Text>Loading...</Text>
@@ -316,7 +320,7 @@ class BikeInformation extends React.Component {
     }
     const list = this.renderList();
     const commentField = this.renderCommentField();
-    const imgSource = image_url ? { uri: image_url } : stockBicycle;
+    const imgSource = data.image_url ? { uri: data.image_url } : stockBicycle;
     return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>

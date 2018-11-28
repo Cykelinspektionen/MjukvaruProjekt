@@ -105,7 +105,10 @@ class Browser extends React.Component {
       }).catch(error => console.log(error));
   }
 
-  keyExtractor = item => item._id;
+  keyExtractor = (item) => {
+    const { _id } = item;
+    return _id;
+  };
 
   renderItem = ({ item }) => {
     const { navigation } = this.props;
@@ -117,7 +120,7 @@ class Browser extends React.Component {
           navigation.navigate('BikeInformation', { data: bikeData });
         }}
       >
-        <Item description={item.description} model={item.model} image_url={item.image_url} />
+        <Item description={item.description || ''} model={item.model || ''} imageUrl={item.image_url || ''} />
       </TouchableOpacity>
     );
   }
@@ -252,10 +255,11 @@ class Browser extends React.Component {
     this.setState({ showFilter: !showFilter });
   }
 
+  /*
   search(searchOptions) {
     console.log(searchOptions);
   }
-
+*/
   render() {
     const header = this.renderHeader();
     const filterHeader = this.renderFilterHeader();

@@ -8,7 +8,7 @@ import headerStyle from './header';
 import serverApi from '../utilities/serverApi';
 import Item from '../components/Item';
 
-const profilePic = require('../assets/images/biker.png');
+const profilePic = require('../assets/images/userPlaceholder.jpg');
 
 
 const styles = StyleSheet.create({

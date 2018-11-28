@@ -122,7 +122,7 @@ class Profile extends React.Component {
     }
 
     render() {
-      const { yourBicycles } = this.state;
+      const { yourBicycles, isFetching } = this.state;
       const { profileState } = this.props;
       const { username } = profileState;
       const { location } = profileState;
@@ -135,7 +135,7 @@ class Profile extends React.Component {
           refreshControl={(
             <RefreshControl
               onRefresh={this.onRefresh}
-              refreshing={this.state.isFetching}
+              refreshing={isFetching}
             />
 )}
         >

@@ -280,12 +280,12 @@ class BikeInformation extends React.Component {
   render() {
     const { currentBike } = this.state;
     const {
-      title, location, description, brand, color, image_url,
+      title, location, description, brand, color,
     } = currentBike;
     const { city, neighborhood } = location;
     const list = this.renderList();
     const commentField = this.renderCommentField();
-    const imgSource = image_url ? { uri: image_url } : stockBicycle;
+    const imgSource = currentBike.image_url ? { uri: currentBike.image_url } : stockBicycle;
     return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>

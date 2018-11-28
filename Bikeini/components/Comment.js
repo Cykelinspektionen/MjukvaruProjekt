@@ -101,13 +101,11 @@ export default class Comment extends React.PureComponent {
     const formBody = {
       author, points,
     };
-
-    console.log(jwt, formBody);
     serverApi.fetchApi(null, JSON.stringify(formBody), 'application/json', jwt[0]);
   }
 
   handleFound = () => {
-    Alert.alert('closing ad!')
+    Alert.alert('closing ad!');
   }
 
   handleThumbs = (action) => {

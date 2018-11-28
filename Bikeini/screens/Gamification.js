@@ -7,7 +7,7 @@ import {
 import headerStyle from './header';
 import serverApi from '../utilities/serverApi';
 
-const profilePic = require('../assets/images/biker.png');
+const profilePic = require('../assets/images/userPlaceholder.jpg');
 
 
 const styles = StyleSheet.create({
@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
   categories: {
     fontSize: 24,
     margin: 10,
+    textDecorationLine: 'underline',
   },
   UserInfo: {
     fontSize: 18,
@@ -70,6 +71,7 @@ class Gamification extends React.Component {
       super(props);
       this.state = {
         topPlayersSwe: '',
+        topPlayersLocal: '',
       };
     }
 
@@ -78,14 +80,21 @@ class Gamification extends React.Component {
     }
 
       handleServerTopPlayers = () => {
-        const { authState } = this.props;
+        const { authState, profileState } = this.props;
         const { jwt } = authState;
 
+        const { location } = profileState;
         const topPlayersSwe = [];
-        const topScore = {
+        const topPlayersLocal = [];
+        const topScoreSwe = {
           limit: 5,
         };
-        const formBody = JSON.stringify(topScore);
+        const topScoreLocal = {
+          limit: 5,
+          location,
+        };
+        const formBody = JSON.stringify(topScoreSwe);
+        const formBodyLocal = JSON.stringify(topScoreLocal);
 
         serverApi.fetchApi('users/gethighscores/', formBody, 'application/json', jwt[0])
           .then((responseJson) => {
@@ -94,8 +103,15 @@ class Gamification extends React.Component {
             }
             this.setState({ topPlayersSwe });
           }).catch(error => console.log(error));
-      }
 
+        serverApi.fetchApi('users/gethighscores/', formBodyLocal, 'application/json', jwt[0])
+          .then((responseJson) => {
+            for (let i = 0; i < responseJson.length; i += 1) {
+              topPlayersLocal.push(responseJson[i]);
+            }
+            this.setState({ topPlayersLocal });
+          }).catch(error => console.log(error));
+      }
 
     renderSweList = () => {
       const { topPlayersSwe } = this.state;
@@ -124,6 +140,33 @@ p
       );
     }
 
+    renderLocalList = () => {
+      const { topPlayersLocal } = this.state;
+      return (
+        <View style={styles.scoreList}>
+          <FlatList
+            data={topPlayersLocal}
+            extraData={this.state}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View style={styles.rowContainer}>
+                <Text style={styles.topName}>
+                  {index + 1}
+                  .
+                  {item.username}
+
+                </Text>
+                <Text style={styles.topScore}>
+                  {item.game_score}
+  p
+                </Text>
+              </View>
+            )}
+          />
+        </View>
+      );
+    }
+
     render() {
       const { profileState } = this.props;
       const { location } = profileState;
@@ -135,7 +178,7 @@ p
             <Image style={styles.profile} source={profilePic} />
             <View style={styles.columnContainer}>
               <Text style={styles.UserInfo}>
-                Founded Bikes:
+                Found Bikes:
               </Text>
               <Text style={styles.UserInfo}>
                 Helpful tips:
@@ -154,8 +197,12 @@ p
             Top list in
             {' '}
             {location}
+            :
           </Text>
-          <Text style={styles.categories}>Top list in Sweden</Text>
+          <View>
+            {this.renderLocalList()}
+          </View>
+          <Text style={styles.categories}>Top list in Sweden:</Text>
           <View>
             {this.renderSweList()}
           </View>

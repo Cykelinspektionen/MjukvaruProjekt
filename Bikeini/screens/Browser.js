@@ -19,7 +19,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
-    alignItems: 'center',
   },
   headerText: {
     fontSize: 22,
@@ -40,13 +39,13 @@ const styles = StyleSheet.create({
   },
   showTypeLeft: {
     alignSelf: 'flex-start',
-    position: 'absolute',
+    position: 'relative',
     marginTop: '1%',
     left: 10,
   },
   showTypeRight: {
     alignSelf: 'flex-end',
-    position: 'absolute',
+    position: 'relative',
     marginTop: '1%',
     right: 10,
   },

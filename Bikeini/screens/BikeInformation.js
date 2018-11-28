@@ -152,7 +152,10 @@ class BikeInformation extends React.Component {
       }).catch(error => console.log(error));
   }
 
-  keyExtractor = item => item._id;
+  keyExtractor = (item) => {
+    const { _id } = item;
+    return _id;
+  };
 
   renderItem = ({ item }) => {
     const { showComments } = this.state;

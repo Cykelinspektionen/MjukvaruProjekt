@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image,
+  StyleSheet, Text, View, Image, TouchableOpacity, Alert,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -29,6 +29,8 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     marginBottom: '5%',
     marginLeft: '5%',
+    flexWrap: 'wrap',
+    flex: 1,
   },
   description: {
     fontSize: 18,
@@ -39,26 +41,28 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   commentsTag: {
-    position: 'absolute',
-    alignSelf: 'flex-end',
     width: 25,
     height: 25,
-    right: '5%',
-    marginBottom: 10,
+    marginBottom: 5,
   },
   locationTag: {
-    position: 'absolute',
-    alignSelf: 'flex-end',
     width: 25,
     height: 25,
-    right: '13%',
-    marginBottom: 10,
+    marginBottom: 5,
+  },
+  buttonRow: {
+    flex: 0.25,
+    flexDirection: 'row-reverse',
+    alignSelf: 'flex-end',
+    alignContent: 'flex-end',
   },
 });
 
 export default class Item extends React.PureComponent {
   render() {
-    const { description, model, imageUrl } = this.props;
+    const {
+      description, model, imageUrl, bikeData, navigation,
+    } = this.props;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
     return (
       <View style={styles.item}>
@@ -71,8 +75,24 @@ export default class Item extends React.PureComponent {
             {model}
           </Text>
         </View>
-        <Image style={styles.commentsTag} source={commentIcon} />
-        <Image style={styles.locationTag} source={locationIcon} />
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={styles.commentsTag}
+            onPress={() => {
+              bikeData.showComments = true;
+              navigation.navigate('BikeInformation', { data: bikeData });
+            }}
+          >
+            <Image style={styles.commentsTag} source={commentIcon} />
+
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.locationTag}
+            onPress={() => { Alert.alert('Position me blokitch'); }}
+          >
+            <Image style={styles.locationTag} source={locationIcon} />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -82,4 +102,7 @@ Item.propTypes = {
   description: PropTypes.string.isRequired,
   model: PropTypes.string.isRequired,
   imageUrl: PropTypes.string.isRequired,
+  bikeData: PropTypes.shape({
+    showComments: PropTypes.bool.isRequired,
+  }).isRequired,
 };

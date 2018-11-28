@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, ScrollView, Image, FlatList, TouchableOpacity, TouchableHighlight,
+  StyleSheet, Text, View, ScrollView, Image, FlatList, TouchableOpacity, TouchableHighlight, RefreshControl,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -8,7 +8,7 @@ import headerStyle from './header';
 import serverApi from '../utilities/serverApi';
 import Item from '../components/Item';
 
-const profilePic = require('../assets/images/biker.png');
+const profilePic = require('../assets/images/userPlaceholder.jpg');
 
 
 const styles = StyleSheet.create({
@@ -59,6 +59,12 @@ const styles = StyleSheet.create({
   actionButton: {
     backgroundColor: '#00b5ec',
   },
+  browserList: {
+    alignSelf: 'flex-start',
+    marginTop: '1%',
+    marginLeft: '10%',
+    width: '88%',
+  },
 });
 
 class Profile extends React.Component {
@@ -70,6 +76,7 @@ class Profile extends React.Component {
       super(props);
       this.state = {
         yourBicycles: '',
+        isFetching: false,
       };
     }
 
@@ -88,7 +95,7 @@ class Profile extends React.Component {
           for (let i = 0; i < responseJson.length; i += 1) {
             yourBicycles.push(responseJson[i]);
           }
-          this.setState({ yourBicycles });
+          this.setState({ yourBicycles, isFetching: false });
         }).catch(error => console.log(error));
     }
 
@@ -99,23 +106,35 @@ class Profile extends React.Component {
 
     renderItem = ({ item }) => {
       const { navigation } = this.props;
-
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
       bikeData.showResolveBike = true;
       return (
         <TouchableOpacity
           onPress={() => {
+            bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
             navigation.navigate('BikeInformation', { data: bikeData });
           }}
         >
-          <Item description={item.description || ''} model={item.model || ''} imageUrl={item.image_url || ''} />
+          <Item
+            description={item.description || ''}
+            model={item.model || ''}
+            imageUrl={item.image_url || ''}
+            bikeData={bikeData}
+            navigation={navigation}
+          />
         </TouchableOpacity>
       );
     }
 
+    onRefresh = () => {
+      this.setState({ isFetching: true }, () => {
+        this.getItemFromServer();
+      });
+    }
+
     render() {
-      const { yourBicycles } = this.state;
+      const { yourBicycles, isFetching } = this.state;
       const { profileState } = this.props;
       const { username } = profileState;
       const { location } = profileState;
@@ -123,7 +142,15 @@ class Profile extends React.Component {
 
 
       return (
-        <ScrollView style={styles.background}>
+        <ScrollView
+          style={styles.background}
+          refreshControl={(
+            <RefreshControl
+              onRefresh={this.onRefresh}
+              refreshing={isFetching}
+            />
+)}
+        >
           <View style={styles.container}>
             <View style={styles.rowContainer}>
               <Image style={styles.profile} source={profilePic} />
@@ -146,12 +173,14 @@ class Profile extends React.Component {
               </View>
             </View>
             <Text style={styles.categories}>Your missing bikes:</Text>
-            <FlatList
-              data={yourBicycles}
-              keyExtractor={this.keyExtractor}
-              extraData={this.state}
-              renderItem={this.renderItem}
-            />
+            <View style={styles.browserList}>
+              <FlatList
+                data={yourBicycles}
+                keyExtractor={this.keyExtractor}
+                extraData={this.state}
+                renderItem={this.renderItem}
+              />
+            </View>
             <Text style={styles.categories}>Bikes you have submitted tips about:</Text>
           </View>
         </ScrollView>

@@ -175,7 +175,6 @@ class BikeInformation extends React.Component {
     const { showComments } = this.state;
     const { navigation, authState } = this.props;
 
-
     if (showComments) {
       const {
         body, author, date,
@@ -203,7 +202,13 @@ class BikeInformation extends React.Component {
           navigation.navigate('BikeInformation', { data: bikeData });
         }}
       >
-        <Item description={description || ''} model={model || ''} imageUrl={item.image_url || ''} />
+        <Item
+          description={description || ''}
+          model={model || ''}
+          imageUrl={item.image_url || ''}
+          bikeData={bikeData}
+          navigation={navigation}
+        />
       </TouchableOpacity>
     );
   }

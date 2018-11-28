@@ -60,8 +60,11 @@ const styles = StyleSheet.create({
 
 export default class Item extends React.PureComponent {
   render() {
-    const { description, model, imageUrl } = this.props;
+    const {
+      description, model, imageUrl, bikeData, navigation,
+    } = this.props;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
+    console.log('desc: ', description);
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={imgSource} />
@@ -76,14 +79,17 @@ export default class Item extends React.PureComponent {
         <View style={styles.buttonRow}>
           <TouchableOpacity
             style={styles.commentsTag}
-            onPress={() => Alert.alert('Do something!')}
+            onPress={() => {
+              bikeData.showComments = true;
+              navigation.navigate('BikeInformation', { data: bikeData });
+            }}
           >
             <Image style={styles.commentsTag} source={commentIcon} />
 
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.locationTag}
-            onPress={() => Alert.alert('Do something!')}
+            onPress={() => { Alert.alert('Position me biatch'); }}
           >
             <Image style={styles.locationTag} source={locationIcon} />
           </TouchableOpacity>
@@ -97,4 +103,7 @@ Item.propTypes = {
   description: PropTypes.string.isRequired,
   model: PropTypes.string.isRequired,
   imageUrl: PropTypes.string.isRequired,
+  bikeData: PropTypes.shape({
+    showComments: PropTypes.bool.isRequired,
+  }).isRequired,
 };

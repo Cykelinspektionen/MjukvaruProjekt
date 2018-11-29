@@ -32,10 +32,9 @@ const styles = StyleSheet.create({
   },
   browserList: {
     flex: 1,
-    alignSelf: 'flex-start',
-    marginTop: '1%',
-    marginLeft: '10%',
-    width: '88%',
+    alignSelf: 'center',
+    margin: '1%',
+    width: '95%',
   },
   showTypeLeft: {
     alignSelf: 'flex-start',

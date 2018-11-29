@@ -97,8 +97,6 @@ class Browser extends React.Component {
       .then((responseJson) => {
         this.setState({ missingBicycles: responseJson.message, isFetching: false });
       }).catch(error => console.log(error));
-
-    this.setState({isFetching: false});
   }
 
   keyExtractor = (item) => {

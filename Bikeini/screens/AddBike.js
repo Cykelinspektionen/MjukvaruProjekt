@@ -246,16 +246,6 @@ class AddBike extends React.Component {
     this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-   // so this is when the props changed.
-   // so if the hikeId change, you'd have to re-fetch.
-   console.log(nextProps.addBikeState.bikeObject);  
-   /*if (this.props.params.hikeId !== nextProps.params.hikeId) {
-       this.props.fetchHikeById(nextProps.params.hikeId)
-   }*/
-}
-
-
   componentDidUpdate() {
     const { addBikeState, navigation, setBikePosted } = this.props;
     if (addBikeState.bikePosted) {
@@ -452,7 +442,7 @@ class AddBike extends React.Component {
           />
           <RadioGroup
             radioButtons={radios.basket}
-            onPress={(data) => { console.log(data); }}//this.radioUpdater(data, 'basket', true); }}
+            onPress={(data) => { this.radioUpdater(data, 'basket', true); }}
             flexDirection="row"
           />
           <RadioGroup

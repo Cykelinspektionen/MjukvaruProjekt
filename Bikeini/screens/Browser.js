@@ -106,15 +106,15 @@ class Browser extends React.Component {
 
   renderItem = ({ item }) => {
     if (!item.active) return null;
-    const { navigation } = this.props;
+    const { navigation, profileState } = this.props;
     const bikeData = item;
     bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
-    bikeData.showResolveBike = false;
+    bikeData.showResolveBike = profileState.id === bikeData.submitter;
     return (
       <TouchableOpacity
         onPress={() => {
           bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
-          bikeData.showResolveBike = false;
+          bikeData.showResolveBike = profileState.id === bikeData.submitter;
           navigation.navigate('BikeInformation', { bikeData, refresh: this.onRefresh });
         }}
       >

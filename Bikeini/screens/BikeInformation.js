@@ -145,7 +145,6 @@ class BikeInformation extends React.Component {
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
-          console.log(responseJson);
           this.setState({ comments: responseJson });
         }
       }).catch(error => console.log(error));
@@ -162,13 +161,14 @@ class BikeInformation extends React.Component {
     } = this.state;
     const { refresh } = this.state;
     const { _id } = bikeData;
-    const { authState, navigation } = this.props;
+    const { authState, navigation, profileState } = this.props;
 
     if (bikeData.showComments) {
       const {
         body, author, date,
       } = item;
       const { jwt } = authState;
+      const ownersComment = profileState.username === item.author;
       return (
         <TouchableOpacity
           onPress={() => {}}
@@ -182,6 +182,7 @@ class BikeInformation extends React.Component {
             bikeId={_id}
             navigation={navigation}
             refresh={refresh}
+            ownersComment={ownersComment}
           />
         </TouchableOpacity>
       );
@@ -192,7 +193,7 @@ class BikeInformation extends React.Component {
         onPress={() => {
           bikeData = item;
           bikeData.showComments = true;
-          bikeData.showResolveBike = true;
+          bikeData.showResolveBike = profileState.id === bikeData.submitter;
           this.setState({ bikeData }, () => {
             this.fetchComments();
           });
@@ -204,6 +205,7 @@ class BikeInformation extends React.Component {
           imageUrl={item.image_url || ''}
           bikeData={bikeData}
           navigation={navigation}
+          refresh={refresh}
         />
       </TouchableOpacity>
     );
@@ -350,6 +352,7 @@ BikeInformation.propTypes = {
     jwt: PropTypes.array.isRequired,
   }).isRequired,
   profileState: PropTypes.shape({
+    id: PropTypes.string.isRequired,
     location: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,

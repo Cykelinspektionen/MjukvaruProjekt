@@ -102,7 +102,6 @@ export default class Comment extends React.PureComponent {
       points,
       type,
     };
-    console.log(formBody, jwt);
     serverApi.fetchApi('users/updateHighscore/', JSON.stringify(formBody), 'application/json', jwt[0])
       .then((responseJson) => {
         console.log(responseJson);
@@ -162,67 +161,70 @@ export default class Comment extends React.PureComponent {
   }
 
   renderButtonSet = () => {
-    const { showResolveBike, author } = this.props;
+    const {
+      showResolveBike, author, ownersComment,
+    } = this.props;
     const { thumbDown, thumbUp } = this.state;
 
     let resolveButton = null;
     let positionButton = null;
     let thumbUpButton = null;
     let thumbDwButton = null;
-    if (showResolveBike && author !== '1') {
-      resolveButton = (
-        <TouchableOpacity
-          style={styles.FoundTag}
-          onPress={() => this.handleFound()}
-        >
-          <Image
+    if (!ownersComment) {
+      if (showResolveBike && author !== '1') {
+        resolveButton = (
+          <TouchableOpacity
             style={styles.FoundTag}
-            source={FoundBike}
-          />
-        </TouchableOpacity>
-      );
-    }
-    if (author !== '1') {
-      positionButton = (
-        <TouchableOpacity
-          style={styles.locationTag}
-          onPress={() => Alert.alert('Do something!')}
-        >
-          <Image
+            onPress={() => this.handleFound()}
+          >
+            <Image
+              style={styles.FoundTag}
+              source={FoundBike}
+            />
+          </TouchableOpacity>
+        );
+      }
+      if (author !== '1') {
+        positionButton = (
+          <TouchableOpacity
             style={styles.locationTag}
-            source={locationIcon}
-          />
-        </TouchableOpacity>
-      );
-    }
+            onPress={() => Alert.alert('Do something!')}
+          >
+            <Image
+              style={styles.locationTag}
+              source={locationIcon}
+            />
+          </TouchableOpacity>
+        );
+      }
 
-    if (author !== '1') {
-      thumbUpButton = (
-        <TouchableOpacity
-          style={styles.thumbDownTag}
-          onPress={() => this.handleThumbs('DW')}
-        >
-          <Image
-            style={[styles.thumbDownTag, thumbDown ? styles.setRed : []]}
-            source={thumbDownIcon}
-          />
-        </TouchableOpacity>
-      );
+      if (author !== '1') {
+        thumbUpButton = (
+          <TouchableOpacity
+            style={styles.thumbDownTag}
+            onPress={() => this.handleThumbs('DW')}
+          >
+            <Image
+              style={[styles.thumbDownTag, thumbDown ? styles.setRed : []]}
+              source={thumbDownIcon}
+            />
+          </TouchableOpacity>
+        );
+      }
+      if (author !== '1') {
+        thumbDwButton = (
+          <TouchableOpacity
+            style={styles.thumbUpTag}
+            onPress={() => this.handleThumbs('UP')}
+          >
+            <Image
+              style={[styles.thumbUpTag, thumbUp ? styles.setGreen : []]}
+              source={thumbUpIcon}
+            />
+          </TouchableOpacity>
+        );
+      }
     }
-    if (author !== '1') {
-      thumbDwButton = (
-        <TouchableOpacity
-          style={styles.thumbUpTag}
-          onPress={() => this.handleThumbs('UP')}
-        >
-          <Image
-            style={[styles.thumbUpTag, thumbUp ? styles.setGreen : []]}
-            source={thumbUpIcon}
-          />
-        </TouchableOpacity>
-      );
-    }
-
     return {
       resolveButton,
       positionButton,
@@ -277,4 +279,5 @@ Comment.propTypes = {
     navigate: PropTypes.func.isRequired,
   }).isRequired,
   refresh: PropTypes.func.isRequired,
+  ownersComment: PropTypes.bool.isRequired,
 };

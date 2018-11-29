@@ -106,14 +106,14 @@ class Profile extends React.Component {
 
     renderItem = ({ item }) => {
       if (!item.active) return null;
-      const { navigation } = this.props;
+      const { navigation, profileState } = this.props;
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
-      bikeData.showResolveBike = true;
+      bikeData.showResolveBike = profileState.id === bikeData.submitter;
       return (
         <TouchableOpacity
           onPress={() => {
-            bikeData.showResolveBike = true;
+            bikeData.showResolveBike = profileState.id === bikeData.submitter;
             bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
             navigation.navigate('BikeInformation', { bikeData, refresh: this.onRefresh });
           }}

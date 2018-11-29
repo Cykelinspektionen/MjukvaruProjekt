@@ -155,11 +155,11 @@ class BikeInformation extends React.Component {
   };
 
   renderItem = ({ item }) => {
-    const {
+    let {
       bikeData,
     } = this.state;
     const { _id } = bikeData;
-    const { authState } = this.props;
+    const { authState, navigation } = this.props;
 
     if (bikeData.showComments) {
       const {
@@ -185,8 +185,11 @@ class BikeInformation extends React.Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          this.setState({ bikeData: item }, () => {
-            this.fetchSimilarBikes();
+          bikeData = item;
+          bikeData.showComments = true;
+          bikeData.showResolveBike = true;
+          this.setState({ bikeData }, () => {
+            this.fetchComments();
           });
         }}
       >
@@ -195,6 +198,7 @@ class BikeInformation extends React.Component {
           model={item.model || ''}
           imageUrl={item.image_url || ''}
           bikeData={bikeData}
+          navigation={navigation}
         />
       </TouchableOpacity>
     );
@@ -346,7 +350,12 @@ BikeInformation.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    game_score: PropTypes.number.isRequired,
+    game_score: PropTypes.shape({
+      bike_score: PropTypes.number.isRequired,
+      bikes_lost: PropTypes.number.isRequired,
+      thumb_score: PropTypes.number.isRequired,
+      total_score: PropTypes.number.isRequired,
+    }).isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,

@@ -105,7 +105,6 @@ class Profile extends React.Component {
     };
 
     renderItem = ({ item }) => {
-      console.log(item)
       const { navigation } = this.props;
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
@@ -203,7 +202,12 @@ Profile.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    game_score: PropTypes.number.isRequired,
+    game_score: PropTypes.shape({
+      bike_score: PropTypes.number.isRequired,
+      bikes_lost: PropTypes.number.isRequired,
+      thumb_score: PropTypes.number.isRequired,
+      total_score: PropTypes.number.isRequired,
+    }).isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,

@@ -83,6 +83,9 @@ const styles = StyleSheet.create({
   },
 });
 
+const thumbScore = 'thumb_score';
+const bikeScore = 'bike_score';
+
 export default class Comment extends React.PureComponent {
   constructor() {
     super();
@@ -92,12 +95,14 @@ export default class Comment extends React.PureComponent {
     };
   }
 
-  sendPointsToUser = (points) => {
+  sendPointsToUser = (points, type) => {
     const { author, jwt } = this.props;
     const formBody = {
-      author, points,
+      author,
+      points,
+      type,
     };
-    serverApi.fetchApi(null, JSON.stringify(formBody), 'application/json', jwt[0]);
+    serverApi.fetchApi('users/updatescore/', JSON.stringify(formBody), 'application/json', jwt[0]);
   }
 
   setBikeToFound = () => {
@@ -108,12 +113,20 @@ export default class Comment extends React.PureComponent {
 	    type: 'Found',
 
     };
-    serverApi.fetchApi('bikes/update/', JSON.stringify(formBody), 'application/json', jwt[0]);
+    serverApi.fetchApi(null, JSON.stringify(formBody), 'application/json', jwt[0])
+      .then(this.sendPointsToUser(5, bikeScore));
   }
 
   handleFound = () => {
-    this.sendPointsToUser(5);
-    this.setBikeToFound();
+    Alert.alert(
+      'Close Ad',
+      'Are you sure you want to close your ad?',
+      [
+        { text: 'No', onPress: () => console.log('No'), style: 'cancel' },
+        { text: 'Yes', onPress: () => { this.setBikeToFound(); console.log('Yes'); } },
+      ],
+      { cancelable: false },
+    );
   }
 
   handleThumbs = (action) => {
@@ -121,15 +134,15 @@ export default class Comment extends React.PureComponent {
     switch (action) {
       case 'UP':
         if (!thumbUp) {
-          this.sendPointsToUser(1);
+          this.sendThumbPointsToUser(1, thumbScore);
         } else if (thumbUp) {
-          this.sendPointsToUser(-1);
+          this.sendThumbPointsToUser(-1, thumbScore);
         }
         this.setState({ thumbUp: !thumbUp, thumbDown: false });
         break;
       case 'DW':
         if (!thumbDown && thumbUp) {
-          this.sendPointsToUser(-1);
+          this.sendThumbPointsToUser(-1, thumbScore);
         }
         this.setState({ thumbDown: !thumbDown, thumbUp: false });
         break;
@@ -138,17 +151,15 @@ export default class Comment extends React.PureComponent {
     }
   }
 
-  render() {
-    const {
-      body, author, date, showResolveBike,
-    } = this.props;
-    const dateRaw = date.split('-');
-    let day = `${dateRaw[2]}`;
-    day = day.split('T');
-    const dateClean = `${day[0]}/${dateRaw[1]}`;
+  renderButtonSet = () => {
+    const { showResolveBike, author } = this.props;
     const { thumbDown, thumbUp } = this.state;
+
     let resolveButton = null;
-    if (showResolveBike) {
+    let positionButton = null;
+    let thumbUpButton = null;
+    let thumbDwButton = null;
+    if (showResolveBike && author !== 1) {
       resolveButton = (
         <TouchableOpacity
           style={styles.FoundTag}
@@ -161,6 +172,64 @@ export default class Comment extends React.PureComponent {
         </TouchableOpacity>
       );
     }
+    if (author !== '1') {
+      positionButton = (
+        <TouchableOpacity
+          style={styles.locationTag}
+          onPress={() => Alert.alert('Do something!')}
+        >
+          <Image
+            style={styles.locationTag}
+            source={locationIcon}
+          />
+        </TouchableOpacity>
+      );
+    }
+
+    if (author !== '1') {
+      thumbUpButton = (
+        <TouchableOpacity
+          style={styles.thumbDownTag}
+          onPress={() => this.handleThumbs('DW')}
+        >
+          <Image
+            style={[styles.thumbDownTag, thumbDown ? styles.setRed : []]}
+            source={thumbDownIcon}
+          />
+        </TouchableOpacity>
+      );
+    }
+    if (author !== '1') {
+      thumbDwButton = (
+        <TouchableOpacity
+          style={styles.thumbUpTag}
+          onPress={() => this.handleThumbs('UP')}
+        >
+          <Image
+            style={[styles.thumbUpTag, thumbUp ? styles.setGreen : []]}
+            source={thumbUpIcon}
+          />
+        </TouchableOpacity>
+      );
+    }
+
+    return {
+      resolveButton,
+      positionButton,
+      thumbUpButton,
+      thumbDwButton,
+    };
+  }
+
+  render() {
+    const {
+      body, author, date,
+    } = this.props;
+    const dateRaw = date.split('-');
+    let day = `${dateRaw[2]}`;
+    day = day.split('T');
+    const dateClean = `${day[0]}/${dateRaw[1]}`;
+    const buttonSet = this.renderButtonSet();
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={userPlaceholder} />
@@ -176,35 +245,7 @@ export default class Comment extends React.PureComponent {
         <View style={styles.answer}>
           <Text style={styles.answerText}>Answer</Text>
         </View>
-
-        <TouchableOpacity
-          style={styles.locationTag}
-          onPress={() => Alert.alert('Do something!')}
-        >
-          <Image
-            style={styles.locationTag}
-            source={locationIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.thumbDownTag}
-          onPress={() => this.handleThumbs('DW')}
-        >
-          <Image
-            style={[styles.thumbDownTag, thumbDown ? styles.setRed : []]}
-            source={thumbDownIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.thumbUpTag}
-          onPress={() => this.handleThumbs('UP')}
-        >
-          <Image
-            style={[styles.thumbUpTag, thumbUp ? styles.setGreen : []]}
-            source={thumbUpIcon}
-          />
-        </TouchableOpacity>
-        {resolveButton}
+        {buttonSet}
       </View>
     );
   }

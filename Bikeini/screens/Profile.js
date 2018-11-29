@@ -200,7 +200,7 @@ Profile.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    game_score: PropTypes.number.isRequired,
+    game_score: PropTypes.object.isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,

@@ -130,7 +130,7 @@ class Gamification extends React.Component {
 
                 </Text>
                 <Text style={styles.topScore}>
-                  {item.game_score}
+                  {item.game_score.total_score}
 p
                 </Text>
               </View>
@@ -157,7 +157,7 @@ p
 
                 </Text>
                 <Text style={styles.topScore}>
-                  {item.game_score}
+                  {item.game_score.total_score}
   p
                 </Text>
               </View>
@@ -170,6 +170,7 @@ p
     render() {
       const { profileState } = this.props;
       const { location } = profileState;
+      const { game_score } = profileState;
       return (
         <ScrollView style={styles.background}>
           <View style={styles.container} />
@@ -178,17 +179,23 @@ p
             <View style={styles.columnContainer}>
               <Text style={styles.UserInfo}>
                 Found Bikes:
+                {' '}
+                {game_score.bike_score}
               </Text>
               <Text style={styles.UserInfo}>
                 Helpful tips:
+                {' '}
+                {game_score.thumb_score}
               </Text>
               <Text style={styles.UserInfo}>
                 Your stolen Bikes:
+                {' '}
+                {game_score.bikes_lost}
               </Text>
               <Text style={styles.UserInfo}>
                 Total points earned:
                 {' '}
-                {profileState.game_score}
+                {game_score.total_score}
               </Text>
             </View>
           </View>
@@ -223,7 +230,7 @@ Gamification.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    game_score: PropTypes.number.isRequired,
+    game_score: PropTypes.object.isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,

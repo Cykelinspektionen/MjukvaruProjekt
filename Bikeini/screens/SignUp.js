@@ -133,7 +133,12 @@ class SignUp extends React.Component {
           email: newEmail,
           phone_number: parseInt(newPhoneNumber, 10),
           create_time: '',
-          game_score: 0,
+          game_score: {
+            bike_score: 0,
+            bikes_lost: 0,
+            thumb_score: 0,
+            total_score: 0,
+          },
           loadingProfile: false,
           profileLoaded: true,
         };
@@ -309,7 +314,12 @@ SignUp.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    game_score: PropTypes.number.isRequired,
+    game_score: PropTypes.shape({
+      bike_score: PropTypes.number.isRequired,
+      bikes_lost: PropTypes.number.isRequired,
+      thumb_score: PropTypes.number.isRequired,
+      total_score: PropTypes.number.isRequired,
+    }).isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,

@@ -11,7 +11,12 @@ const PROFILE_INITIAL_STATE = {
   email: '',
   phone_number: 0,
   create_time: '',
-  game_score: 0,
+  game_score: {
+    bike_score: 0,
+    bikes_lost: 0,
+    thumb_score: 0,
+    total_score: 0,
+  },
   loadingProfile: false,
   profileLoaded: false,
   error: '',

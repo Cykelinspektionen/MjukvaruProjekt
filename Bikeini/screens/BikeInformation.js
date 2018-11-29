@@ -91,8 +91,7 @@ class BikeInformation extends React.Component {
     const { navigation } = this.props;
     const { state } = navigation;
     const { params } = state;
-    const { data } = params;
-    const { showComments } = data;
+    const { bikeData, refresh } = params;
 
     this.state = {
       comments: [{
@@ -100,15 +99,14 @@ class BikeInformation extends React.Component {
       }],
       matchingBikes: [],
       text: '',
-      currentBike: data,
-      showComments,
+      bikeData,
+      refresh,
     };
   }
 
   componentDidMount() {
-    const { showComments } = this.state;
-
-    if (showComments) {
+    const { bikeData } = this.state;
+    if (bikeData.showComments) {
       this.fetchComments();
     } else {
       this.fetchSimilarBikes();
@@ -116,11 +114,11 @@ class BikeInformation extends React.Component {
   }
 
   fetchSimilarBikes = () => {
-    const { currentBike } = this.state;
+    const { bikeData } = this.state;
     const { authState } = this.props;
     const { jwt } = authState;
 
-    const formBody = this.jsonToFormData(currentBike);
+    const formBody = this.jsonToFormData(bikeData);
 
     serverApi.fetchApi('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
@@ -132,9 +130,9 @@ class BikeInformation extends React.Component {
   }
 
   fetchComments = () => {
-    const { currentBike } = this.state;
+    const { bikeData } = this.state;
     const { authState } = this.props;
-    const { _id } = currentBike;
+    const { _id } = bikeData;
     const { jwt } = authState;
 
     const bikeInformation = {
@@ -147,6 +145,7 @@ class BikeInformation extends React.Component {
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
+          console.log(responseJson);
           this.setState({ comments: responseJson });
         }
       }).catch(error => console.log(error));
@@ -158,20 +157,32 @@ class BikeInformation extends React.Component {
   };
 
   renderItem = ({ item }) => {
-    const { showComments } = this.state;
-    const { authState } = this.props;
+    let {
+      bikeData,
+    } = this.state;
+    const { refresh } = this.state;
+    const { _id } = bikeData;
+    const { authState, navigation } = this.props;
 
-    if (showComments) {
+    if (bikeData.showComments) {
       const {
         body, author, date,
       } = item;
       const { jwt } = authState;
-
       return (
         <TouchableOpacity
           onPress={() => {}}
         >
-          <Comment body={body} author={author} date={date} jwt={jwt} />
+          <Comment
+            body={body}
+            author={author}
+            date={date}
+            jwt={jwt}
+            showResolveBike={bikeData.showResolveBike}
+            bikeId={_id}
+            navigation={navigation}
+            refresh={refresh}
+          />
         </TouchableOpacity>
       );
     }
@@ -179,22 +190,31 @@ class BikeInformation extends React.Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          this.setState({ currentBike: item }, () => {
-            this.fetchSimilarBikes();
+          bikeData = item;
+          bikeData.showComments = true;
+          bikeData.showResolveBike = true;
+          this.setState({ bikeData }, () => {
+            this.fetchComments();
           });
         }}
       >
-        <Item description={item.description || ''} model={item.model || ''} imageUrl={item.image_url || ''} />
+        <Item
+          description={item.description || ''}
+          model={item.model || ''}
+          imageUrl={item.image_url || ''}
+          bikeData={bikeData}
+          navigation={navigation}
+        />
       </TouchableOpacity>
     );
   }
 
   renderList = () => {
     const {
-      comments, matchingBikes, showComments,
+      comments, matchingBikes, bikeData,
     } = this.state;
 
-    if (showComments) {
+    if (bikeData.showComments) {
       return (
         <FlatList
           data={comments}
@@ -222,8 +242,8 @@ class BikeInformation extends React.Component {
   }
 
   sendComment = () => {
-    const { text, currentBike } = this.state;
-    const { _id } = currentBike;
+    const { text, bikeData } = this.state;
+    const { _id } = bikeData;
     const { authState } = this.props;
     const { jwt } = authState;
 
@@ -249,9 +269,9 @@ class BikeInformation extends React.Component {
   }
 
   renderCommentField = () => {
-    const { text, showComments } = this.state;
+    const { text, bikeData } = this.state;
 
-    if (showComments) {
+    if (bikeData.showComments) {
       return (
         <View style={styles.commentInputContainer}>
           <TextInput
@@ -278,14 +298,16 @@ class BikeInformation extends React.Component {
   }
 
   render() {
-    const { currentBike } = this.state;
+    const { bikeData } = this.state;
     const {
       title, location, description, brand, color,
-    } = currentBike;
-    const { city, neighborhood } = location;
+    } = bikeData;
+    const city = location ? location.city : '';
+    const neighborhood = location ? location.neighborhood : '';
+
     const list = this.renderList();
     const commentField = this.renderCommentField();
-    const imgSource = currentBike.image_url ? { uri: currentBike.image_url } : stockBicycle;
+    const imgSource = bikeData.image_url ? { uri: bikeData.image_url } : stockBicycle;
     return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>
@@ -333,7 +355,12 @@ BikeInformation.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    game_score: PropTypes.number.isRequired,
+    game_score: PropTypes.shape({
+      bike_score: PropTypes.number.isRequired,
+      bikes_lost: PropTypes.number.isRequired,
+      thumb_score: PropTypes.number.isRequired,
+      total_score: PropTypes.number.isRequired,
+    }).isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,

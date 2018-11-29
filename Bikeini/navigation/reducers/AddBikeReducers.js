@@ -19,6 +19,7 @@ const ADD_BIKE_STATE = {
   uploadDisabled: true,
   uploadingBike: false,
   bikePosted: false,
+  bikeObject: '',
 };
 
 const addBikeReducers = (state = ADD_BIKE_STATE, action) => {
@@ -32,14 +33,17 @@ const addBikeReducers = (state = ADD_BIKE_STATE, action) => {
         imgUploaded: false,
       };
     case UPLOAD_IMG_BEGIN:
+      console.log('UPLOAD_IMG_BEGIN started!');
       return {
         ...state, uploadingImg: true, uploadDisabled: true,
       };
     case UPLOAD_IMG_FAILURE:
+      console.log('UPLOAD_IMG_FAILURE!');
       return {
         ...state, uploadingImg: false, error: action.payload, uploadDisabled: false,
       };
     case UPLOAD_IMG_SUCCESS:
+      console.log('UPLOAD_IMG_SUCCESS!');
       return {
         ...state, uploadingImg: false, imgUploaded: true, uploadDisabled: true,
       };

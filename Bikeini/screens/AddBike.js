@@ -246,6 +246,15 @@ class AddBike extends React.Component {
     this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+   // so this is when the props changed.
+   // so if the hikeId change, you'd have to re-fetch.
+   console.log(nextProps.addBikeState.bikeObject);  
+   /*if (this.props.params.hikeId !== nextProps.params.hikeId) {
+       this.props.fetchHikeById(nextProps.params.hikeId)
+   }*/
+}
+
 
   componentDidUpdate() {
     const { addBikeState, navigation, setBikePosted } = this.props;
@@ -296,7 +305,21 @@ class AddBike extends React.Component {
     const selectedButton = radios[name].find(e => e.selected === true);
     this.setBikeData(name, selectedButton.value, head);
     radios[name] = change;
-    this.setState({ radios });
+    this.setState({ radios }, () => {
+      console.log(this.state.radios);
+    });
+  }
+
+  setServerResponse(response, callback) {
+    console.log(response);
+    const { radios } = this.state;
+    //let data = {response.basket, 'basket', true};
+    const { basket } = radios;
+    basket[0].selected = false;
+    basket[1].selected = true;
+    //keywords.basket = response.basket;
+    //{(data) => { this.radioUpdater(data, 'basket', true); }}
+    callback(basket, 'basket', response.basket);
   }
 
   render() {
@@ -353,7 +376,7 @@ class AddBike extends React.Component {
               !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
             ]}
             disabled={addBikeState.uploadDisabled}
-            onPress={() => imgUploadInit(addBikeState.imgToUploadUri, bikeData.type, authState.jwt[0])}
+            onPress={() => imgUploadInit(addBikeState.imgToUploadUri, bikeData.type, authState.jwt[0]).then(response => this.setServerResponse(response, this.radioUpdater))}
           >
             <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
           </TouchableHighlight>
@@ -426,7 +449,7 @@ class AddBike extends React.Component {
           />
           <RadioGroup
             radioButtons={radios.basket}
-            onPress={(data) => { this.radioUpdater(data, 'basket', true); }}
+            onPress={(data) => { console.log(data); }}//this.radioUpdater(data, 'basket', true); }}
             flexDirection="row"
           />
           <RadioGroup

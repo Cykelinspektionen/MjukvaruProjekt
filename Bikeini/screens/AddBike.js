@@ -306,20 +306,23 @@ class AddBike extends React.Component {
     this.setBikeData(name, selectedButton.value, head);
     radios[name] = change;
     this.setState({ radios }, () => {
-      console.log(this.state.radios);
+      console.log(this.state.radios.basket);
     });
   }
 
   setServerResponse(response, callback) {
     console.log(response);
     const { radios } = this.state;
-    //let data = {response.basket, 'basket', true};
-    const { basket } = radios;
-    basket[0].selected = false;
-    basket[1].selected = true;
-    //keywords.basket = response.basket;
-    //{(data) => { this.radioUpdater(data, 'basket', true); }}
-    callback(basket, 'basket', response.basket);
+
+    // For this to work the response from the server CAN'T have any nestled attrbiutes!  
+    Object.keys(response).forEach(function(key) {
+      if(!response[key]) {
+        const data = radios[key];
+        data[0].selected = false;
+        data[1].selected = true;
+        callback(data, key, true);
+      }
+    });
   }
 
   render() {

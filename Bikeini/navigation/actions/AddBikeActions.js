@@ -63,7 +63,6 @@ export const setBikePosted = bool => (
 );
 
 export function imgUploadInit(imgUri, addType, jwt) {
-  console.log('imgUploadInit started!');
   const file = {
     uri: imgUri,
     type: 'image/jpg',

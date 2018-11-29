@@ -88,14 +88,14 @@ class Browser extends React.Component {
 
     serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
-        this.setState({ foundBicycles: responseJson.message });
+        this.setState({ foundBicycles: responseJson.message, isFetching: false });
       }).catch(error => console.log(error));
 
     formData = `type=STOLEN&location.city=${location}`;
 
     serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
-        this.setState({ missingBicycles: responseJson.message });
+        this.setState({ missingBicycles: responseJson.message, isFetching: false });
       }).catch(error => console.log(error));
   }
 
@@ -105,6 +105,7 @@ class Browser extends React.Component {
   };
 
   renderItem = ({ item }) => {
+    if (!item.active) return null;
     const { navigation } = this.props;
     const bikeData = item;
     bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
@@ -114,7 +115,7 @@ class Browser extends React.Component {
         onPress={() => {
           bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
           bikeData.showResolveBike = false;
-          navigation.navigate('BikeInformation', { bikeData });
+          navigation.navigate('BikeInformation', { bikeData, refresh: this.onRefresh });
         }}
       >
         <Item
@@ -123,6 +124,7 @@ class Browser extends React.Component {
           imageUrl={item.image_url || ''}
           bikeData={bikeData}
           navigation={navigation}
+          refresh={this.onRefresh}
         />
       </TouchableOpacity>
     );

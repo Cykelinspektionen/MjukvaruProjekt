@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
 export default class Item extends React.PureComponent {
   render() {
     const {
-      description, model, imageUrl, bikeData, navigation,
+      description, model, imageUrl, bikeData, navigation, refresh,
     } = this.props;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
     return (
@@ -80,7 +80,7 @@ export default class Item extends React.PureComponent {
             style={styles.commentsTag}
             onPress={() => {
               bikeData.showComments = true;
-              navigation.navigate('BikeInformation', { bikeData });
+              navigation.navigate('BikeInformation', { bikeData, refresh });
             }}
           >
             <Image style={styles.commentsTag} source={commentIcon} />
@@ -105,4 +105,5 @@ Item.propTypes = {
   bikeData: PropTypes.shape({
     showComments: PropTypes.bool.isRequired,
   }).isRequired,
+  refresh: PropTypes.func.isRequired,
 };

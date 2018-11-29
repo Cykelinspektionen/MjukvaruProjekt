@@ -72,8 +72,8 @@ class Profile extends React.Component {
       ...headerStyle,
     };
 
-    constructor(props) {
-      super(props);
+    constructor() {
+      super();
       this.state = {
         yourBicycles: '',
         isFetching: false,
@@ -105,6 +105,7 @@ class Profile extends React.Component {
     };
 
     renderItem = ({ item }) => {
+      if (!item.active) return null;
       const { navigation } = this.props;
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
@@ -114,7 +115,7 @@ class Profile extends React.Component {
           onPress={() => {
             bikeData.showResolveBike = true;
             bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
-            navigation.navigate('BikeInformation', { bikeData });
+            navigation.navigate('BikeInformation', { bikeData, refresh: this.onRefresh });
           }}
         >
           <Item
@@ -123,6 +124,7 @@ class Profile extends React.Component {
             imageUrl={item.image_url || ''}
             bikeData={bikeData}
             navigation={navigation}
+            refresh={this.onRefresh}
           />
         </TouchableOpacity>
       );
@@ -140,7 +142,6 @@ class Profile extends React.Component {
       const { username } = profileState;
       const { location } = profileState;
       const { email } = profileState;
-
 
       return (
         <ScrollView

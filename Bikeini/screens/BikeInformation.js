@@ -91,7 +91,7 @@ class BikeInformation extends React.Component {
     const { navigation } = this.props;
     const { state } = navigation;
     const { params } = state;
-    const { bikeData } = params;
+    const { bikeData, refresh } = params;
 
     this.state = {
       comments: [{
@@ -100,6 +100,7 @@ class BikeInformation extends React.Component {
       matchingBikes: [],
       text: '',
       bikeData,
+      refresh,
     };
   }
 
@@ -144,6 +145,7 @@ class BikeInformation extends React.Component {
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
+          console.log(responseJson);
           this.setState({ comments: responseJson });
         }
       }).catch(error => console.log(error));
@@ -158,6 +160,7 @@ class BikeInformation extends React.Component {
     let {
       bikeData,
     } = this.state;
+    const { refresh } = this.state;
     const { _id } = bikeData;
     const { authState, navigation } = this.props;
 
@@ -177,6 +180,8 @@ class BikeInformation extends React.Component {
             jwt={jwt}
             showResolveBike={bikeData.showResolveBike}
             bikeId={_id}
+            navigation={navigation}
+            refresh={refresh}
           />
         </TouchableOpacity>
       );

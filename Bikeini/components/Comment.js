@@ -98,23 +98,33 @@ export default class Comment extends React.PureComponent {
   sendPointsToUser = (points, type) => {
     const { author, jwt } = this.props;
     const formBody = {
-      author,
+      user_name: author,
       points,
       type,
     };
-    serverApi.fetchApi('users/updatescore/', JSON.stringify(formBody), 'application/json', jwt[0]);
+    console.log(formBody, jwt);
+    serverApi.fetchApi('users/updateHighscore/', JSON.stringify(formBody), 'application/json', jwt[0])
+      .then((responseJson) => {
+        console.log(responseJson);
+      }).catch(error => console.log(error));
   }
 
   setBikeToFound = () => {
-    const { jwt, bikeId } = this.props;
+    const {
+      jwt, bikeId, navigation, refresh,
+    } = this.props;
     const formBody = {
-      bikeId,
+      id: bikeId,
       active: false,
-	    type: 'Found',
-
+	    type: 'FOUND',
     };
-    serverApi.fetchApi(null, JSON.stringify(formBody), 'application/json', jwt[0])
-      .then(this.sendPointsToUser(5, bikeScore));
+    serverApi.fetchApi('bikes/updatebike/', JSON.stringify(formBody), 'application/json', jwt[0])
+      .then(
+        this.sendPointsToUser(5, bikeScore),
+        refresh(),
+        navigation.navigate('Profile'),
+
+      );
   }
 
   handleFound = () => {
@@ -134,15 +144,15 @@ export default class Comment extends React.PureComponent {
     switch (action) {
       case 'UP':
         if (!thumbUp) {
-          this.sendThumbPointsToUser(1, thumbScore);
+          this.sendPointsToUser(1, thumbScore);
         } else if (thumbUp) {
-          this.sendThumbPointsToUser(-1, thumbScore);
+          this.sendPointsToUser(-1, thumbScore);
         }
         this.setState({ thumbUp: !thumbUp, thumbDown: false });
         break;
       case 'DW':
         if (!thumbDown && thumbUp) {
-          this.sendThumbPointsToUser(-1, thumbScore);
+          this.sendPointsToUser(-1, thumbScore);
         }
         this.setState({ thumbDown: !thumbDown, thumbUp: false });
         break;
@@ -159,7 +169,7 @@ export default class Comment extends React.PureComponent {
     let positionButton = null;
     let thumbUpButton = null;
     let thumbDwButton = null;
-    if (showResolveBike && author !== 1) {
+    if (showResolveBike && author !== '1') {
       resolveButton = (
         <TouchableOpacity
           style={styles.FoundTag}
@@ -229,7 +239,9 @@ export default class Comment extends React.PureComponent {
     let day = `${dateRaw[2]}`;
     day = day.split('T');
     const dateClean = `${day[0]}/${dateRaw[1]}`;
-    const buttonSet = this.renderButtonSet();
+    const {
+      resolveButton, positionButton, thumbUpButton, thumbDwButton,
+    } = this.renderButtonSet();
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={userPlaceholder} />
@@ -245,7 +257,10 @@ export default class Comment extends React.PureComponent {
         <View style={styles.answer}>
           <Text style={styles.answerText}>Answer</Text>
         </View>
-        {buttonSet}
+        {positionButton}
+        {thumbDwButton}
+        {thumbUpButton}
+        {resolveButton}
       </View>
     );
   }
@@ -258,4 +273,8 @@ Comment.propTypes = {
   jwt: PropTypes.arrayOf(PropTypes.string).isRequired,
   showResolveBike: PropTypes.bool.isRequired,
   bikeId: PropTypes.string.isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+  refresh: PropTypes.func.isRequired,
 };

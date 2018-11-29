@@ -19,7 +19,6 @@ const ADD_BIKE_STATE = {
   uploadDisabled: true,
   uploadingBike: false,
   bikePosted: false,
-  bikeObject: '',
 };
 
 const addBikeReducers = (state = ADD_BIKE_STATE, action) => {

@@ -87,14 +87,14 @@ class Browser extends React.Component {
 
     serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
-        this.setState({ foundBicycles: responseJson.message });
+        this.setState({ foundBicycles: responseJson.message, isFetching: false });
       }).catch(error => console.log(error));
 
     formData = `type=STOLEN&location.city=${location}`;
 
     serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
-        this.setState({ missingBicycles: responseJson.message });
+        this.setState({ missingBicycles: responseJson.message, isFetching: false });
       }).catch(error => console.log(error));
   }
 
@@ -104,14 +104,17 @@ class Browser extends React.Component {
   };
 
   renderItem = ({ item }) => {
+    if (!item.active) return null;
     const { navigation } = this.props;
     const bikeData = item;
     bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
+    bikeData.showResolveBike = false;
     return (
       <TouchableOpacity
         onPress={() => {
           bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
-          navigation.navigate('BikeInformation', { data: bikeData });
+          bikeData.showResolveBike = false;
+          navigation.navigate('BikeInformation', { bikeData, refresh: this.onRefresh });
         }}
       >
         <Item
@@ -120,6 +123,7 @@ class Browser extends React.Component {
           imageUrl={item.image_url || ''}
           bikeData={bikeData}
           navigation={navigation}
+          refresh={this.onRefresh}
         />
       </TouchableOpacity>
     );
@@ -305,7 +309,12 @@ Browser.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    game_score: PropTypes.number.isRequired,
+    game_score: PropTypes.shape({
+      bike_score: PropTypes.number.isRequired,
+      bikes_lost: PropTypes.number.isRequired,
+      thumb_score: PropTypes.number.isRequired,
+      total_score: PropTypes.number.isRequired,
+    }).isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,

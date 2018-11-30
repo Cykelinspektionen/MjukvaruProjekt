@@ -77,8 +77,8 @@ class Profile extends React.Component {
       ...headerStyle,
     };
 
-    constructor(props) {
-      super(props);
+    constructor() {
+      super();
       this.state = {
         yourBicycles: '',
         isFetching: false,
@@ -110,14 +110,17 @@ class Profile extends React.Component {
     };
 
     renderItem = ({ item }) => {
+      if (!item.active) return null;
       const { navigation } = this.props;
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
+      bikeData.showResolveBike = true;
       return (
         <TouchableOpacity
           onPress={() => {
+            bikeData.showResolveBike = true;
             bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
-            navigation.navigate('BikeInformation', { data: bikeData });
+            navigation.navigate('BikeInformation', { bikeData, refresh: this.onRefresh });
           }}
         >
           <Item
@@ -126,6 +129,7 @@ class Profile extends React.Component {
             imageUrl={item.image_url || ''}
             bikeData={bikeData}
             navigation={navigation}
+            refresh={this.onRefresh}
           />
         </TouchableOpacity>
       );
@@ -143,7 +147,6 @@ class Profile extends React.Component {
       const { username } = profileState;
       const { location } = profileState;
       const { email } = profileState;
-
 
       return (
         <ScrollView
@@ -205,7 +208,12 @@ Profile.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    game_score: PropTypes.number.isRequired,
+    game_score: PropTypes.shape({
+      bike_score: PropTypes.number.isRequired,
+      bikes_lost: PropTypes.number.isRequired,
+      thumb_score: PropTypes.number.isRequired,
+      total_score: PropTypes.number.isRequired,
+    }).isRequired,
     loadingProfile: PropTypes.bool.isRequired,
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,

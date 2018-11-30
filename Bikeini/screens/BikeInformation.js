@@ -357,6 +357,8 @@ class BikeInformation extends React.Component {
   setBikeToFound = () => {
     const { authState, navigation } = this.props;
     const { bikeData, refresh } = this.state;
+    // TODO change to userName when backend fixes submitter to user_name
+    const bikeSubmitter = bikeData.submitter._id || bikeData.submitter;
     const formBody = {
       id: bikeData._id,
       active: false,
@@ -365,7 +367,8 @@ class BikeInformation extends React.Component {
     serverApi.fetchApi('bikes/updatebike/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
       .then(
         refresh(),
-        bikeData.type === 'FOUND' ? this.sendPointsToUser(5, bikeScore) : null,
+        // TODO change to userName when backend fixes submitter to user_name
+        bikeData.type === 'FOUND' && profileState.id !== bikeSubmitter ? this.sendPointsToUser(5, bikeScore) : null,
         navigation.navigate('Browser'),
       );
   }

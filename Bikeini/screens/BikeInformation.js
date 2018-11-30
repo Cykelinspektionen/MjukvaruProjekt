@@ -107,6 +107,9 @@ const styles = StyleSheet.create({
   },
 });
 
+const thumbScore = 'thumb_score';
+const bikeScore = 'bike_score';
+
 class BikeInformation extends React.Component {
   constructor(props) {
     super(props);
@@ -325,9 +328,9 @@ class BikeInformation extends React.Component {
   renderFoundButton = () => {
     const { bikeData } = this.state;
     const { profileState } = this.props;
+    // TODO: change to submitter.user_name, when backend fixes submitter
     const bikeSubmitter = bikeData.submitter._id || bikeData.submitter;
-    console.log(bikeData);
-    if (bikeSubmitter === profileState.id) {
+    if (bikeSubmitter === profileState.id || bikeData.type === 'FOUND') {
       return (
         <View style={styles.closeButton}>
           <TouchableHighlight style={[styles.buttonSmall, styles.greenButton]} onPress={() => this.handleFound()}>
@@ -362,8 +365,25 @@ class BikeInformation extends React.Component {
     serverApi.fetchApi('bikes/updatebike/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
       .then(
         refresh(),
+        bikeData.type === 'FOUND' ? this.sendPointsToUser(5, bikeScore) : null,
         navigation.navigate('Browser'),
       );
+  }
+
+  sendPointsToUser = (points, type) => {
+    const { authState } = this.props;
+    const { bikeData } = this.state;
+    // TODO: change to submitter.user_name, when backend fixes submitter
+    const bikeSubmitter = bikeData.submitter._id || bikeData.submitter;
+    const formBody = {
+      user_name: bikeSubmitter,
+      points,
+      type,
+    };
+    serverApi.fetchApi('users/updateHighscore/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
+      .then((responseJson) => {
+        console.log(responseJson);
+      }).catch(error => console.log(error));
   }
 
   render() {

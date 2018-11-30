@@ -239,7 +239,16 @@ class AddBike extends React.Component {
           value: 'Red',
         },
         {
-          value: 'Not Red',
+          value: 'Green',
+        },
+        {
+          value: 'Blue',
+        },
+        {
+          value: 'White',
+        },
+        {
+          value: 'Black',
         },
       ],
     };
@@ -252,6 +261,23 @@ class AddBike extends React.Component {
       setBikePosted(false);
       navigation.navigate('Browser');
     }
+  }
+
+  setServerResponse(response, radioCallback, colorCallback) {
+    console.log(response);
+    const { radios } = this.state;
+
+    // For this to work the response from the server CAN'T have any nestled attrbiutes!
+    Object.keys(response).forEach((key) => {
+      if (!response[key]) {
+        const data = radios[key];
+        data[0].selected = false;
+        data[1].selected = true;
+        radioCallback(data, key, true);
+      } else if (key === 'color') {
+        colorCallback('color', response[key]);
+      }
+    });
   }
 
   startCameraRoll = () => {
@@ -295,24 +321,7 @@ class AddBike extends React.Component {
     const selectedButton = radios[name].find(e => e.selected === true);
     this.setBikeData(name, selectedButton.value, head);
     radios[name] = change;
-    this.setState({ radios }, () => {
-      console.log(this.state.radios.basket);
-    });
-  }
-
-  setServerResponse(response, callback) {
-    console.log(response);
-    const { radios } = this.state;
-
-    // For this to work the response from the server CAN'T have any nestled attrbiutes!  
-    Object.keys(response).forEach(function(key) {
-      if(!response[key]) {
-        const data = radios[key];
-        data[0].selected = false;
-        data[1].selected = true;
-        callback(data, key, true);
-      }
-    });
+    this.setState({ radios });
   }
 
   render() {
@@ -322,6 +331,9 @@ class AddBike extends React.Component {
     const {
       bikeData, radios, Color,
     } = this.state;
+    const {
+      color,
+    } = bikeData;
     if (addBikeState.uploadingBike) {
       return (
         <View style={styles.container}>
@@ -369,7 +381,7 @@ class AddBike extends React.Component {
               !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
             ]}
             disabled={addBikeState.uploadDisabled}
-            onPress={() => imgUploadInit(addBikeState.imgToUploadUri, bikeData.type, authState.jwt[0]).then(response => this.setServerResponse(response, this.radioUpdater))}
+            onPress={() => imgUploadInit(addBikeState.imgToUploadUri, bikeData.type, authState.jwt[0]).then(response => this.setServerResponse(response, this.radioUpdater, this.setBikeData))}
           >
             <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
           </TouchableHighlight>
@@ -479,6 +491,7 @@ class AddBike extends React.Component {
             <Dropdown
               label="Color"
               data={Color}
+              value={color}
               onChangeText={value => this.setBikeData('color', value)}
             />
           </View>

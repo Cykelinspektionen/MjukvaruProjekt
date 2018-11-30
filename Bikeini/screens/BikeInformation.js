@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert,
+  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert, TouchableHighlight,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -24,8 +24,8 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignSelf: 'center',
     marginTop: 30,
-    width: 400,
-    height: 200,
+    width: '100%',
+    flex: 0.5,
   },
   image: {
     flex: 1,
@@ -33,8 +33,13 @@ const styles = StyleSheet.create({
     height: null,
   },
   descriptionContainer: {
-    alignSelf: 'flex-start',
-    marginLeft: 20,
+    marginLeft: 10,
+    flexDirection: 'row',
+    width: '100%',
+    flex: 0.2,
+  },
+  colFlex: {
+    flexDirection: 'column',
   },
   headContainer: {
     marginTop: 10,
@@ -81,6 +86,24 @@ const styles = StyleSheet.create({
     height: '100%',
     marginLeft: '2%',
     width: '83%',
+  },
+  closeButton: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  buttonSmall: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginRight: '5%',
+  },
+  greenButton: {
+    backgroundColor: '#44ccad',
+  },
+  greenButtonText: {
+    color: 'white',
+    margin: 5,
   },
 });
 
@@ -299,6 +322,50 @@ class BikeInformation extends React.Component {
     return null;
   }
 
+  renderFoundButton = () => {
+    const { bikeData } = this.state;
+    const { profileState } = this.props;
+    const bikeSubmitter = bikeData.submitter._id || bikeData.submitter;
+    console.log(bikeData);
+    if (bikeSubmitter === profileState.id) {
+      return (
+        <View style={styles.closeButton}>
+          <TouchableHighlight style={[styles.buttonSmall, styles.greenButton]} onPress={() => this.handleFound()}>
+            <Text style={styles.greenButtonText}>BIKE IS FOUND</Text>
+          </TouchableHighlight>
+        </View>
+      );
+    }
+    return null;
+  }
+
+  handleFound = () => {
+    Alert.alert(
+      'Close Ad',
+      'Are you sure you want to close your ad?',
+      [
+        { text: 'No', onPress: () => console.log('No'), style: 'cancel' },
+        { text: 'Yes', onPress: () => { this.setBikeToFound(); console.log('Yes'); } },
+      ],
+      { cancelable: false },
+    );
+  }
+
+  setBikeToFound = () => {
+    const { authState, navigation } = this.props;
+    const { bikeData, refresh } = this.state;
+    const formBody = {
+      id: bikeData._id,
+      active: false,
+	    type: 'FOUND',
+    };
+    serverApi.fetchApi('bikes/updatebike/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
+      .then(
+        refresh(),
+        navigation.navigate('Browser'),
+      );
+  }
+
   render() {
     const { bikeData } = this.state;
     const {
@@ -309,27 +376,32 @@ class BikeInformation extends React.Component {
 
     const list = this.renderList();
     const commentField = this.renderCommentField();
+    const foundButton = this.renderFoundButton();
     const imgSource = bikeData.image_url ? { uri: bikeData.image_url } : stockBicycle;
+
     return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <Image style={styles.image} resizeMode="contain" resizeMethod="scale" source={imgSource} />
         </View>
         <View style={styles.descriptionContainer}>
-          <View style={styles.headContainer}>
-            <Text style={styles.head}>{title}</Text>
+          <View style={styles.colFlex}>
+            <View style={styles.headContainer}>
+              <Text style={styles.head}>{title}</Text>
+            </View>
+            <Text style={styles.body}>
+              {city}
+              {', '}
+              {neighborhood}
+            </Text>
+            <Text style={styles.body}>{description}</Text>
+            <Text style={styles.body}>
+              {brand}
+              {', '}
+              {color}
+            </Text>
           </View>
-          <Text style={styles.body}>
-            {city}
-            {', '}
-            {neighborhood}
-          </Text>
-          <Text style={styles.body}>{description}</Text>
-          <Text style={styles.body}>
-            {brand}
-            {', '}
-            {color}
-          </Text>
+          {foundButton}
         </View>
         <View style={styles.breakLine} />
         <View style={styles.listContainer}>

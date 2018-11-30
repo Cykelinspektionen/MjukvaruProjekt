@@ -20,9 +20,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   profile: {
-    height: 100,
-    width: 100,
-    margin: 10,
+    height: '80%',
+    width: '25%',
+    margin: '2%',
   },
   rowContainer: {
     flexDirection: 'row',
@@ -31,11 +31,11 @@ const styles = StyleSheet.create({
   columnContainer: {
     flexDirection: 'column',
     backgroundColor: '#fff',
-    margin: 20,
+    margin: '5%',
   },
   categories: {
     fontSize: 24,
-    margin: 10,
+    margin: '2%',
     textDecorationLine: 'underline',
   },
   UserInfo: {
@@ -46,15 +46,16 @@ const styles = StyleSheet.create({
     marginTop: '1%',
     marginLeft: '3%',
     width: '88%',
+    height: '100%',
   },
   topName: {
     fontSize: 18,
-    marginLeft: 15,
-    marginBottom: 3,
+    marginLeft: '4%',
+    marginBottom: '1%',
   },
   topScore: {
     fontSize: 18,
-    marginBottom: 3,
+    marginBottom: '1%',
     position: 'absolute',
     alignSelf: 'center',
     justifyContent: 'center',
@@ -192,7 +193,9 @@ p
                 {' '}
                 {game_score.bikes_lost}
               </Text>
-              <Text style={styles.UserInfo}>
+              <Text style={[styles.UserInfo, { fontWeight: 'bold' },
+              ]}
+              >
                 Total points earned:
                 {' '}
                 {game_score.total_score}

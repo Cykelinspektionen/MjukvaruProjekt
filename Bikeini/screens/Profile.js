@@ -24,9 +24,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#fff',
     margin: '2%',
+    left: '30%',
   },
   profile: {
-    height: '94%',
+    height: '92%',
     width: '28%',
   },
   columnContainer: {
@@ -44,10 +45,12 @@ const styles = StyleSheet.create({
     marginTop: '4%',
   },
   UserInfo: {
-    fontSize: 18,
+    fontSize: 17,
+    left: '20%',
   },
   greenButton: {
     backgroundColor: '#44ccad',
+    left: '27%',
   },
   greenButtonText: {
     color: 'white',
@@ -162,7 +165,7 @@ class Profile extends React.Component {
             <View style={styles.rowContainer}>
               <Image style={styles.profile} source={profilePic} />
               <View style={styles.columnContainer}>
-                <Text style={styles.UserInfo}>
+                <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
                   {''}
                   {username}
                 </Text>

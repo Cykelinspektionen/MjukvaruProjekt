@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
-import { ImagePicker } from 'expo';
+import { ImagePicker, ImageManipulator } from 'expo';
 import permissions from '../utilities/permissions';
 import headerStyle from './header';
 
@@ -269,15 +269,54 @@ class AddBike extends React.Component {
 
     // For this to work the response from the server CAN'T have any nestled attrbiutes!
     Object.keys(response).forEach((key) => {
-      if (!response[key]) {
-        const data = radios[key];
+      let data = radios[key];
+      if(key === 'frame') {
+        key = response[key];
+        switch(key) {
+          case 'sport':
+            data = radios[key];
+            data[0].selected = true;
+            data[1].selected = false;
+            radioCallback(data, key, true, true);
+            break;
+          case 'male':
+            key = 'frame_type';
+            data = radios[key];
+            data[0].selected = true;
+            data[1].selected = false;
+            radioCallback(data, key, true, 'MALE');
+            break;
+          case 'female':
+            key = 'frame_type';
+            data = radios[key];
+            data[0].selected = false;
+            data[1].selected = true;
+            radioCallback(data, key, true, 'FEMALE');
+            break;
+          default:
+            console.log('Unknown key: ' + key);
+            break;
+        }
+        data = radios[key];
+      }
+      else if (key === 'bikeFound') {
+        console.log('There was a bike in the picture!');
+      }
+      else if (!response[key]) {
         data[0].selected = false;
         data[1].selected = true;
-        radioCallback(data, key, true);
-      } else if (key === 'color') {
+        radioCallback(data, key, true, false);
+      }
+      else if (response[key] && key !== 'color') {
+        data[0].selected = true;
+        data[1].selected = false;
+        radioCallback(data, key, true, true);
+      }
+      else if (key === 'color') {
         colorCallback('color', response[key]);
       }
     });
+    //console.log(this.state.bikeData);
   }
 
   startCameraRoll = () => {
@@ -316,12 +355,36 @@ class AddBike extends React.Component {
     this.setState({ bikeData });
   }
 
-  radioUpdater = (change, name, head) => {
+  radioUpdater = (change, name, head, response) => {
     const { radios } = this.state;
     const selectedButton = radios[name].find(e => e.selected === true);
-    this.setBikeData(name, selectedButton.value, head);
+    if(response != null) {
+      this.setBikeData(name, response, head);
+    }
+    else {
+      this.setBikeData(name, selectedButton.value, head);
+    }
     radios[name] = change;
     this.setState({ radios });
+  }
+
+  async compressUri(imgUri) {
+    try {
+      const compressedUri =
+        await ImageManipulator.manipulateAsync(
+                                      imgUri,
+                                      [ { resize: { width: 250, height: 250 } } ],
+                                      {
+                                          compress: 1,
+                                          format: 'jpeg'
+                                      }
+                                  );
+      return compressedUri
+    }
+    catch(err) {
+      console.log(err);
+    }
+    //return compressedUri;
   }
 
   render() {
@@ -502,7 +565,12 @@ class AddBike extends React.Component {
                 Alert.alert('Picture is mandatory!');
                 return;
               }
-              uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
+              //COMPRESS URI TO 250x250 HERE!
+              console.log(addBikeState.imgToUploadUri);
+              this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
+                console.log(compressedUri.uri);
+                uploadBikeToServer(compressedUri.uri, bikeData, authState.jwt[0]);
+              });
             }}
           >
             <Text style={styles.greenButtonText}>Submit</Text>

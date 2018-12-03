@@ -543,6 +543,7 @@ class AddBike extends React.Component {
           </View>
           <View style={styles.dropdowns}>
             <Dropdown
+              value={color}
               label="Color"
               data={Color}
               onChangeText={value => this.setBikeData('color', value)}

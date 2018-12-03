@@ -84,13 +84,23 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class Comment extends React.PureComponent {
-  constructor() {
-    super();
+export default class Comment extends React.Component {
+  constructor(props) {
+    super(props);
     this.state = {
       thumbDown: false,
       thumbUp: false,
     };
+  }
+
+  componentDidMount() {
+    const { myId, rating } = this.props;
+    if (rating.up.every(item => item === myId)) {
+      this.setState({ thumbUp: true });
+    }
+    if (rating.down.every(item => item === myId)) {
+      this.setState({ thumbDown: true });
+    }
   }
 
   sendPointsToUser = (points, type) => {
@@ -277,4 +287,10 @@ Comment.propTypes = {
   ownersComment: PropTypes.bool.isRequired,
   bikeSubUsername: PropTypes.string.isRequired,
   bikeType: PropTypes.string.isRequired,
+  myId: PropTypes.string.isRequired,
+  rating: PropTypes.shape({
+    up: PropTypes.arrayOf(PropTypes.string).isRequired,
+    down: PropTypes.arrayOf(PropTypes.string).isRequired,
+  }).isRequired,
+
 };

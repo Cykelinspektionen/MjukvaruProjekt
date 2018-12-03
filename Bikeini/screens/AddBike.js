@@ -24,11 +24,14 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    marginLeft: '2%',
+    marginBottom: 100,
   },
   dropdowns: {
-    width: 250,
+    width: '90%',
+    marginLeft: '4%',
   },
   rowContainer: {
     flexDirection: 'row',
@@ -50,24 +53,50 @@ const styles = StyleSheet.create({
     backgroundColor: '#00b5ec',
   },
   inputs: {
-    height: 45,
-    marginLeft: 16,
-    borderBottomColor: '#FFFFFF',
+    height: '4%',
+    width: '90%',
+    marginLeft: '4%',
+    marginBottom: '1%',
+    borderColor: '#d8d8d8',
+    borderBottomWidth: 1,
   },
   thumbnail: {
-    width: 100,
+    width: 120,
     height: 100,
     resizeMode: 'contain',
   },
   icons: {
-    width: 30,
-    height: 30,
+    width: '20%',
+    height: '60%',
+    marginLeft: '2%',
+    left: '75%',
+  },
+  addPhotoButtons: {
+    left: '20%',
   },
   greenButton: {
     backgroundColor: '#44ccad',
   },
   greenButtonText: {
     color: 'white',
+  },
+  headerText: {
+    fontSize: 18,
+    margin: '2%',
+    fontWeight: 'bold',
+  },
+  uploadPhotoButton: {
+    flex: 1,
+    alignSelf: 'center',
+    width: '70%',
+  },
+  submitButton: {
+    alignSelf: 'flex-end',
+    marginRight: '4%',
+  },
+  radio: {
+    alignItems: 'flex-start',
+    marginLeft: '15%',
   },
 });
 
@@ -400,7 +429,7 @@ class AddBike extends React.Component {
     return (
       <ScrollView style={styles.background}>
         <View style={styles.container}>
-          <Text>
+          <Text style={styles.headerText}>
           Add a picture of your bike
           </Text>
           <View style={styles.rowContainer}>
@@ -410,7 +439,7 @@ class AddBike extends React.Component {
             </View>
             <View>
               <View style={styles.rowContainer}>
-                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton]} onPress={this.startCameraRoll}>
+                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCameraRoll}>
                   <Text style={styles.greenButtonText}>ADD FROM ALBUM</Text>
                 </TouchableHighlight>
                 <Image
@@ -419,7 +448,7 @@ class AddBike extends React.Component {
                 />
               </View>
               <View style={styles.rowContainer}>
-                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => navigation.navigate('Camera')}>
+                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={() => navigation.navigate('Camera')}>
                   <Text style={styles.greenButtonText}>TAKE A PHOTO</Text>
                 </TouchableHighlight>
                 <Image
@@ -434,6 +463,7 @@ class AddBike extends React.Component {
               styles.smallButtonContainer,
               styles.actionButton,
               styles.greenButton,
+              styles.uploadPhotoButton,
               !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
             ]}
             disabled={addBikeState.uploadDisabled}
@@ -447,6 +477,77 @@ class AddBike extends React.Component {
           >
             <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
           </TouchableHighlight>
+          <View style={styles.radio}>
+            <RadioGroup
+              horizontal="true"
+              radioButtons={radios.type}
+              onPress={(data) => { this.radioUpdater(data, 'type'); }}
+              flexDirection="row"
+            />
+            <RadioGroup
+              horizontal="true"
+              radioButtons={radios.frame_type}
+              onPress={(data) => { this.radioUpdater(data, 'frame_type', true); }}
+              flexDirection="row"
+            />
+            <RadioGroup
+              radioButtons={radios.child}
+              onPress={(data) => { this.radioUpdater(data, 'child', true); }}
+              flexDirection="row"
+            />
+            <RadioGroup
+              radioButtons={radios.sport}
+              onPress={(data) => { this.radioUpdater(data, 'sport', true); }}
+              flexDirection="row"
+            />
+            <RadioGroup
+              radioButtons={radios.tandem}
+              onPress={(data) => { this.radioUpdater(data, 'tandem', true); }}
+              flexDirection="row"
+            />
+            <RadioGroup
+              radioButtons={radios.basket}
+              onPress={(data) => { this.radioUpdater(data, 'basket', true); }}
+              flexDirection="row"
+            />
+            <RadioGroup
+              radioButtons={radios.rack}
+              onPress={(data) => { this.radioUpdater(data, 'rack', true); }}
+              flexDirection="row"
+            />
+            <RadioGroup
+              radioButtons={radios.mudguard}
+              onPress={(data) => { this.radioUpdater(data, 'mudguard', true); }}
+              flexDirection="row"
+            />
+            <RadioGroup
+              radioButtons={radios.chainProtection}
+              onPress={(data) => { this.radioUpdater(data, 'chainProtection', true); }}
+              flexDirection="row"
+            />
+            <RadioGroup
+              radioButtons={radios.net}
+              onPress={(data) => { this.radioUpdater(data, 'net', true); }}
+              flexDirection="row"
+            />
+            <RadioGroup
+              radioButtons={radios.winterTires}
+              onPress={(data) => { this.radioUpdater(data, 'winterTires', true); }}
+              flexDirection="row"
+            />
+            <RadioGroup
+              radioButtons={radios.light}
+              onPress={(data) => { this.radioUpdater(data, 'light', true); }}
+              flexDirection="row"
+            />
+          </View>
+          <View style={styles.dropdowns}>
+            <Dropdown
+              label="Color"
+              data={Color}
+              onChangeText={value => this.setBikeData('color', value)}
+            />
+          </View>
           <TextInput
             style={styles.inputs}
             placeholder="Frame number"
@@ -489,76 +590,8 @@ class AddBike extends React.Component {
             value={bikeData.description}
             onChangeText={text => this.setBikeData('description', text)}
           />
-          <RadioGroup
-            radioButtons={radios.type}
-            onPress={(data) => { this.radioUpdater(data, 'type'); }}
-            flexDirection="row"
-          />
-          <RadioGroup
-            radioButtons={radios.frame_type}
-            onPress={(data) => { this.radioUpdater(data, 'frame_type', true); }}
-            flexDirection="row"
-          />
-          <RadioGroup
-            radioButtons={radios.child}
-            onPress={(data) => { this.radioUpdater(data, 'child', true); }}
-            flexDirection="row"
-          />
-          <RadioGroup
-            radioButtons={radios.sport}
-            onPress={(data) => { this.radioUpdater(data, 'sport', true); }}
-            flexDirection="row"
-          />
-          <RadioGroup
-            radioButtons={radios.tandem}
-            onPress={(data) => { this.radioUpdater(data, 'tandem', true); }}
-            flexDirection="row"
-          />
-          <RadioGroup
-            radioButtons={radios.basket}
-            onPress={(data) => { this.radioUpdater(data, 'basket', true); }}
-            flexDirection="row"
-          />
-          <RadioGroup
-            radioButtons={radios.rack}
-            onPress={(data) => { this.radioUpdater(data, 'rack', true); }}
-            flexDirection="row"
-          />
-          <RadioGroup
-            radioButtons={radios.mudguard}
-            onPress={(data) => { this.radioUpdater(data, 'mudguard', true); }}
-            flexDirection="row"
-          />
-          <RadioGroup
-            radioButtons={radios.chainProtection}
-            onPress={(data) => { this.radioUpdater(data, 'chainProtection', true); }}
-            flexDirection="row"
-          />
-          <RadioGroup
-            radioButtons={radios.net}
-            onPress={(data) => { this.radioUpdater(data, 'net', true); }}
-            flexDirection="row"
-          />
-          <RadioGroup
-            radioButtons={radios.winterTires}
-            onPress={(data) => { this.radioUpdater(data, 'winterTires', true); }}
-            flexDirection="row"
-          />
-          <RadioGroup
-            radioButtons={radios.light}
-            onPress={(data) => { this.radioUpdater(data, 'light', true); }}
-            flexDirection="row"
-          />
-          <View style={styles.dropdowns}>
-            <Dropdown
-              label="Color"
-              data={Color}
-              value={color}
-              onChangeText={value => this.setBikeData('color', value)}
-            />
-          </View>
           <TouchableHighlight
-            style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton]}
+            style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.submitButton]}
             onPress={() => {
               if (!addBikeState.uriSet) {
                 Alert.alert('Picture is mandatory!');
@@ -568,7 +601,7 @@ class AddBike extends React.Component {
             }
             }
           >
-            <Text style={styles.greenButtonText}>Submit</Text>
+            <Text style={styles.greenButtonText}>SUBMIT</Text>
           </TouchableHighlight>
         </View>
       </ScrollView>

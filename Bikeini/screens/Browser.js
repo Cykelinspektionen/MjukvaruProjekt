@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, FlatList, TouchableOpacity, Platform,
+  StyleSheet, Text, View, FlatList, TouchableOpacity, Platform, ImageBackground,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -10,6 +10,8 @@ import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
 import headerStyle from './header';
+
+const background = require('../assets/images/background.jpeg');
 
 const styles = StyleSheet.create({
   container: {
@@ -21,21 +23,22 @@ const styles = StyleSheet.create({
   header: {
   },
   headerText: {
-    fontSize: 22,
-    fontWeight: '300',
+    marginTop: '5%',
+    fontSize: 26,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    textDecorationLine: 'underline',
   },
   filter: {
     alignSelf: 'flex-start',
     flexDirection: 'row',
-    marginTop: '5%',
-    marginLeft: '13%',
+    marginLeft: '5%',
   },
   browserList: {
     flex: 1,
-    alignSelf: 'flex-start',
-    marginTop: '1%',
-    marginLeft: '10%',
-    width: '88%',
+    alignSelf: 'center',
+    margin: '1%',
+    width: '95%',
   },
   showTypeLeft: {
     alignSelf: 'flex-start',
@@ -55,6 +58,10 @@ const styles = StyleSheet.create({
     marginTop: '1%',
     borderWidth: 0,
     borderBottomWidth: 1,
+  },
+  headerContainer: {
+    backgroundColor: '#44ccad',
+    width: '100%',
   },
 });
 
@@ -221,7 +228,7 @@ class Browser extends React.Component {
           style={styles.showTypeRight}
           onPress={this.switchPageType}
         >
-          <Icon name={Platform.OS === 'ios' ? 'ios-arrow-dropright' : 'md-arrow-dropright'} size={80} color="black" />
+          <Icon name={Platform.OS === 'ios' ? 'ios-arrow-forward' : 'md-arrow-dropright'} size={75} color="black" />
         </TouchableOpacity>
       );
     }
@@ -232,7 +239,7 @@ class Browser extends React.Component {
         style={styles.showTypeLeft}
         onPress={this.switchPageType}
       >
-        <Icon name={Platform.OS === 'ios' ? 'ios-arrow-dropleft' : 'md-arrow-dropleft'} size={80} color="black" />
+        <Icon name={Platform.OS === 'ios' ? 'ios-arrow-back' : 'md-arrow-dropleft'} size={80} color="black" />
       </TouchableOpacity>
     );
   }
@@ -246,7 +253,18 @@ class Browser extends React.Component {
           style={styles.filter}
           onPress={this.changeFilterStatus}
         >
-          <Text style={{ fontSize: 16 }}>Filter  </Text>
+          <Text style={{
+            fontSize: 20,
+            fontWeight: 'bold',
+            shadowOffset: { width: 1, height: 1 },
+            shadowColor: 'white',
+            shadowOpacity: 10.0,
+          }}
+          >
+            Filter
+            {' '}
+
+          </Text>
           <Icon name="md-arrow-dropup" size={30} color="black" />
         </TouchableOpacity>
       );
@@ -258,7 +276,18 @@ class Browser extends React.Component {
         style={styles.filter}
         onPress={this.changeFilterStatus}
       >
-        <Text style={{ fontSize: 16 }}>Filter  </Text>
+        <Text style={{
+          fontSize: 20,
+          fontWeight: 'bold',
+          shadowOffset: { width: 1, height: 1 },
+          shadowColor: 'white',
+          shadowOpacity: 10.0,
+        }}
+        >
+        Filter
+          {' '}
+
+        </Text>
         <Icon name="md-arrow-dropdown" size={30} color="black" />
       </TouchableOpacity>
     );
@@ -283,9 +312,11 @@ class Browser extends React.Component {
     const switchArrow = this.renderSwitchType();
     return (
       <View style={styles.container}>
-        {header}
-        {switchArrow}
-        {filterHeader}
+        <ImageBackground style={styles.headerContainer} source={background}>
+          {header}
+          {switchArrow}
+          {filterHeader}
+        </ImageBackground>
         <View style={styles.breakLine} />
         {filter}
         {list}

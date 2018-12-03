@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
-import { ImagePicker } from 'expo';
+import { ImagePicker, ImageManipulator } from 'expo';
 import permissions from '../utilities/permissions';
 import headerStyle from './header';
 
@@ -293,7 +293,7 @@ class AddBike extends React.Component {
   }
 
   setServerResponse(response, radioCallback, colorCallback) {
-    // console.log(response);       <- Used for checking the structure of the ML-response, please leave it until it's been testsed on live! :)
+    console.log(response); // <- Used for checking the structure of the ML-response, please leave it until it's been testsed on live! :)
     const { radios } = this.state;
 
     // For this to work the response from the server CAN'T have any nestled attrbiutes!
@@ -392,9 +392,9 @@ class AddBike extends React.Component {
     this.setState({ radios });
   }
 
-  async compressUri(imgUri) {
+  compressUri = async (imgUri) => {
     try {
-      const compressedUri = await this.ImageManipulator.manipulateAsync(
+      const compressedUri = await ImageManipulator.manipulateAsync(
         imgUri,
         [{ resize: { width: 250, height: 250 } }],
         {

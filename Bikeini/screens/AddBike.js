@@ -264,57 +264,52 @@ class AddBike extends React.Component {
   }
 
   setServerResponse(response, radioCallback, colorCallback) {
-    //console.log(response);       <- Used for checking the structure of the ML-response, please leave it until it's been testsed on live! :)
+    // console.log(response);       <- Used for checking the structure of the ML-response, please leave it until it's been testsed on live! :)
     const { radios } = this.state;
 
     // For this to work the response from the server CAN'T have any nestled attrbiutes!
     Object.keys(response).forEach((key) => {
       let data = radios[key];
-      if(key === 'frame') {
-        key = response[key];
-        switch(key) {
+      if (key === 'frame') {
+        let frameKey = response[key];
+        switch (frameKey) {
           case 'sport':
-            data = radios[key];
+            data = radios[frameKey];
             data[0].selected = true;
             data[1].selected = false;
-            radioCallback(data, key, true, true);
+            radioCallback(data, frameKey, true, true);
             break;
           case 'male':
-            key = 'frame_type';
-            data = radios[key];
+            frameKey = 'frame_type';
+            data = radios[frameKey];
             data[0].selected = true;
             data[1].selected = false;
-            radioCallback(data, key, true, 'MALE');
+            radioCallback(data, frameKey, true, 'MALE');
             break;
           case 'female':
-            key = 'frame_type';
-            data = radios[key];
+            frameKey = 'frame_type';
+            data = radios[frameKey];
             data[0].selected = false;
             data[1].selected = true;
-            radioCallback(data, key, true, 'FEMALE');
+            radioCallback(data, frameKey, true, 'FEMALE');
             break;
           default:
-            console.log('Unknown key: ' + key);
+            console.log(`Unknown key: ${frameKey}`);
             break;
         }
-      }
-      else if (key === 'bikeFound') {
-        if(!response[key]) {
+      } else if (key === 'bikeFound') {
+        if (!response[key]) {
           console.log('There was NOT a bike in the picture!');
-          return;
         }
-      }
-      else if (!response[key]) {
+      } else if (!response[key]) {
         data[0].selected = false;
         data[1].selected = true;
         radioCallback(data, key, true, false);
-      }
-      else if (response[key] & key !== 'color') {
+      } else if (response[key] && key !== 'color') {
         data[0].selected = true;
         data[1].selected = false;
         radioCallback(data, key, true, true);
-      }
-      else if (key === 'color') {
+      } else if (key === 'color') {
         colorCallback('color', response[key]);
       }
     });
@@ -359,10 +354,9 @@ class AddBike extends React.Component {
   radioUpdater = (change, name, head, response) => {
     const { radios } = this.state;
     const selectedButton = radios[name].find(e => e.selected === true);
-    if(response != null) {
+    if (response != null) {
       this.setBikeData(name, response, head);
-    }
-    else {
+    } else {
       this.setBikeData(name, selectedButton.value, head);
     }
     radios[name] = change;
@@ -371,20 +365,19 @@ class AddBike extends React.Component {
 
   async compressUri(imgUri) {
     try {
-      const compressedUri =
-        await ImageManipulator.manipulateAsync(
-                                      imgUri,
-                                      [ { resize: { width: 250, height: 250 } } ],
-                                      {
-                                          compress: 1,
-                                          format: 'jpeg'
-                                      }
-                                  );
-      return compressedUri
-    }
-    catch(err) {
+      const compressedUri = await ImageManipulator.manipulateAsync(
+        imgUri,
+        [{ resize: { width: 250, height: 250 } }],
+        {
+          compress: 1,
+          format: 'jpeg',
+        },
+      );
+      return compressedUri;
+    } catch (err) {
       console.log(err);
     }
+    return imgUri;
   }
 
   render() {
@@ -447,9 +440,9 @@ class AddBike extends React.Component {
             onPress={() => {
               this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
                 imgUploadInit(compressedUri.uri, bikeData.type, authState.jwt[0])
-                  .then(response => this.setServerResponse(response, this.radioUpdater, this.setBikeData))
-                })
-              }
+                  .then(response => this.setServerResponse(response, this.radioUpdater, this.setBikeData));
+              });
+            }
             }
           >
             <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
@@ -572,7 +565,7 @@ class AddBike extends React.Component {
                 return;
               }
               uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
-              }
+            }
             }
           >
             <Text style={styles.greenButtonText}>Submit</Text>

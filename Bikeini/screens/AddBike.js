@@ -394,7 +394,7 @@ class AddBike extends React.Component {
 
   async compressUri(imgUri) {
     try {
-      const compressedUri = await ImageManipulator.manipulateAsync(
+      const compressedUri = await this.ImageManipulator.manipulateAsync(
         imgUri,
         [{ resize: { width: 250, height: 250 } }],
         {

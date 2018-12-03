@@ -121,7 +121,7 @@ class BikeInformation extends React.Component {
 
     this.state = {
       comments: [{
-        body: 'No comments yet! Be the first to make a comment! :)', author: '1', date: '1', _id: '1',
+        body: 'No comments yet! Be the first to make a comment! :)', author: { username: '1' }, date: '1', _id: '1',
       }],
       matchingBikes: [],
       text: '',
@@ -182,6 +182,7 @@ class BikeInformation extends React.Component {
   };
 
   renderItem = ({ item }) => {
+    console.log(item);
     let {
       bikeData,
     } = this.state;
@@ -194,14 +195,14 @@ class BikeInformation extends React.Component {
         body, author, date,
       } = item;
       const { jwt } = authState;
-      const ownersComment = profileState.username === item.author;
+      const ownersComment = profileState.username === item.author.username;
       return (
         <TouchableOpacity
           onPress={() => {}}
         >
           <Comment
             body={body}
-            author={author}
+            username={author.username}
             date={date}
             jwt={jwt}
             showResolveBike={bikeData.showResolveBike}

@@ -96,13 +96,12 @@ export default class Comment extends React.PureComponent {
   }
 
   sendPointsToUser = (points, type) => {
-    const { author, jwt } = this.props;
-    const formBody = {
-      user_name: author,
-      points,
-      type,
-    };
-    serverApi.fetchApi('users/updateHighscore/', JSON.stringify(formBody), 'application/json', jwt[0])
+    const { username, jwt } = this.props;
+    const formBody = {};
+    formBody.user_name = username;
+    formBody[type] = points;
+    console.log(formBody);
+    serverApi.fetchApi('users/updatehighscore/', JSON.stringify(formBody), 'application/json', jwt[0])
       .then((responseJson) => {
         console.log(responseJson);
       }).catch(error => console.log(error));
@@ -162,7 +161,7 @@ export default class Comment extends React.PureComponent {
 
   renderButtonSet = () => {
     const {
-      showResolveBike, author, ownersComment,
+      showResolveBike, username, ownersComment,
     } = this.props;
     const { thumbDown, thumbUp } = this.state;
 
@@ -171,7 +170,7 @@ export default class Comment extends React.PureComponent {
     let thumbUpButton = null;
     let thumbDwButton = null;
     if (!ownersComment) {
-      if (showResolveBike && author !== '1') {
+      if (showResolveBike && username !== '1') {
         resolveButton = (
           <TouchableOpacity
             style={styles.FoundTag}
@@ -184,7 +183,7 @@ export default class Comment extends React.PureComponent {
           </TouchableOpacity>
         );
       }
-      if (author !== '1') {
+      if (username !== '1') {
         positionButton = (
           <TouchableOpacity
             style={styles.locationTag}
@@ -198,7 +197,7 @@ export default class Comment extends React.PureComponent {
         );
       }
 
-      if (author !== '1') {
+      if (username !== '1') {
         thumbUpButton = (
           <TouchableOpacity
             style={styles.thumbDownTag}
@@ -211,7 +210,7 @@ export default class Comment extends React.PureComponent {
           </TouchableOpacity>
         );
       }
-      if (author !== '1') {
+      if (username !== '1') {
         thumbDwButton = (
           <TouchableOpacity
             style={styles.thumbUpTag}
@@ -235,7 +234,7 @@ export default class Comment extends React.PureComponent {
 
   render() {
     const {
-      body, author, date,
+      body, username, date,
     } = this.props;
     const dateRaw = date.split('-');
     let day = `${dateRaw[2]}`;
@@ -249,7 +248,7 @@ export default class Comment extends React.PureComponent {
         <Image style={styles.image} source={userPlaceholder} />
         <View style={styles.textView}>
           <Text>
-            {author}
+            {username}
             {', '}
             {dateClean}
           </Text>
@@ -270,7 +269,7 @@ export default class Comment extends React.PureComponent {
 
 Comment.propTypes = {
   body: PropTypes.string.isRequired,
-  author: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   jwt: PropTypes.arrayOf(PropTypes.string).isRequired,
   showResolveBike: PropTypes.bool.isRequired,

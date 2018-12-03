@@ -180,7 +180,6 @@ class BikeInformation extends React.Component {
   };
 
   renderItem = ({ item }) => {
-    console.log(item);
     let {
       bikeData,
     } = this.state;
@@ -384,9 +383,7 @@ class BikeInformation extends React.Component {
     const formBody = { user_name: bikeSubmitter };
     formBody[type] = points;
     serverApi.fetchApi('users/updatehighscore/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
-      .then((responseJson) => {
-        console.log(responseJson);
-      }).catch(error => console.log(error));
+      .catch(error => console.log(error));
   }
 
   render() {

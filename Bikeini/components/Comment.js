@@ -98,11 +98,8 @@ export default class Comment extends React.PureComponent {
     const formBody = {};
     formBody.user_name = username;
     formBody[type] = points;
-    console.log(formBody);
     serverApi.fetchApi('users/updatehighscore/', JSON.stringify(formBody), 'application/json', jwt[0])
-      .then((responseJson) => {
-        console.log(responseJson);
-      }).catch(error => console.log(error));
+      .catch(error => console.log(error));
   }
 
   setBikeToFound = () => {

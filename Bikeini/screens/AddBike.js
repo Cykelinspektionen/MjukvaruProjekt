@@ -264,7 +264,7 @@ class AddBike extends React.Component {
   }
 
   setServerResponse(response, radioCallback, colorCallback) {
-    console.log(response);
+    //console.log(response);       <- Used for checking the structure of the ML-response, please leave it until it's been testsed on live! :)
     const { radios } = this.state;
 
     // For this to work the response from the server CAN'T have any nestled attrbiutes!
@@ -297,17 +297,19 @@ class AddBike extends React.Component {
             console.log('Unknown key: ' + key);
             break;
         }
-        data = radios[key];
       }
       else if (key === 'bikeFound') {
-        console.log('There was a bike in the picture!');
+        if(!response[key]) {
+          console.log('There was NOT a bike in the picture!');
+          return;
+        }
       }
       else if (!response[key]) {
         data[0].selected = false;
         data[1].selected = true;
         radioCallback(data, key, true, false);
       }
-      else if (response[key] && key !== 'color') {
+      else if (response[key] & key !== 'color') {
         data[0].selected = true;
         data[1].selected = false;
         radioCallback(data, key, true, true);
@@ -316,7 +318,6 @@ class AddBike extends React.Component {
         colorCallback('color', response[key]);
       }
     });
-    //console.log(this.state.bikeData);
   }
 
   startCameraRoll = () => {
@@ -384,7 +385,6 @@ class AddBike extends React.Component {
     catch(err) {
       console.log(err);
     }
-    //return compressedUri;
   }
 
   render() {
@@ -444,7 +444,13 @@ class AddBike extends React.Component {
               !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
             ]}
             disabled={addBikeState.uploadDisabled}
-            onPress={() => imgUploadInit(addBikeState.imgToUploadUri, bikeData.type, authState.jwt[0]).then(response => this.setServerResponse(response, this.radioUpdater, this.setBikeData))}
+            onPress={() => {
+              this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
+                imgUploadInit(compressedUri.uri, bikeData.type, authState.jwt[0])
+                  .then(response => this.setServerResponse(response, this.radioUpdater, this.setBikeData))
+                })
+              }
+            }
           >
             <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
           </TouchableHighlight>
@@ -565,13 +571,9 @@ class AddBike extends React.Component {
                 Alert.alert('Picture is mandatory!');
                 return;
               }
-              //COMPRESS URI TO 250x250 HERE!
-              console.log(addBikeState.imgToUploadUri);
-              this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
-                console.log(compressedUri.uri);
-                uploadBikeToServer(compressedUri.uri, bikeData, authState.jwt[0]);
-              });
-            }}
+              uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
+              }
+            }
           >
             <Text style={styles.greenButtonText}>Submit</Text>
           </TouchableHighlight>

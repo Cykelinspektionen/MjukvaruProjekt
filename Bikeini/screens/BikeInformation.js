@@ -203,6 +203,8 @@ class BikeInformation extends React.Component {
             username={author.username}
             date={date}
             jwt={jwt}
+            bikeSubUsername={bikeData.submitter.user_name}
+            bikeType={bikeData.type}
             showResolveBike={bikeData.showResolveBike}
             bikeId={_id}
             navigation={navigation}

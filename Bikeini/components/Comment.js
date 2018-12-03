@@ -107,7 +107,7 @@ export default class Comment extends React.PureComponent {
 
   setBikeToFound = () => {
     const {
-      jwt, bikeId, navigation, refresh,
+      jwt, bikeId, navigation, refresh, bikeType, bikeSubUsername,
     } = this.props;
     const formBody = {
       id: bikeId,
@@ -117,6 +117,7 @@ export default class Comment extends React.PureComponent {
     serverApi.fetchApi('bikes/updatebike/', JSON.stringify(formBody), 'application/json', jwt[0])
       .then(
         this.sendPointsToUser(5, bikeScore),
+        bikeType === 'FOUND' ? this.sendPointsToUser(5, bikeSubUsername) : null,
         refresh(),
         navigation.navigate('Profile'),
 
@@ -277,4 +278,6 @@ Comment.propTypes = {
   }).isRequired,
   refresh: PropTypes.func.isRequired,
   ownersComment: PropTypes.bool.isRequired,
+  bikeSubUsername: PropTypes.string.isRequired,
+  bikeType: PropTypes.string.isRequired,
 };

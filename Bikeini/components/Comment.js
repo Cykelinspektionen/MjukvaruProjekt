@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import serverApi from '../utilities/serverApi';
+import { thumbScore, bikeScore } from '../utilities/Const';
 
 const locationIcon = require('../assets/images/location.png');
 const thumbUpIcon = require('../assets/images/thumbupNoBack.png');
@@ -82,9 +83,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'red',
   },
 });
-
-const thumbScore = 'thumb_score';
-const bikeScore = 'bike_score';
 
 export default class Comment extends React.PureComponent {
   constructor() {

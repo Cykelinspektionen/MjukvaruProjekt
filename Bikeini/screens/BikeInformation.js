@@ -5,12 +5,12 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-
 import serverApi from '../utilities/serverApi';
 import * as jwtActions from '../navigation/actions/JwtActions';
-
 import Item from '../components/Item';
 import Comment from '../components/Comment';
+import { bikeScore } from '../utilities/Const';
+
 
 const stockBicycle = require('../assets/images/stockBicycle.png');
 
@@ -107,8 +107,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const thumbScore = 'thumb_score';
-const bikeScore = 'bike_score';
 
 class BikeInformation extends React.Component {
   constructor(props) {
@@ -332,7 +330,7 @@ class BikeInformation extends React.Component {
     const { bikeData } = this.state;
     const { profileState } = this.props;
     // TODO: change to submitter.user_name, when backend fixes submitter
-    const bikeSubmitter = bikeData.submitter._id || bikeData.submitter;
+    const bikeSubmitter = bikeData.submitter.user_name || bikeData.submitter;
     if (bikeSubmitter === profileState.id || bikeData.type === 'FOUND') {
       return (
         <View style={styles.closeButton}>
@@ -358,10 +356,10 @@ class BikeInformation extends React.Component {
   }
 
   setBikeToFound = () => {
-    const { authState, navigation } = this.props;
+    const { authState, navigation, profileState } = this.props;
     const { bikeData, refresh } = this.state;
     // TODO change to userName when backend fixes submitter to user_name
-    const bikeSubmitter = bikeData.submitter._id || bikeData.submitter;
+    const bikeSubmitter = bikeData.submitter.user_name || bikeData.submitter;
     const formBody = {
       id: bikeData._id,
       active: false,
@@ -380,13 +378,10 @@ class BikeInformation extends React.Component {
     const { authState } = this.props;
     const { bikeData } = this.state;
     // TODO: change to submitter.user_name, when backend fixes submitter
-    const bikeSubmitter = bikeData.submitter._id || bikeData.submitter;
-    const formBody = {
-      user_name: bikeSubmitter,
-      points,
-      type,
-    };
-    serverApi.fetchApi('users/updateHighscore/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
+    const bikeSubmitter = bikeData.submitter.user_name || bikeData.submitter;
+    const formBody = { user_name: bikeSubmitter };
+    formBody[type] = points;
+    serverApi.fetchApi('users/updatehighscore/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
       .then((responseJson) => {
         console.log(responseJson);
       }).catch(error => console.log(error));

@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
-import { ImagePicker, ImageManipulator } from 'expo';
+import { ImagePicker } from 'expo';
 import permissions from '../utilities/permissions';
 import headerStyle from './header';
 

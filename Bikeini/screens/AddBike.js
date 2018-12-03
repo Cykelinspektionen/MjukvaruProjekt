@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
-import { ImagePicker } from 'expo';
+import { ImagePicker, ImageManipulator } from 'expo';
 import permissions from '../utilities/permissions';
 import headerStyle from './header';
 
@@ -268,13 +268,21 @@ class AddBike extends React.Component {
           value: 'Red',
         },
         {
-          value: 'Not Red',
+          value: 'Green',
+        },
+        {
+          value: 'Blue',
+        },
+        {
+          value: 'White',
+        },
+        {
+          value: 'Black',
         },
       ],
     };
     this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
   }
-
 
   componentDidUpdate() {
     const { addBikeState, navigation, setBikePosted } = this.props;
@@ -282,6 +290,58 @@ class AddBike extends React.Component {
       setBikePosted(false);
       navigation.navigate('Browser');
     }
+  }
+
+  setServerResponse(response, radioCallback, colorCallback) {
+    console.log(response); // <- Used for checking the structure of the ML-response, please leave it until it's been testsed on live! :)
+    const { radios } = this.state;
+
+    // For this to work the response from the server CAN'T have any nestled attrbiutes!
+    Object.keys(response).forEach((key) => {
+      let data = radios[key];
+      if (key === 'frame') {
+        let frameKey = response[key];
+        switch (frameKey) {
+          case 'sport':
+            data = radios[frameKey];
+            data[0].selected = true;
+            data[1].selected = false;
+            radioCallback(data, frameKey, true, true);
+            break;
+          case 'male':
+            frameKey = 'frame_type';
+            data = radios[frameKey];
+            data[0].selected = true;
+            data[1].selected = false;
+            radioCallback(data, frameKey, true, 'MALE');
+            break;
+          case 'female':
+            frameKey = 'frame_type';
+            data = radios[frameKey];
+            data[0].selected = false;
+            data[1].selected = true;
+            radioCallback(data, frameKey, true, 'FEMALE');
+            break;
+          default:
+            console.log(`Unknown key: ${frameKey}`);
+            break;
+        }
+      } else if (key === 'bikeFound') {
+        if (!response[key]) {
+          console.log('There was NOT a bike in the picture!');
+        }
+      } else if (!response[key]) {
+        data[0].selected = false;
+        data[1].selected = true;
+        radioCallback(data, key, true, false);
+      } else if (response[key] && key !== 'color') {
+        data[0].selected = true;
+        data[1].selected = false;
+        radioCallback(data, key, true, true);
+      } else if (key === 'color') {
+        colorCallback('color', response[key]);
+      }
+    });
   }
 
   startCameraRoll = () => {
@@ -320,12 +380,33 @@ class AddBike extends React.Component {
     this.setState({ bikeData });
   }
 
-  radioUpdater = (change, name, head) => {
+  radioUpdater = (change, name, head, response) => {
     const { radios } = this.state;
     const selectedButton = radios[name].find(e => e.selected === true);
-    this.setBikeData(name, selectedButton.value, head);
+    if (response != null) {
+      this.setBikeData(name, response, head);
+    } else {
+      this.setBikeData(name, selectedButton.value, head);
+    }
     radios[name] = change;
     this.setState({ radios });
+  }
+
+  compressUri = async (imgUri) => {
+    try {
+      const compressedUri = await ImageManipulator.manipulateAsync(
+        imgUri,
+        [{ resize: { width: 250, height: 250 } }],
+        {
+          compress: 1,
+          format: 'jpeg',
+        },
+      );
+      return compressedUri;
+    } catch (err) {
+      console.log(err);
+    }
+    return imgUri;
   }
 
   render() {
@@ -335,6 +416,9 @@ class AddBike extends React.Component {
     const {
       bikeData, radios, Color,
     } = this.state;
+    const {
+      color,
+    } = bikeData;
     if (addBikeState.uploadingBike) {
       return (
         <View style={styles.container}>
@@ -383,7 +467,13 @@ class AddBike extends React.Component {
               !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
             ]}
             disabled={addBikeState.uploadDisabled}
-            onPress={() => imgUploadInit(addBikeState.imgToUploadUri, bikeData.type, authState.jwt[0])}
+            onPress={() => {
+              this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
+                imgUploadInit(compressedUri.uri, bikeData.type, authState.jwt[0])
+                  .then(response => this.setServerResponse(response, this.radioUpdater, this.setBikeData));
+              });
+            }
+            }
           >
             <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
           </TouchableHighlight>
@@ -453,6 +543,7 @@ class AddBike extends React.Component {
           </View>
           <View style={styles.dropdowns}>
             <Dropdown
+              value={color}
               label="Color"
               data={Color}
               onChangeText={value => this.setBikeData('color', value)}
@@ -508,7 +599,8 @@ class AddBike extends React.Component {
                 return;
               }
               uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
-            }}
+            }
+            }
           >
             <Text style={styles.greenButtonText}>SUBMIT</Text>
           </TouchableHighlight>

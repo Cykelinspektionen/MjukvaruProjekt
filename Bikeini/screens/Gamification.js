@@ -2,63 +2,85 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  StyleSheet, Text, View, ScrollView, Image, FlatList,
+  StyleSheet, Text, View, ScrollView, Image, FlatList, ImageBackground,
 } from 'react-native';
 import headerStyle from './header';
 import serverApi from '../utilities/serverApi';
 
 const profilePic = require('../assets/images/userPlaceholder.jpg');
+const background = require('../assets/images/background.jpeg');
 
 
 const styles = StyleSheet.create({
   background: {
-    backgroundColor: '#fff',
+    backgroundColor: 'transparent',
+    flex: 1,
   },
   container: {
     flex: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
+    backgroundColor: 'transparent',
   },
   profile: {
-    height: 100,
-    width: 100,
-    margin: 10,
+    height: '80%',
+    width: '25%',
+    margin: '3%',
+    borderRadius: 10,
   },
   rowContainer: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
   },
   columnContainer: {
     flexDirection: 'column',
-    backgroundColor: '#fff',
-    margin: 20,
+    margin: '5%',
+    borderRadius: 10,
+    backgroundColor: 'white',
+    padding: '2%',
   },
   categories: {
+    alignSelf: 'center',
     fontSize: 24,
-    margin: 10,
+    margin: '2%',
     textDecorationLine: 'underline',
+    fontWeight: 'bold',
   },
   UserInfo: {
     fontSize: 18,
+    fontWeight: 'bold',
+    borderRadius: 15,
   },
   scoreList: {
+    backgroundColor: 'transparent',
     alignSelf: 'flex-start',
-    marginTop: '1%',
+    marginTop: '5%',
     marginLeft: '3%',
     width: '88%',
+    height: '90%',
   },
   topName: {
     fontSize: 18,
-    marginLeft: 15,
-    marginBottom: 3,
+    marginBottom: '1%',
+    fontWeight: 'bold',
   },
   topScore: {
     fontSize: 18,
-    marginBottom: 3,
+    marginBottom: '1%',
     position: 'absolute',
     alignSelf: 'center',
     justifyContent: 'center',
-    right: '5%',
+    right: '9%',
+    fontWeight: 'bold',
+  },
+  backImg: {
+    flex: 1,
+    alignSelf: 'stretch',
+  },
+  listBack: {
+    backgroundColor: 'white',
+    width: '75%',
+    left: '12%',
+    borderRadius: 15,
   },
 });
 
@@ -172,47 +194,56 @@ p
       const { location } = profileState;
       const { game_score } = profileState;
       return (
-        <ScrollView style={styles.background}>
-          <View style={styles.container} />
-          <View style={styles.rowContainer}>
-            <Image style={styles.profile} source={profilePic} />
-            <View style={styles.columnContainer}>
-              <Text style={styles.UserInfo}>
+        <ImageBackground style={styles.backImg} source={background}>
+          <ScrollView style={styles.background}>
+            <View style={styles.container} />
+            <View style={styles.rowContainer}>
+              <Image style={styles.profile} source={profilePic} />
+              <View style={styles.columnContainer}>
+                <Text style={styles.UserInfo}>
                 Found Bikes:
-                {' '}
-                {game_score.bike_score}
-              </Text>
-              <Text style={styles.UserInfo}>
+                  {' '}
+                  {game_score.bike_score}
+                </Text>
+                <Text style={styles.UserInfo}>
                 Helpful tips:
-                {' '}
-                {game_score.thumb_score}
-              </Text>
-              <Text style={styles.UserInfo}>
+                  {' '}
+                  {game_score.thumb_score}
+                </Text>
+                <Text style={styles.UserInfo}>
                 Your stolen Bikes:
-                {' '}
-                {game_score.bikes_lost}
-              </Text>
-              <Text style={styles.UserInfo}>
+                  {' '}
+                  {game_score.bikes_lost}
+                </Text>
+                <Text style={[styles.UserInfo, { fontWeight: 'bold' },
+                ]}
+                >
                 Total points earned:
-                {' '}
-                {game_score.total_score}
-              </Text>
+                  {' '}
+                  {game_score.total_score}
+                </Text>
+              </View>
             </View>
-          </View>
-          <Text style={styles.categories}>
+            <View style={styles.listBack}>
+              <Text style={styles.categories}>
             Top list in
-            {' '}
-            {location}
+                {' '}
+                {location}
             :
-          </Text>
-          <View>
-            {this.renderLocalList()}
-          </View>
-          <Text style={styles.categories}>Top list in Sweden:</Text>
-          <View>
-            {this.renderSweList()}
-          </View>
-        </ScrollView>
+              </Text>
+              <View>
+                {this.renderLocalList()}
+              </View>
+            </View>
+            <Text>{' '}</Text>
+            <View style={styles.listBack}>
+              <Text style={styles.categories}>Top list in Sweden:</Text>
+              <View>
+                {this.renderSweList()}
+              </View>
+            </View>
+          </ScrollView>
+        </ImageBackground>
       );
     }
 }

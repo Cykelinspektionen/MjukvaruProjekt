@@ -20,50 +20,58 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
   },
-  profile: {
-    height: 100,
-    width: 100,
-    margin: 10,
-  },
   rowContainer: {
     flexDirection: 'row',
     backgroundColor: '#fff',
+    margin: '2%',
+    left: '30%',
+  },
+  profile: {
+    height: '92%',
+    width: '28%',
   },
   columnContainer: {
     flexDirection: 'column',
     backgroundColor: '#fff',
-    margin: 20,
+    marginTop: '4%',
+    marginLeft: '4%',
   },
   categories: {
-    fontSize: 24,
-    margin: 10,
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginLeft: '2%',
+  },
+  tipsBikes: {
+    marginTop: '4%',
   },
   UserInfo: {
-    fontSize: 18,
+    fontSize: 17,
+    left: '20%',
   },
   greenButton: {
     backgroundColor: '#44ccad',
+    left: '27%',
   },
   greenButtonText: {
     color: 'white',
   },
   editButtonContainer: {
-    height: 32,
+    height: '25%',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
-    width: 100,
+    width: '70%',
     borderRadius: 5,
   },
   actionButton: {
     backgroundColor: '#00b5ec',
   },
   browserList: {
-    alignSelf: 'flex-start',
-    marginTop: '1%',
-    marginLeft: '10%',
-    width: '88%',
+    alignSelf: 'center',
+    margin: '1%',
+    width: '95%',
+    height: '200%',
+    marginBottom: '5%',
   },
 });
 
@@ -157,7 +165,7 @@ class Profile extends React.Component {
             <View style={styles.rowContainer}>
               <Image style={styles.profile} source={profilePic} />
               <View style={styles.columnContainer}>
-                <Text style={styles.UserInfo}>
+                <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
                   {''}
                   {username}
                 </Text>
@@ -183,7 +191,7 @@ class Profile extends React.Component {
                 renderItem={this.renderItem}
               />
             </View>
-            <Text style={styles.categories}>Bikes you have submitted tips about:</Text>
+            <Text style={[styles.categories, styles.tipsBikes]}>Bikes you have submitted tips about:</Text>
           </View>
         </ScrollView>
       );

@@ -94,13 +94,15 @@ export default class Comment extends React.Component {
   }
 
   componentDidMount() {
-    const { myId, rating } = this.props;
-    if (rating.up.every(item => item === myId)) {
-      this.setState({ thumbUp: true });
-    }
-    if (rating.down.every(item => item === myId)) {
-      this.setState({ thumbDown: true });
-    }
+    // const { myId, rating } = this.props;
+    const { myId } = this.props;
+    const rating = {
+      up: [],
+      down: [],
+    };
+    console.log(myId);
+    rating.up.every(item => (item.up === myId ? this.setState({ thumbUp: true }) : null));
+    rating.up.every(item => (item.down === myId ? this.setState({ thumbDown: true }) : null));
   }
 
   sendPointsToUser = (points, type) => {

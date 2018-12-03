@@ -119,7 +119,7 @@ class BikeInformation extends React.Component {
 
     this.state = {
       comments: [{
-        body: 'No comments yet! Be the first to make a comment! :)', author: { username: '1' }, date: '1', _id: '1',
+        body: 'No comments yet! Be the first to make a comment! :)', author: { username: '1' }, date: '1', _id: '1', rating: { down: [], up: [] },
       }],
       matchingBikes: [],
       text: '',

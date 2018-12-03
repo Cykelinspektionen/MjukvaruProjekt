@@ -92,6 +92,7 @@ class Profile extends React.Component {
 
       serverApi.get('bikes/getmybikes/', jwt[0])
         .then((responseJson) => {
+          console.log(responseJson);
           for (let i = 0; i < responseJson.length; i += 1) {
             yourBicycles.push(responseJson[i]);
           }

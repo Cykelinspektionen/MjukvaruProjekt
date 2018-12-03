@@ -272,10 +272,12 @@ class BikeInformation extends React.Component {
   sendComment = () => {
     const { text, bikeData } = this.state;
     const { _id } = bikeData;
-    const { authState } = this.props;
+    const { authState, profileState } = this.props;
+    const { username } = profileState;
     const { jwt } = authState;
 
     const commentInformation = {
+      username,
       bikeId: _id,
       body: text,
     };

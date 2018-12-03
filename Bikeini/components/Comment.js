@@ -100,7 +100,7 @@ export default class Comment extends React.Component {
       up: [],
       down: [],
     };
-    console.log(myId);
+    // console.log(myId);
     rating.up.every(item => (item.up === myId ? this.setState({ thumbUp: true }) : null));
     rating.up.every(item => (item.down === myId ? this.setState({ thumbDown: true }) : null));
   }

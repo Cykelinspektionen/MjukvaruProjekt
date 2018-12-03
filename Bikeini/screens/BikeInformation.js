@@ -183,6 +183,7 @@ class BikeInformation extends React.Component {
     let {
       bikeData,
     } = this.state;
+    console.log(bikeData)
     const { refresh } = this.state;
     const { _id } = bikeData;
     const { authState, navigation, profileState } = this.props;
@@ -204,7 +205,7 @@ class BikeInformation extends React.Component {
             username={author.username}
             date={date}
             jwt={jwt}
-            bikeSubUsername={bikeData.submitter.user_name}
+            bikeSubUsername={bikeData.submitter.username}
             bikeType={bikeData.type}
             showResolveBike={bikeData.showResolveBike}
             bikeId={_id}
@@ -332,8 +333,8 @@ class BikeInformation extends React.Component {
   renderFoundButton = () => {
     const { bikeData } = this.state;
     const { profileState } = this.props;
-    // TODO: change to submitter.user_name, when backend fixes submitter
-    const bikeSubmitter = bikeData.submitter.user_name || bikeData.submitter;
+    // TODO: change to submitter.username, when backend fixes submitter
+    const bikeSubmitter = bikeData.submitter.username || bikeData.submitter;
     if (bikeSubmitter === profileState.id || bikeData.type === 'FOUND') {
       return (
         <View style={styles.closeButton}>
@@ -361,8 +362,8 @@ class BikeInformation extends React.Component {
   setBikeToFound = () => {
     const { authState, navigation, profileState } = this.props;
     const { bikeData, refresh } = this.state;
-    // TODO change to userName when backend fixes submitter to user_name
-    const bikeSubmitter = bikeData.submitter.user_name || bikeData.submitter;
+    // TODO change to userName when backend fixes submitter to username
+    const bikeSubmitter = bikeData.submitter.username || bikeData.submitter;
     const formBody = {
       id: bikeData._id,
       active: false,
@@ -371,7 +372,7 @@ class BikeInformation extends React.Component {
     serverApi.fetchApi('bikes/updatebike/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
       .then(
         refresh(),
-        // TODO change to userName when backend fixes submitter to user_name
+        // TODO change to userName when backend fixes submitter to username
         bikeData.type === 'FOUND' && profileState.id !== bikeSubmitter ? this.sendPointsToUser(5, bikeScore) : null,
         navigation.navigate('Browser'),
       );
@@ -380,9 +381,9 @@ class BikeInformation extends React.Component {
   sendPointsToUser = (points, type) => {
     const { authState } = this.props;
     const { bikeData } = this.state;
-    // TODO: change to submitter.user_name, when backend fixes submitter
-    const bikeSubmitter = bikeData.submitter.user_name || bikeData.submitter;
-    const formBody = { user_name: bikeSubmitter };
+    // TODO: change to submitter.username, when backend fixes submitter
+    const bikeSubmitter = bikeData.submitter.username || bikeData.submitter;
+    const formBody = { username: bikeSubmitter };
     formBody[type] = points;
     serverApi.fetchApi('users/updatehighscore/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
       .catch(error => console.log(error));

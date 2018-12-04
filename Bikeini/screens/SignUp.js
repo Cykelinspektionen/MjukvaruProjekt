@@ -68,8 +68,10 @@ const styles = StyleSheet.create({
   },
 });
 
+const passLowCase = 'abcdefghijklmnopqrstuvwxyz';
+const passUpCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const passNumbs = '1234567890';
-const passChars = '!#¤%&/()=?@£$€{[]}+-.,;:';
+const passChars = ' !"#$%&()*+,-./:;<=>?@[\]^_`{|}~';
 
 class SignUp extends React.Component {
   constructor(props) {
@@ -176,29 +178,48 @@ class SignUp extends React.Component {
   checkPasswordStrength = () => {
     const { newPassword } = this.state;
 
-    if(newPassword.length < 8) {
+    if (newPassword.length < 8) {
       console.log('Password has to be ATLEAST 8 characters!');
       return '`Password´ has to be ATLEAST 8 characters!';
     }
 
-    let charExists = false;
-    let numbExists = false;
-    for(let i = 0; i < newPassword.length; i += 1) {
+    const conditions = {
+      specialChar: false, number: false, lowerCase: false, upperCase: false,
+    };
+    for (let i = 0; i < newPassword.length; i += 1) {
       const currChar = newPassword.charAt(i);
 
-      if(passChars.indexOf(currChar) > -1) {
-        charExists = true;
-      }
-      else if(passNumbs.indexOf(currChar) > -1) {
-        numbExists = true;
+      if (passChars.indexOf(currChar) > -1) {
+        conditions.specialChar = true;
+      } else if (passNumbs.indexOf(currChar) > -1) {
+        conditions.number = true;
+      } else if (passLowCase.indexOf(currChar) > -1) {
+        conditions.lowerCase = true;
+      } else if (passUpCase.indexOf(currChar) > -1) {
+        conditions.upperCase = true;
       }
 
-      if(charExists && numbExists) {
-        // PASSWORD IS ATLEAST 8 CHARS AND HAVE A NUMBER AND SPECIAL-CHARACTER!
-        // RETURN NULL IN SUCCESS! :)
-        return null;
+      if (conditions.specialChar && conditions.number
+          && conditions.lowerCase && conditions.upperCase) {
+        return '';
       }
     }
+
+    let errorMsg = 'Missing';
+    if (!conditions.specialChar) {
+      errorMsg += ', `SPECIAL CHARACTER´';
+    }
+    if (!conditions.number) {
+      errorMsg += ', `NUMBER´';
+    }
+    if (!conditions.lowerCase) {
+      errorMsg += ', `LOWERCASE LETTER´';
+    }
+    if (!conditions.upperCase) {
+      errorMsg += ', `UPPERCASE LETTER´';
+    }
+
+    return errorMsg;
   }
 
   verifyRequiredCredentials(sendToServer) {
@@ -223,6 +244,11 @@ class SignUp extends React.Component {
     if (newPassword.trim() === '') {
       credStatus.newPassword = '`Password´ has to be specified';
       numErr += 1;
+    } else {
+      credStatus.newPassword = this.checkPasswordStrength();
+      if (credStatus.newPassword !== '') {
+        numErr += 1;
+      }
     }
     if (newPasswordConfirm.trim() === '') {
       credStatus.newPasswordConfirm = '`Password´ has to be confirmed';

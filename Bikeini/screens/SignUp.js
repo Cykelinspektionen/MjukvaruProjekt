@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Alert, StyleSheet, Text, View, TextInput, TouchableHighlight, Image,
+  Alert, StyleSheet, Text, View, TextInput, TouchableHighlight, Image, KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -277,7 +277,7 @@ class SignUp extends React.Component {
       credStatus = this.verifyRequiredCredentials(false);
     }
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
         <Image style={styles.logo} source={logo} />
         <View style={styles.logoTextCont}>
           <Text style={styles.logoText}> Cykelinspektionen </Text>
@@ -349,7 +349,7 @@ class SignUp extends React.Component {
         >
           <Text style={styles.loginText}>Register</Text>
         </TouchableHighlight>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }

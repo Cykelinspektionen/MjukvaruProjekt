@@ -68,6 +68,9 @@ const styles = StyleSheet.create({
   },
 });
 
+const passNumbs = '1234567890';
+const passChars = '!#¤%&/()=?@£$€{[]}+-.,;:';
+
 class SignUp extends React.Component {
   constructor(props) {
     super(props);
@@ -168,6 +171,34 @@ class SignUp extends React.Component {
   jsonToFormData = (details) => {
     const formBody = Object.entries(details).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
     return formBody;
+  }
+
+  checkPasswordStrength = () => {
+    const { newPassword } = this.state;
+
+    if(newPassword.length < 8) {
+      console.log('Password has to be ATLEAST 8 characters!');
+      return '`Password´ has to be ATLEAST 8 characters!';
+    }
+
+    let charExists = false;
+    let numbExists = false;
+    for(let i = 0; i < newPassword.length; i += 1) {
+      const currChar = newPassword.charAt(i);
+
+      if(passChars.indexOf(currChar) > -1) {
+        charExists = true;
+      }
+      else if(passNumbs.indexOf(currChar) > -1) {
+        numbExists = true;
+      }
+
+      if(charExists && numbExists) {
+        // PASSWORD IS ATLEAST 8 CHARS AND HAVE A NUMBER AND SPECIAL-CHARACTER!
+        // RETURN NULL IN SUCCESS! :)
+        return null;
+      }
+    }
   }
 
   verifyRequiredCredentials(sendToServer) {

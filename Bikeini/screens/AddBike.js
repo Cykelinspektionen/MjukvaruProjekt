@@ -298,6 +298,10 @@ class AddBike extends React.Component {
 
     // For this to work the response from the server CAN'T have any nestled attrbiutes!
     Object.keys(response).forEach((key) => {
+      console.log(key + ' ' + response[key]);
+      if(key === 'lamp') {
+        key = 'light';
+      }
       let data = radios[key];
       if (key === 'frame') {
         let frameKey = response[key];

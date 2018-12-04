@@ -183,7 +183,6 @@ class BikeInformation extends React.Component {
     let {
       bikeData,
     } = this.state;
-    console.log(bikeData)
     const { refresh } = this.state;
     const { _id } = bikeData;
     const { authState, navigation, profileState } = this.props;
@@ -194,6 +193,7 @@ class BikeInformation extends React.Component {
       } = item;
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
+      bikeData.showResolveBike = bikeData.submitter.username !== item.author.username;
       return (
         <TouchableOpacity
           onPress={() => {}}
@@ -205,7 +205,7 @@ class BikeInformation extends React.Component {
             username={author.username}
             date={date}
             jwt={jwt}
-            bikeSubUsername={bikeData.submitter.username}
+            bikeSubUsername={bikeData.submitter.username || ''}
             bikeType={bikeData.type}
             showResolveBike={bikeData.showResolveBike}
             bikeId={_id}
@@ -216,13 +216,12 @@ class BikeInformation extends React.Component {
         </TouchableOpacity>
       );
     }
-
     return (
       <TouchableOpacity
         onPress={() => {
           bikeData = item;
           bikeData.showComments = true;
-          bikeData.showResolveBike = profileState.id === bikeData.submitter;
+          bikeData.showResolveBike = profileState.username === bikeData.submitter.username;
           this.setState({ bikeData }, () => {
             this.fetchComments();
           });
@@ -284,8 +283,6 @@ class BikeInformation extends React.Component {
       bikeId: _id,
       body: text,
     };
-
-
     if (text === '') {
       Alert.alert('You must add some text :0 !');
       return;
@@ -335,7 +332,7 @@ class BikeInformation extends React.Component {
     const { profileState } = this.props;
     // TODO: change to submitter.username, when backend fixes submitter
     const bikeSubmitter = bikeData.submitter.username || bikeData.submitter;
-    if (bikeSubmitter === profileState.id || bikeData.type === 'FOUND') {
+    if (bikeSubmitter === profileState.username || bikeData.type === 'FOUND') {
       return (
         <View style={styles.closeButton}>
           <TouchableHighlight style={[styles.buttonSmall, styles.greenButton]} onPress={() => this.handleFound()}>

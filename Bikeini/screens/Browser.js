@@ -109,12 +109,14 @@ class Browser extends React.Component {
     const { navigation, profileState } = this.props;
     const bikeData = item;
     bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
-    bikeData.showResolveBike = profileState.id === bikeData.submitter;
+    // needed for items comment button
+    bikeData.showResolveBike = profileState.username === bikeData.submitter.username;
     return (
       <TouchableOpacity
         onPress={() => {
+          // This is if showcomments is false from profile
+          bikeData.showResolveBike = profileState.username === bikeData.submitter.username;
           bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
-          bikeData.showResolveBike = profileState.id === bikeData.submitter;
           navigation.navigate('BikeInformation', { bikeData, refresh: this.onRefresh });
         }}
       >

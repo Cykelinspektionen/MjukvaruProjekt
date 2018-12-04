@@ -92,7 +92,6 @@ class Profile extends React.Component {
 
       serverApi.get('bikes/getmybikes/', jwt[0])
         .then((responseJson) => {
-          console.log(responseJson);
           for (let i = 0; i < responseJson.length; i += 1) {
             yourBicycles.push(responseJson[i]);
           }
@@ -110,11 +109,12 @@ class Profile extends React.Component {
       const { navigation, profileState } = this.props;
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
-      bikeData.showResolveBike = profileState.id === bikeData.submitter;
+      bikeData.showResolveBike = profileState.username === bikeData.submitter.username;
       return (
         <TouchableOpacity
           onPress={() => {
-            bikeData.showResolveBike = profileState.id === bikeData.submitter;
+            // This is if showcomments is true from browser or item
+            bikeData.showResolveBike = profileState.username === bikeData.submitter.username;
             bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
             navigation.navigate('BikeInformation', { bikeData, refresh: this.onRefresh });
           }}

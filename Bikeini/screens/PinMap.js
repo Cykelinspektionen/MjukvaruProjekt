@@ -73,6 +73,21 @@ class PinMap extends React.Component {
   render() {
     const { mapState } = this.props;
     console.log(mapState);
+
+    if (mapState.marker.showMarker) {
+      return (
+        <MapView
+          style={{ flex: 1 }}
+          initialRegion={mapState.marker}
+          onRegionChangeComplete={this.onRegionChangeComplete}
+        >
+          <MapView.Marker
+            coordinate={{ latitude: mapState.marker.latitude, longitude: mapState.marker.longitude }}
+          />
+        </MapView>
+      );
+    }
+
     if (mapState.loadedCurrPos) {
       return (
         <MapView

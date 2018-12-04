@@ -1,4 +1,4 @@
-import { SET_COORDS, ROLL } from './types';
+import { SET_COORDS, SET_SHOW_MARKER, SET_MARKER } from './types';
 
 export const setMapLocation = coords => (
   {
@@ -7,9 +7,16 @@ export const setMapLocation = coords => (
   }
 );
 
-export const setCameraRollPermission = status => (
+export const setShowMarker = bool => (
   {
-    type: ROLL,
-    payload: status,
+    type: SET_SHOW_MARKER,
+    payload: bool,
+  }
+);
+
+export const setMarker = coords => (
+  {
+    type: SET_MARKER,
+    payload: coords,
   }
 );

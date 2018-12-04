@@ -1,4 +1,4 @@
-import { SET_COORDS } from '../actions/types';
+import { SET_COORDS, SET_SHOW_MARKER, SET_MARKER } from '../actions/types';
 
 
 const MAP_STATE = {
@@ -19,6 +19,13 @@ const MAP_STATE = {
   speed: 0,
   street: '',
   loadedCurrPos: false,
+  marker: {
+    showMarker: false,
+    latitude: 59.856,
+    longitude: 17.630,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  },
 };
 
 const mapReducer = (state = MAP_STATE, action) => {
@@ -27,6 +34,10 @@ const mapReducer = (state = MAP_STATE, action) => {
       return {
         ...state, ...action.payload, loadedCurrPos: true,
       };
+    case SET_SHOW_MARKER:
+      return { ...state, marker: { ...state.marker, showMarker: action.payload } };
+    case SET_MARKER:
+      return { ...state, marker: { ...state.marker, ...action.payload } };
     default:
       return state;
   }

@@ -105,8 +105,8 @@ export default class Comment extends React.Component {
     rating.up.every(item => (item.down === myId ? this.setState({ thumbDown: true }) : null));
   }
 
-  sendPointsToUser = (points, type) => {
-    const { username, jwt } = this.props;
+  sendPointsToUser = (points, type, username) => {
+    const { jwt } = this.props;
     const formBody = {};
     formBody.user_name = username;
     formBody[type] = points;
@@ -116,7 +116,7 @@ export default class Comment extends React.Component {
 
   setBikeToFound = () => {
     const {
-      jwt, bikeId, navigation, refresh, bikeType, bikeSubUsername,
+      jwt, bikeId, navigation, refresh, bikeType, bikeSubUsername, username,
     } = this.props;
     const formBody = {
       id: bikeId,
@@ -125,8 +125,8 @@ export default class Comment extends React.Component {
     };
     serverApi.fetchApi('bikes/updatebike/', JSON.stringify(formBody), 'application/json', jwt[0])
       .then(
-        this.sendPointsToUser(5, bikeScore),
-        bikeType === 'FOUND' ? this.sendPointsToUser(5, bikeSubUsername) : null,
+        this.sendPointsToUser(5, bikeScore, username),
+        bikeType === 'FOUND' ? this.sendPointsToUser(5, bikeScore, bikeSubUsername) : null,
         refresh(),
         navigation.navigate('Profile'),
 
@@ -147,18 +147,19 @@ export default class Comment extends React.Component {
 
   handleThumbs = (action) => {
     const { thumbDown, thumbUp } = this.state;
+    const { username } = this.state;
     switch (action) {
       case 'UP':
         if (!thumbUp) {
-          this.sendPointsToUser(1, thumbScore);
+          this.sendPointsToUser(1, thumbScore, username);
         } else if (thumbUp) {
-          this.sendPointsToUser(-1, thumbScore);
+          this.sendPointsToUser(-1, thumbScore, username);
         }
         this.setState({ thumbUp: !thumbUp, thumbDown: false });
         break;
       case 'DW':
         if (!thumbDown && thumbUp) {
-          this.sendPointsToUser(-1, thumbScore);
+          this.sendPointsToUser(-1, thumbScore, username);
         }
         this.setState({ thumbDown: !thumbDown, thumbUp: false });
         break;

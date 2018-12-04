@@ -193,7 +193,7 @@ class BikeInformation extends React.Component {
       } = item;
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
-      bikeData.showResolveBike = bikeData.submitter.username !== item.author.username;
+      bikeData.showResolveBike = bikeData.submitter.username !== item.author.username && bikeData.type === 'FOUND';
       return (
         <TouchableOpacity
           onPress={() => {}}
@@ -241,8 +241,11 @@ class BikeInformation extends React.Component {
 
   renderList = () => {
     const {
-      comments, matchingBikes, bikeData,
+      comments, bikeData,
     } = this.state;
+    const { matchingBikes } = this.state;
+    const matchingBikesFiltered = matchingBikes.filter(x => x.active === true);
+
 
     if (bikeData.showComments) {
       return (
@@ -258,7 +261,7 @@ class BikeInformation extends React.Component {
 
     return (
       <FlatList
-        data={matchingBikes}
+        data={matchingBikesFiltered}
         extraData={this.state}
         keyExtractor={this.keyExtractor}
         renderItem={this.renderItem}

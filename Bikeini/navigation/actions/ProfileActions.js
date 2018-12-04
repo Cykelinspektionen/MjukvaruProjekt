@@ -4,6 +4,7 @@ import {
   LOAD_PROFILE_BEGIN,
   LOAD_PROFILE_SUCCESS,
   LOAD_PROFILE_FAILURE,
+  UNLOAD_PROFILE,
 } from './types';
 import serverApi from '../../utilities/serverApi';
 import { deleteJWTInit } from './JwtActions';
@@ -39,6 +40,12 @@ export const loadProfileFailure = error => (
   {
     type: LOAD_PROFILE_FAILURE,
     payload: error,
+  }
+);
+
+export const unloadProfile = () => (
+  {
+    type: UNLOAD_PROFILE,
   }
 );
 

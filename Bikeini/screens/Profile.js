@@ -2,14 +2,16 @@ import React from 'react';
 import {
   StyleSheet, Text, View, ScrollView, Image, FlatList, TouchableOpacity, TouchableHighlight, RefreshControl,
 } from 'react-native';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import headerStyle from './header';
 import serverApi from '../utilities/serverApi';
 import Item from '../components/Item';
+import * as jwtActions from '../navigation/actions/JwtActions';
+import * as profileActions from '../navigation/actions/ProfileActions';
 
 const profilePic = require('../assets/images/userPlaceholder.jpg');
-
 
 const styles = StyleSheet.create({
   background: {
@@ -50,18 +52,24 @@ const styles = StyleSheet.create({
   },
   greenButton: {
     backgroundColor: '#44ccad',
-    left: '27%',
+    // left: '27%',
   },
   greenButtonText: {
     color: 'white',
   },
-  editButtonContainer: {
+  editAndLogoutButtonContainer: {
     height: '25%',
+    width: '90%',
+    borderRadius: 5,
+    flexDirection: 'row',
+  },
+  editButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '70%',
+    width: '40%',
     borderRadius: 5,
+    margin: 2,
   },
   actionButton: {
     backgroundColor: '#00b5ec',
@@ -138,6 +146,14 @@ class Profile extends React.Component {
       );
     }
 
+    onLogoutPress = () => {
+      const { deleteJWTInit, navigation, unloadProfile } = this.props;
+      unloadProfile();
+      deleteJWTInit();
+      navigation.navigate('Login');
+    }
+
+
     onRefresh = () => {
       this.setState({ isFetching: true }, () => {
         this.getItemFromServer();
@@ -177,9 +193,14 @@ class Profile extends React.Component {
                   {''}
                   {email}
                 </Text>
-                <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
-                  <Text style={styles.greenButtonText}>EDIT USER</Text>
-                </TouchableHighlight>
+                <View style={styles.editAndLogoutButtonContainer}>
+                  <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
+                    <Text style={styles.greenButtonText}>EDIT USER</Text>
+                  </TouchableHighlight>
+                  <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => this.onLogoutPress()}>
+                    <Text style={styles.greenButtonText}>LOG OUT</Text>
+                  </TouchableHighlight>
+                </View>
               </View>
             </View>
             <Text style={styles.categories}>Your missing bikes:</Text>
@@ -199,6 +220,9 @@ class Profile extends React.Component {
 }
 
 Profile.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
   authState: PropTypes.shape({
     isLoggedIn: PropTypes.bool.isRequired,
     username: PropTypes.string.isRequired,
@@ -221,6 +245,8 @@ Profile.propTypes = {
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
+  deleteJWTInit: PropTypes.func.isRequired,
+  unloadProfile: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
@@ -228,5 +254,9 @@ const mapStateToProps = (state) => {
   return { authState, profileState };
 };
 
+const mapDispatchToProps = dispatch => bindActionCreators(
+  { ...jwtActions, ...profileActions },
+  dispatch,
+);
 
-export default connect(mapStateToProps)(Profile);
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

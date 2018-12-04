@@ -62,6 +62,7 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
+    console.log('set state');
     const { loadJWTInit } = this.props;
     loadJWTInit();
   }
@@ -92,6 +93,8 @@ class Login extends React.Component {
     const { email, password } = this.state;
     const { loginInit } = this.props;
     loginInit(email, password);
+    this.setState({ email: '' });
+    this.setState({ password: '' });
   }
 
   render() {

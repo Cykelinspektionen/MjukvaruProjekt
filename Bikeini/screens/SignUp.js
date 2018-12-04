@@ -179,7 +179,6 @@ class SignUp extends React.Component {
     const { newPassword } = this.state;
 
     if (newPassword.length < 8) {
-      console.log('Password has to be ATLEAST 8 characters!');
       return '`Password´ has to be ATLEAST 8 characters!';
     }
 

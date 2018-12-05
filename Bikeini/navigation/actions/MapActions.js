@@ -1,4 +1,6 @@
-import { SET_COORDS, SET_SHOW_MARKER, SET_MARKER } from './types';
+import {
+  SET_COORDS, SET_SHOW_MARKER, SET_MARKER, SET_USER_MARKER,
+} from './types';
 
 export const setMapLocation = coords => (
   {
@@ -17,6 +19,13 @@ export const setShowMarker = bool => (
 export const setMarker = coords => (
   {
     type: SET_MARKER,
+    payload: coords,
+  }
+);
+
+export const setUserMarker = coords => (
+  {
+    type: SET_USER_MARKER,
     payload: coords,
   }
 );

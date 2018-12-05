@@ -32,3 +32,4 @@ export const SET_BIKE_POSTED = 'SET_BIKE_POSTED';
 export const SET_COORDS = 'SET_COORDS';
 export const SET_MARKER = 'SET_MARKER';
 export const SET_SHOW_MARKER = 'SET_SHOW_MARKER';
+export const SET_USER_MARKER = 'SET_USER_MARKER';

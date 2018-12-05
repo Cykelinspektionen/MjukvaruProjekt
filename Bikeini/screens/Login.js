@@ -62,7 +62,6 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
-    console.log('set state');
     const { loadJWTInit } = this.props;
     loadJWTInit();
   }

@@ -3,6 +3,7 @@ import {
   LOAD_PROFILE_BEGIN,
   LOAD_PROFILE_SUCCESS,
   LOAD_PROFILE_FAILURE,
+  UNLOAD_PROFILE,
 } from '../actions/types';
 
 const PROFILE_INITIAL_STATE = {
@@ -48,6 +49,8 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         loadingProfile: false,
         profileLoaded: true,
       };
+    case UNLOAD_PROFILE:
+      return { ...PROFILE_INITIAL_STATE };
     default:
       return state;
   }

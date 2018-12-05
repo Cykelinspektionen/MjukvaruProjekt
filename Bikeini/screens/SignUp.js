@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Alert, StyleSheet, Text, View, TextInput, TouchableHighlight, Image,
+  StyleSheet, Text, View, TextInput, TouchableHighlight, Image, KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -68,6 +68,11 @@ const styles = StyleSheet.create({
   },
 });
 
+const passLowCase = 'abcdefghijklmnopqrstuvwxyz';
+const passUpCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const passNumbs = '1234567890';
+const passChars = ' !"#$%&()*+,-./:;<=>?@[\]^_`{|}~';
+
 class SignUp extends React.Component {
   constructor(props) {
     super(props);
@@ -78,6 +83,7 @@ class SignUp extends React.Component {
       newPassword: '',
       newPasswordConfirm: '',
       clicked: false,
+      credStatus: {},
     };
   }
 
@@ -100,10 +106,8 @@ class SignUp extends React.Component {
       .then((responseJson) => {
         const responseErr = this.handleSignUpReponse(responseJson);
 
-        if (responseErr.length === 0) {
+        if (!responseErr.username && !responseErr.email) {
           this.authNewUser();
-        } else {
-          Alert.alert('Username and/or email has to be unique!');
         }
       }).catch(error => console.log(error));
   }
@@ -150,24 +154,75 @@ class SignUp extends React.Component {
   }
 
   handleSignUpReponse = (response) => {
-    const respErrors = [];
-    const { _message, errors } = response;
+    const { credStatus } = this.state;
+    const respErrors = { email: false, username: false };
+    const { message } = response;
+    const { _message, errors } = message;
 
     if (_message === 'User validation failed') {
       if (errors.email) {
-        respErrors.push('email');
+        respErrors.email = true;
+        credStatus.newEmail = '`Email´ is already in use!';
       }
       if (errors.username) {
-        respErrors.push('username');
+        respErrors.username = true;
+        credStatus.newUsername = '`Username´ is already in use!';
       }
     }
 
+    this.setState({ credStatus });
     return respErrors;
   }
 
   jsonToFormData = (details) => {
     const formBody = Object.entries(details).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
     return formBody;
+  }
+
+  checkPasswordStrength = () => {
+    const { newPassword } = this.state;
+
+    if (newPassword.length < 8) {
+      return '`Password´ has to be ATLEAST 8 characters!';
+    }
+
+    const conditions = {
+      specialChar: false, number: false, lowerCase: false, upperCase: false,
+    };
+    for (let i = 0; i < newPassword.length; i += 1) {
+      const currChar = newPassword.charAt(i);
+
+      if (passChars.indexOf(currChar) > -1) {
+        conditions.specialChar = true;
+      } else if (passNumbs.indexOf(currChar) > -1) {
+        conditions.number = true;
+      } else if (passLowCase.indexOf(currChar) > -1) {
+        conditions.lowerCase = true;
+      } else if (passUpCase.indexOf(currChar) > -1) {
+        conditions.upperCase = true;
+      }
+
+      if (conditions.specialChar && conditions.number
+          && conditions.lowerCase && conditions.upperCase) {
+        return '';
+      }
+    }
+
+    let errorMsg = 'Missing';
+    if (!conditions.specialChar) {
+      errorMsg += ', `SPECIAL CHARACTER´';
+    }
+    if (!conditions.number) {
+      errorMsg += ', `NUMBER´';
+    }
+    if (!conditions.lowerCase) {
+      errorMsg += ', `LOWERCASE LETTER´';
+    }
+    if (!conditions.upperCase) {
+      errorMsg += ', `UPPERCASE LETTER´';
+    }
+
+    return errorMsg;
   }
 
   verifyRequiredCredentials(sendToServer) {
@@ -192,6 +247,11 @@ class SignUp extends React.Component {
     if (newPassword.trim() === '') {
       credStatus.newPassword = '`Password´ has to be specified';
       numErr += 1;
+    } else {
+      credStatus.newPassword = this.checkPasswordStrength();
+      if (credStatus.newPassword !== '') {
+        numErr += 1;
+      }
     }
     if (newPasswordConfirm.trim() === '') {
       credStatus.newPasswordConfirm = '`Password´ has to be confirmed';
@@ -209,19 +269,15 @@ class SignUp extends React.Component {
     if (!clicked) {
       this.setState({ clicked: true });
     }
-    return credStatus;
+    this.setState({ credStatus });
   }
 
   render() {
     const {
-      username, email, phoneNumber, password, clicked,
+      username, email, phoneNumber, password, clicked, credStatus,
     } = this.state;
-    let credStatus = {};
-    if (clicked) {
-      credStatus = this.verifyRequiredCredentials(false);
-    }
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
         <Image style={styles.logo} source={logo} />
         <View style={styles.logoTextCont}>
           <Text style={styles.logoText}> Cykelinspektionen </Text>
@@ -293,7 +349,7 @@ class SignUp extends React.Component {
         >
           <Text style={styles.loginText}>Register</Text>
         </TouchableHighlight>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }

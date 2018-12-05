@@ -18,7 +18,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     alignItems: 'flex-start',
     width: '80%',
-    height: '100%',
     marginLeft: '10%',
   },
   searchBar: {
@@ -32,8 +31,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '40%',
-    height: '20%',
+    width: 120,
+    height: 60,
     borderRadius: 10,
     backgroundColor: '#44ccad',
   },
@@ -45,8 +44,7 @@ const styles = StyleSheet.create({
   },
   inputs: {
     height: '7%',
-    width: '90%',
-    marginLeft: '4%',
+    width: '100%',
     marginBottom: '1%',
     borderColor: '#d8d8d8',
     borderBottomWidth: 1,
@@ -200,7 +198,7 @@ class Filter extends React.Component {
 
   renderRow(rowData) {
     return (
-      <View style={styles.rowContainer}>
+      <View style={styles.rowContainer} key={Math.random() * 10000}>
         <View style={styles.itemContainer}>
           <ItemCheckbox title={rowData[0].title} category={rowData[0].category} id={rowData[0].id} isChecked={rowData[0].isChecked} onChange={this.updateCheckBoxes} />
         </View>
@@ -218,6 +216,7 @@ class Filter extends React.Component {
     return (
       <View style={styles.fullContainter}>
         <ScrollView contentContainerStyle={styles.container}>
+        <View style={{marginBottom: 150,}}>
           {/*<ListView
             dataSource={
               ds.cloneWithRows(this.processFilterItems(checkBoxes))
@@ -227,32 +226,28 @@ class Filter extends React.Component {
           {this.processFilterItems(checkBoxes).map((rowData) => {
             this.renderRow(rowData);
           })}*/}
-          {this.renderRow(processedFilter[0])}
+          {processedFilter.map(rowData => this.renderRow(rowData))}
           <TextInput
             style={styles.inputs}
             placeholder="Frame number"
-            underlineColorAndroid="transparent"
             value={searchOptions.frameNumber}
             onChangeText={text => this.setBikeData('frameNumber', text)}
           />
           <TextInput
             style={styles.inputs}
             placeholder="Anti Theft Code"
-            underlineColorAndroid="transparent"
             value={searchOptions.antiTheftCode}
             onChangeText={text => this.setBikeData('antiTheftCode', text)}
           />
           <TextInput
             style={styles.inputs}
             placeholder="Brand"
-            underlineColorAndroid="transparent"
             value={searchOptions.brand}
             onChangeText={text => this.setBikeData('brand', text)}
           />
           <TextInput
             style={styles.inputs}
             placeholder="Model"
-            underlineColorAndroid="transparent"
             value={searchOptions.model}
             onChangeText={text => this.setBikeData('model', text)}
           />
@@ -262,6 +257,7 @@ class Filter extends React.Component {
           >
             <Text style={styles.searchButtonText}>SEARCH</Text>
           </TouchableOpacity>
+        </View>
         </ScrollView>
         <View style={styles.breakLine} />
       </View>

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, ScrollView, Image, FlatList, TouchableOpacity, TouchableHighlight, RefreshControl,
+  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TouchableHighlight, RefreshControl,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -22,32 +22,36 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   rowContainer: {
+    flex: 0.20,
     flexDirection: 'row',
+    width: '100%',
     backgroundColor: '#fff',
-    margin: '2%',
-    left: '30%',
+    marginTop: 5,
   },
   profile: {
-    height: '92%',
-    width: '28%',
+    flex: 1,
+    height: undefined,
+    width: undefined,
   },
   columnContainer: {
     flexDirection: 'column',
     backgroundColor: '#fff',
-    marginTop: '4%',
-    marginLeft: '4%',
+    alignContent: 'flex-start',
+    marginLeft: 5,
+    marginRight: 5,
   },
   categories: {
-    fontSize: 22,
+    flex: 0.05,
     fontWeight: 'bold',
-    marginLeft: '2%',
+    marginLeft: 10,
+    marginTop: 5,
+    fontSize: 18,
   },
   tipsBikes: {
     marginTop: '4%',
   },
   UserInfo: {
     fontSize: 17,
-    left: '20%',
   },
   greenButton: {
     backgroundColor: '#44ccad',
@@ -68,11 +72,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#00b5ec',
   },
   browserList: {
+    flex: 0.4,
+    width: '100%',
     alignSelf: 'center',
-    margin: '1%',
-    width: '95%',
-    height: '125%',
-    marginBottom: '5%',
   },
 });
 
@@ -151,56 +153,64 @@ class Profile extends React.Component {
       const { email } = profileState;
 
       return (
-        <ScrollView
-          style={styles.background}
-          refreshControl={(
-            <RefreshControl
-              onRefresh={this.onRefresh}
-              refreshing={isFetching}
+        <View style={[styles.container, styles.background]}>
+          <View style={styles.rowContainer}>
+            <Image
+              style={styles.profile}
+              source={profilePic}
+              resizeMode="contain"
             />
-)}
-        >
-          <View style={styles.container}>
-            <View style={styles.rowContainer}>
-              <Image style={styles.profile} source={profilePic} />
-              <View style={styles.columnContainer}>
-                <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
-                  {''}
-                  {username}
-                </Text>
-                <Text style={styles.UserInfo}>
-                  {''}
-                  {location}
-                </Text>
-                <Text style={styles.UserInfo}>
-                  {''}
-                  {email}
-                </Text>
-                <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
-                  <Text style={styles.greenButtonText}>EDIT USER</Text>
-                </TouchableHighlight>
-              </View>
-            </View>
-            <Text style={styles.categories}>Your missing bikes:</Text>
-            <View style={styles.browserList}>
-              <FlatList
-                data={yourBicycles}
-                keyExtractor={this.keyExtractor}
-                extraData={this.state}
-                renderItem={this.renderItem}
-              />
-            </View>
-            <Text style={[styles.categories, styles.tipsBikes]}>Bikes you have submitted tips about:</Text>
-            <View style={styles.browserList}>
-              <FlatList
-                data={yourTips}
-                keyExtractor={this.keyExtractor}
-                extraData={this.state}
-                renderItem={this.renderItem}
-              />
+            <View style={styles.columnContainer}>
+              <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
+                {''}
+                {username}
+              </Text>
+              <Text style={styles.UserInfo}>
+                {''}
+                {location}
+              </Text>
+              <Text style={styles.UserInfo}>
+                {''}
+                {email}
+              </Text>
+              <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
+                <Text style={styles.greenButtonText}>EDIT USER</Text>
+              </TouchableHighlight>
             </View>
           </View>
-        </ScrollView>
+          <Text style={styles.categories} adjustsFontSizeToFit>Your missing bikes:</Text>
+          <View
+            style={styles.browserList}
+          >
+            <FlatList
+              data={yourBicycles}
+              keyExtractor={this.keyExtractor}
+              extraData={this.state}
+              renderItem={this.renderItem}
+              refreshControl={(
+                <RefreshControl
+                  onRefresh={this.onRefresh}
+                  refreshing={isFetching}
+                />
+            )}
+            />
+          </View>
+          <Text style={[styles.categories, styles.tipsBikes]}>Bikes you have submitted tips about:</Text>
+          <View style={styles.browserList}>
+            <FlatList
+              data={yourTips}
+              keyExtractor={this.keyExtractor}
+              extraData={this.state}
+              renderItem={this.renderItem}
+              refreshControl={(
+                <RefreshControl
+                  onRefresh={this.onRefresh}
+                  refreshing={isFetching}
+                />
+          )}
+            />
+          </View>
+        </View>
       );
     }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Alert, StyleSheet, Text, View, TextInput, TouchableHighlight, Image, KeyboardAvoidingView,
+  StyleSheet, Text, View, TextInput, TouchableHighlight, Image, KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -83,6 +83,7 @@ class SignUp extends React.Component {
       newPassword: '',
       newPasswordConfirm: '',
       clicked: false,
+      credStatus: {},
     };
   }
 
@@ -105,10 +106,8 @@ class SignUp extends React.Component {
       .then((responseJson) => {
         const responseErr = this.handleSignUpReponse(responseJson);
 
-        if (responseErr.length === 0) {
+        if (!responseErr.username && !responseErr.email) {
           this.authNewUser();
-        } else {
-          Alert.alert('Username and/or email has to be unique!');
         }
       }).catch(error => console.log(error));
   }
@@ -155,18 +154,23 @@ class SignUp extends React.Component {
   }
 
   handleSignUpReponse = (response) => {
-    const respErrors = [];
-    const { _message, errors } = response;
+    const { credStatus } = this.state;
+    const respErrors = { email: false, username: false };
+    const { message } = response;
+    const { _message, errors } = message;
 
     if (_message === 'User validation failed') {
       if (errors.email) {
-        respErrors.push('email');
+        respErrors.email = true;
+        credStatus.newEmail = '`Email´ is already in use!';
       }
       if (errors.username) {
-        respErrors.push('username');
+        respErrors.username = true;
+        credStatus.newUsername = '`Username´ is already in use!';
       }
     }
 
+    this.setState({ credStatus });
     return respErrors;
   }
 
@@ -265,17 +269,13 @@ class SignUp extends React.Component {
     if (!clicked) {
       this.setState({ clicked: true });
     }
-    return credStatus;
+    this.setState({ credStatus });
   }
 
   render() {
     const {
-      username, email, phoneNumber, password, clicked,
+      username, email, phoneNumber, password, clicked, credStatus,
     } = this.state;
-    let credStatus = {};
-    if (clicked) {
-      credStatus = this.verifyRequiredCredentials(false);
-    }
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
         <Image style={styles.logo} source={logo} />

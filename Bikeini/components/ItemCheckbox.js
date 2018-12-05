@@ -43,8 +43,6 @@ export default class ItemCheckbox extends React.Component {
       return (
         <CheckBox
           title={title}
-          checkedIcon="dot-circle-o"
-          uncheckedIcon="circle-o"
           checked={isChecked}
           containerStyle={{ backgroundColor: 'white', borderWidth: 0 }}
           onPress={this.changeStatus}

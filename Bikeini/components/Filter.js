@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, View, ListView, TouchableOpacity, Text, TextInput,
+  StyleSheet, View, ListView, TouchableOpacity, Text, TextInput, ScrollView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,7 +11,7 @@ import ItemCheckbox from './ItemCheckbox';
 const styles = StyleSheet.create({
   fullContainter: {
     width: '100%',
-    height: '50%',
+    height: '65%',
     marginTop: '2%',
   },
   container: {
@@ -28,23 +28,28 @@ const styles = StyleSheet.create({
     marginBottom: '5%',
     borderWidth: 1,
   },
-  searchBarIcon: {
-    height: '100%',
-    width: '10%',
-    borderWidth: 1,
-    backgroundColor: 'red',
-  },
   searchButton: {
     alignSelf: 'flex-end',
     alignItems: 'center',
+    justifyContent: 'center',
     width: '40%',
     height: '20%',
-    backgroundColor: 'blue',
+    borderRadius: 10,
+    backgroundColor: '#44ccad',
   },
   searchButtonText: {
     textAlignVertical: 'center',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 24,
+    fontWeight: '100',
+    color: 'white',
+  },
+  inputs: {
+    height: '7%',
+    width: '90%',
+    marginLeft: '4%',
+    marginBottom: '1%',
+    borderColor: '#d8d8d8',
+    borderBottomWidth: 1,
   },
   breakLine: {
     width: '100%',
@@ -101,6 +106,12 @@ class Filter extends React.Component {
       checkBoxes: filterState.checkBoxes,
       categories: filterState.categories,
       searchText: '',
+      searchOptions: {
+        frameNumber: '',
+        antiTheftCode: '',
+        brand: '',
+        model: ''
+      },
     };
 
     this.updateCheckBoxes = this.updateCheckBoxes.bind(this);
@@ -166,6 +177,18 @@ class Filter extends React.Component {
     return processedFilter;
   }
 
+  renderFilterOptions = () => {
+    const { checkBoxes } = this.state;
+    const processedFilter = this.processFilterItems(checkBoxes);
+    let filterOptions = {};
+
+    for(let i = 0; i < processedFilter.length; i += 1) {
+      filterOptions.push(this.renderRow(processedFilter[i]));
+    }
+
+    return filterOptions;
+  }
+
   updateCheckBoxes(id, category) {
     const { checkBoxes, categories } = this.state;
     // get index of 'category' from the const 'categories' array
@@ -190,34 +213,56 @@ class Filter extends React.Component {
 
   render() {
     const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    const { checkBoxes, searchText } = this.state;
+    const { checkBoxes, searchText, searchOptions } = this.state;
+    const processedFilter = this.processFilterItems(checkBoxes);
     return (
       <View style={styles.fullContainter}>
-        <View style={styles.container}>
-          <View style={{
-            flexDirection: 'row', width: '100%', height: '10%', marginBottom: '5%',
-          }}
-          >
-            <TextInput
-              style={styles.searchBar}
-              onChangeText={text => this.setState({ searchText: text })}
-              value={searchText}
-            />
-            <View style={styles.searchBarIcon} />
-          </View>
-          <ListView
+        <ScrollView contentContainerStyle={styles.container}>
+          {/*<ListView
             dataSource={
               ds.cloneWithRows(this.processFilterItems(checkBoxes))
               }
             renderRow={rowData => this.renderRow(rowData)}
           />
+          {this.processFilterItems(checkBoxes).map((rowData) => {
+            this.renderRow(rowData);
+          })}*/}
+          {this.renderRow(processedFilter[0])}
+          <TextInput
+            style={styles.inputs}
+            placeholder="Frame number"
+            underlineColorAndroid="transparent"
+            value={searchOptions.frameNumber}
+            onChangeText={text => this.setBikeData('frameNumber', text)}
+          />
+          <TextInput
+            style={styles.inputs}
+            placeholder="Anti Theft Code"
+            underlineColorAndroid="transparent"
+            value={searchOptions.antiTheftCode}
+            onChangeText={text => this.setBikeData('antiTheftCode', text)}
+          />
+          <TextInput
+            style={styles.inputs}
+            placeholder="Brand"
+            underlineColorAndroid="transparent"
+            value={searchOptions.brand}
+            onChangeText={text => this.setBikeData('brand', text)}
+          />
+          <TextInput
+            style={styles.inputs}
+            placeholder="Model"
+            underlineColorAndroid="transparent"
+            value={searchOptions.model}
+            onChangeText={text => this.setBikeData('model', text)}
+          />
           <TouchableOpacity
             style={styles.searchButton}
             onPress={this.search}
           >
-            <Text style={styles.searchButtonText}>Search</Text>
+            <Text style={styles.searchButtonText}>SEARCH</Text>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
         <View style={styles.breakLine} />
       </View>
     );

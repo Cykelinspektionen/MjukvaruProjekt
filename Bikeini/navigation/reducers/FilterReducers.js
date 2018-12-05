@@ -25,35 +25,43 @@ import { CHANGEITEMS } from '../actions/types';
 const ITEMS_STATE = {
   checkBoxes: [
     {
+      category: 'Brand',
+      items:
+        [{ title: 'Monark', isChecked: false },
+          { title: 'Merida', isChecked: false },
+          { title: 'Cresent', isChecked: false },
+          { title: 'Scott', isChecked: false },
+          { title: 'Mountainbike', isChecked: false }],
+    },
+    {
       category: 'Color',
       items:
-        [{ title: 'Blå', isChecked: false },
-          { title: 'Röd', isChecked: false },
-          { title: 'Svart', isChecked: false },
-          { title: 'Vit', isChecked: false },
-          { title: 'Grön', isChecked: false }],
+        [{ title: 'Red', isChecked: false },
+          { title: 'Green', isChecked: false },
+          { title: 'Blue', isChecked: false },
+          { title: 'Yellow', isChecked: false }],
     },
     {
       category: 'Type',
       items:
-        [{ title: 'Damcykel', isChecked: false },
-          { title: 'Herrcykel', isChecked: false },
-          { title: 'Barncykel', isChecked: false },
-          { title: 'Sportcykel', isChecked: false },
-          { title: 'Tandemcykel', isChecked: false }],
+        [{ title: 'Female bike', isChecked: false },
+          { title: 'Male bike', isChecked: false },
+          { title: 'Kids bike', isChecked: false },
+          { title: 'Sports bike', isChecked: false },
+          { title: 'Tandem bike', isChecked: false }],
     },
     {
       category: 'Other',
       items:
-         [{ title: 'Korg', isChecked: false },
-           { title: 'Stänkskydd', isChecked: false },
-           { title: 'Kedjeskydd', isChecked: false },
-           { title: 'Nät', isChecked: false },
-           { title: 'Vinterdäck', isChecked: false },
-           { title: 'Light?', isChecked: false }],
+         [{ title: 'Basket', isChecked: false },
+           { title: 'Splasher', isChecked: false },
+           { title: 'Chain guard', isChecked: false },
+           { title: 'Net', isChecked: false },
+           { title: 'Winter tires', isChecked: false },
+           { title: 'Lamp', isChecked: false }],
     },
   ],
-  categories: ['Color', 'Type', 'Other'],
+  categories: ['Brand', 'Color', 'Type', 'Other'],
 };
 
 const filterReducer = (state = ITEMS_STATE, action) => {

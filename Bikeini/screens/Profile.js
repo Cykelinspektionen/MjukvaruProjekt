@@ -13,6 +13,7 @@ const profilePic = require('../assets/images/userPlaceholder.jpg');
 
 const styles = StyleSheet.create({
   background: {
+    flex: 1,
     backgroundColor: '#fff',
   },
   container: {
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     margin: '1%',
     width: '95%',
-    height: '200%',
+    height: '125%',
     marginBottom: '5%',
   },
 });
@@ -83,8 +84,9 @@ class Profile extends React.Component {
     constructor() {
       super();
       this.state = {
-        yourBicycles: '',
+        yourBicycles: [],
         isFetching: false,
+        yourTips: [],
       };
     }
 
@@ -96,14 +98,11 @@ class Profile extends React.Component {
       const { authState } = this.props;
       const { jwt } = authState;
 
-      const yourBicycles = [];
-
       serverApi.get('bikes/getmybikes/', jwt[0])
         .then((responseJson) => {
-          for (let i = 0; i < responseJson.length; i += 1) {
-            yourBicycles.push(responseJson[i]);
-          }
-          this.setState({ yourBicycles, isFetching: false });
+          const yourBicycles = responseJson.filter(x => x.type === 'STOLEN');
+          const yourTips = responseJson.filter(x => x.type === 'FOUND');
+          this.setState({ yourBicycles, yourTips, isFetching: false });
         }).catch(error => console.log(error));
     }
 
@@ -145,7 +144,7 @@ class Profile extends React.Component {
     }
 
     render() {
-      const { yourBicycles, isFetching } = this.state;
+      const { yourBicycles, isFetching, yourTips } = this.state;
       const { profileState } = this.props;
       const { username } = profileState;
       const { location } = profileState;
@@ -192,6 +191,14 @@ class Profile extends React.Component {
               />
             </View>
             <Text style={[styles.categories, styles.tipsBikes]}>Bikes you have submitted tips about:</Text>
+            <View style={styles.browserList}>
+              <FlatList
+                data={yourTips}
+                keyExtractor={this.keyExtractor}
+                extraData={this.state}
+                renderItem={this.renderItem}
+              />
+            </View>
           </View>
         </ScrollView>
       );

@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
   },
   greenButton: {
     backgroundColor: '#44ccad',
-    // left: '27%',
   },
   greenButtonText: {
     color: 'white',

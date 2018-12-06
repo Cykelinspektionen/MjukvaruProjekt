@@ -124,7 +124,6 @@ class Filter extends React.Component {
 
   search = () => {
     const { checkBoxes, categories, searchOptions } = this.state;
-    const { search } = this.props;
     const {
       frameNumber, antiTheftCode, brand, model, color,
     } = searchOptions;
@@ -155,8 +154,7 @@ class Filter extends React.Component {
       filterOptions.color = color;
     }
 
-    console.log(filterOptions);
-    search(filterOptions);
+    this.props.search(filterOptions);
   }
 
   processFilterItems(filterItems) {

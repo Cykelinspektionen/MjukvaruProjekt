@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, FlatList, TouchableOpacity, Platform, ImageBackground, 
+  StyleSheet, Text, View, FlatList, TouchableOpacity, Platform, ImageBackground,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -301,7 +301,30 @@ class Browser extends React.Component {
 
 
   search = (searchOptions) => {
-    //console.log(searchOptions);
+    const searchJson = searchOptions;
+    const { showMissing } = this.state;
+    const { authState, profileState } = this.props;
+    const { jwt } = authState;
+    const { location } = profileState;
+
+    if (showMissing) {
+      searchJson.type = 'STOLEN';
+      let formData = Object.entries(searchJson).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+      formData += (`&location.city=${location}`);
+      console.log(formData);
+      serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
+        .then((responseJson) => {
+          this.setState({ missingBicycles: responseJson.message, isFetching: false, showFilter: false });
+        }).catch(error => console.log(error));
+    } else {
+      searchJson.type = 'FOUND';
+      let formData = Object.entries(searchJson).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+      formData += (`&location.city=${location}`);
+      serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
+        .then((responseJson) => {
+          this.setState({ foundBicycles: responseJson.message, isFetching: false, showFilter: false });
+        }).catch(error => console.log(error));
+    }
   }
 
   render() {

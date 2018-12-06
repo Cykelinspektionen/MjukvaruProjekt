@@ -19,7 +19,7 @@ const AppNavigator = createStackNavigator({
   TabNavigator,
 },
 {
-  initialRouteName: 'PinMap',
+  initialRouteName: 'Login',
   headerMode: 'none',
 });
 

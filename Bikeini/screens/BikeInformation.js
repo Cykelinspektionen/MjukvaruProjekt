@@ -11,7 +11,7 @@ import Item from '../components/Item';
 import Comment from '../components/Comment';
 import { bikeScore } from '../utilities/Const';
 
-
+const locationIcon = require('../assets/images/location.png');
 const stockBicycle = require('../assets/images/stockBicycle.png');
 
 const styles = StyleSheet.create({
@@ -75,20 +75,20 @@ const styles = StyleSheet.create({
     width: '90%',
     borderWidth: 1,
     marginBottom: 15,
+    paddingRight: 1,
   },
   send: {
     alignSelf: 'center',
-    width: '15%',
   },
   sendText: {
-    color: 'blue',
+    color: 'white',
     fontSize: 14,
     fontWeight: '300',
   },
   commentInput: {
+    flex: 1,
     height: '100%',
     marginLeft: '2%',
-    width: '83%',
   },
   closeButton: {
     flex: 1,
@@ -102,6 +102,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: '5%',
   },
+  buttonCorner: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 1,
+    height: '100%',
+    borderWidth: 0.5,
+    paddingLeft: 5,
+    paddingRight: 5,
+  },
   greenButton: {
     backgroundColor: '#44ccad',
   },
@@ -113,6 +122,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     alignSelf: 'center',
+  },
+  locationTag: {
+    width: 25,
+    height: '90%',
   },
 });
 
@@ -321,17 +334,26 @@ class BikeInformation extends React.Component {
 
   renderCommentField = () => {
     const { text, bikeData } = this.state;
-
+    const { navigation } = this.props;
     if (bikeData.showComments) {
       return (
         <View style={styles.commentInputContainer}>
+          <TouchableOpacity
+            style={[styles.locationTag, styles.send]}
+            onPress={() => navigation.navigate('PinMap')}
+          >
+            <Image
+              style={styles.locationTag}
+              source={locationIcon}
+            />
+          </TouchableOpacity>
           <TextInput
             style={styles.commentInput}
             onChangeText={newText => this.setState({ text: newText })}
             value={text}
             placeholder="Add comment..."
           />
-          <View style={styles.send}>
+          <View style={[styles.send, styles.buttonCorner, styles.greenButton]}>
             <TouchableOpacity
               onPress={() => {
                 this.sendComment();

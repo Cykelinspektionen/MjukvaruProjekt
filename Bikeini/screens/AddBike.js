@@ -118,13 +118,8 @@ class AddBike extends React.Component {
         frame_number: 0,
         antitheft_code: '',
         description: '',
-        location: {
-          lat: 0,
-          long: 0,
-          city: '',
-          neighborhood: '',
-          street: '',
-        },
+        lat: 40.714224,
+        long: -73.961452,
         keywords: {
           frame_type: 'MALE',
           child: false,

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert, TouchableHighlight,
+  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert, TouchableHighlight, KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -35,8 +35,9 @@ const styles = StyleSheet.create({
   descriptionContainer: {
     marginLeft: 10,
     flexDirection: 'row',
+    marginBottom: 5,
     width: '100%',
-    flex: 0.4,
+    height: 125,
   },
   colFlex: {
     flexDirection: 'column',
@@ -57,21 +58,23 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 10,
     width: '95%',
+    marginBottom: 30,
   },
   breakLine: {
     width: '100%',
-    height: '1%',
-    marginTop: '1%',
+    height: 5,
+    marginTop: 5,
     borderWidth: 0,
     borderBottomWidth: 1,
   },
   commentInputContainer: {
+    backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'flex-start',
     height: 40,
-    width: '95%',
+    width: '90%',
     borderWidth: 1,
-    marginBottom: 2,
+    marginBottom: 15,
   },
   send: {
     alignSelf: 'center',
@@ -418,7 +421,7 @@ class BikeInformation extends React.Component {
     const imgSource = bikeData.image_url ? { uri: bikeData.image_url } : stockBicycle;
 
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
         <View style={styles.imageContainer}>
           <Image style={styles.image} resizeMode="contain" resizeMethod="scale" source={imgSource} />
         </View>
@@ -453,7 +456,7 @@ class BikeInformation extends React.Component {
           {list}
         </View>
         {commentField}
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }

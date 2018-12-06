@@ -145,6 +145,18 @@ export default class Comment extends React.Component {
     );
   }
 
+  sendThumbRating = (value) => {
+    const { commentId, jwt } = this.props;
+    const formBody = {
+      commentId,
+      value,
+    };
+    console.log(formBody);
+    serverApi.fetchApi('/bikes/ratecomment/', JSON.stringify(formBody), 'application/json', jwt[0])
+      .catch(error => console.log(error));
+  }
+
+
   handleThumbs = (action) => {
     const { thumbDown, thumbUp } = this.state;
     const { username } = this.state;
@@ -155,12 +167,18 @@ export default class Comment extends React.Component {
         } else if (thumbUp) {
           this.sendPointsToUser(-1, thumbScore, username);
         }
+        if (thumbDown) {
+          this.sendThumbRating('down');
+        }
+        this.sendThumbRating('up');
         this.setState({ thumbUp: !thumbUp, thumbDown: false });
         break;
       case 'DW':
         if (!thumbDown && thumbUp) {
+          this.sendThumbRating('up');
           this.sendPointsToUser(-1, thumbScore, username);
         }
+        this.sendThumbRating('down');
         this.setState({ thumbDown: !thumbDown, thumbUp: false });
         break;
       default:
@@ -295,5 +313,5 @@ Comment.propTypes = {
     up: PropTypes.arrayOf(PropTypes.string).isRequired,
     down: PropTypes.arrayOf(PropTypes.string).isRequired,
   }).isRequired,
-
+  commentId: PropTypes.string.isRequired,
 };

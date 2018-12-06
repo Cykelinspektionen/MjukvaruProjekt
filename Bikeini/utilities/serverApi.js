@@ -6,7 +6,7 @@ import { Alert } from 'react-native';
 
 // Handle HTTP errors since fetch won't.
 function handleErrors(response) {
-  // console.log(response);
+  console.log(response);
   if (!response.ok) {
     throw Error(response.status);
   }

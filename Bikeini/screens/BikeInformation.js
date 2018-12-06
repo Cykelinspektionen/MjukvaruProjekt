@@ -184,13 +184,13 @@ class BikeInformation extends React.Component {
       bikeData,
     } = this.state;
     const { refresh } = this.state;
-    const { _id } = bikeData;
     const { authState, navigation, profileState } = this.props;
 
     if (bikeData.showComments) {
       const {
         body, author, date, rating,
       } = item;
+      console.log(item);
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
       bikeData.showResolveBike = bikeData.submitter.username !== item.author.username && bikeData.type === 'FOUND';
@@ -200,6 +200,7 @@ class BikeInformation extends React.Component {
         >
           <Comment
             body={body}
+            commentId={item._id}
             rating={rating}
             myId={profileState.id}
             username={author.username}
@@ -208,7 +209,7 @@ class BikeInformation extends React.Component {
             bikeSubUsername={bikeData.submitter.username || ''}
             bikeType={bikeData.type}
             showResolveBike={bikeData.showResolveBike}
-            bikeId={_id}
+            bikeId={bikeData._id}
             navigation={navigation}
             refresh={refresh}
             ownersComment={ownersComment}

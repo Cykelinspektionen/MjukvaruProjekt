@@ -24,7 +24,7 @@ import { CHANGEITEMS } from '../actions/types';
 
 const ITEMS_STATE = {
   checkBoxes: [
-    {
+    /*{
       category: 'Brand',
       items:
         [{ title: 'Monark', isChecked: false },
@@ -40,28 +40,28 @@ const ITEMS_STATE = {
           { title: 'Green', isChecked: false },
           { title: 'Blue', isChecked: false },
           { title: 'Yellow', isChecked: false }],
-    },
+    },*/
     {
       category: 'Type',
       items:
-        [{ title: 'Female bike', isChecked: false },
-          { title: 'Male bike', isChecked: false },
-          { title: 'Kids bike', isChecked: false },
-          { title: 'Sports bike', isChecked: false },
-          { title: 'Tandem bike', isChecked: false }],
+        [{ title: 'Female bike', data: 'female', isChecked: false },
+          { title: 'Male bike', data: 'male', isChecked: false },
+          { title: 'Kids bike', data: 'child', isChecked: false },
+          { title: 'Sports bike', data: 'sport', isChecked: false },
+          { title: 'Tandem bike', data: 'tandem', isChecked: false }],
     },
     {
       category: 'Other',
       items:
-         [{ title: 'Basket', isChecked: false },
-           { title: 'Splasher', isChecked: false },
-           { title: 'Chain guard', isChecked: false },
-           { title: 'Net', isChecked: false },
-           { title: 'Winter tires', isChecked: false },
-           { title: 'Lamp', isChecked: false }],
+         [{ title: 'Basket', data: 'basket', isChecked: false },
+           { title: 'Mudguard', data: 'mudguard', isChecked: false },
+           { title: 'Chain protection', data: 'chain_protection', isChecked: false },
+           { title: 'Net', data: 'net', isChecked: false },
+           { title: 'Winter tires', data: 'winter_tires', isChecked: false },
+           { title: 'Lamp', data: 'light', isChecked: false }],
     },
   ],
-  categories: ['Brand', 'Color', 'Type', 'Other'],
+  categories: [/*'Brand', 'Color',*/ 'Type', 'Other'],
 };
 
 const filterReducer = (state = ITEMS_STATE, action) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, View, ListView, TouchableOpacity, Text, TextInput, ScrollView,
+  StyleSheet, View, TouchableOpacity, Text, TextInput, ScrollView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -44,8 +44,8 @@ const styles = StyleSheet.create({
   },
   inputs: {
     height: '7%',
-    width: '100%',
-    marginBottom: '1%',
+    flex: 1,
+    marginBottom: '5%',
     borderColor: '#d8d8d8',
     borderBottomWidth: 1,
   },
@@ -103,39 +103,63 @@ class Filter extends React.Component {
     this.state = {
       checkBoxes: filterState.checkBoxes,
       categories: filterState.categories,
-      searchText: '',
       searchOptions: {
         frameNumber: '',
         antiTheftCode: '',
         brand: '',
-        model: ''
+        model: '',
+        color: '',
       },
     };
 
     this.updateCheckBoxes = this.updateCheckBoxes.bind(this);
   }
 
-  search = () => {
-    const { checkBoxes, categories, searchText } = this.state;
-    const filterOptions = [];
-    let categoryOptions = { attributes: [] };
+  setSearchText(type, text) {
+    const { searchOptions } = this.state;
+    searchOptions[type] = text;
 
-    for (let i = 0; i < categories.length; i += 1) {
-      const { items, category } = checkBoxes[i];
-      categoryOptions.category = category;
-      for (let j = 0; j < items.length; j += 1) {
-        if (items[j].isChecked) {
-          categoryOptions.attributes.push(items[j].title);
-        }
-      }
-      filterOptions.push(categoryOptions);
-      categoryOptions = { attributes: [] };
-    }
-
-    this.props.search(filterOptions);
+    this.setState({ searchOptions });
   }
 
-  processFilterItems(filterItems) {
+  search = () => {
+    const { checkBoxes, categories, searchOptions } = this.state;
+    const { search } = this.props;
+    const {
+      frameNumber, antiTheftCode, brand, model, color,
+    } = searchOptions;
+    const filterOptions = {};
+
+    for (let i = 0; i < categories.length; i += 1) {
+      const { items } = checkBoxes[i];
+      for (let j = 0; j < items.length; j += 1) {
+        if (items[j].isChecked) {
+          filterOptions[items[j].data] = true;
+        }
+      }
+    }
+
+    if (frameNumber !== '') {
+      filterOptions.frame_number = frameNumber;
+    }
+    if (antiTheftCode !== '') {
+      filterOptions.antitheft_code = antiTheftCode;
+    }
+    if (brand !== '') {
+      filterOptions.brand = brand;
+    }
+    if (model !== '') {
+      filterOptions.model = model;
+    }
+    if (color !== '') {
+      filterOptions.color = color;
+    }
+
+    console.log(filterOptions);
+    search(filterOptions);
+  }
+
+  static processFilterItems(filterItems) {
     let row = [];
     const processedFilter = [];
     let item1 = {};
@@ -178,9 +202,9 @@ class Filter extends React.Component {
   renderFilterOptions = () => {
     const { checkBoxes } = this.state;
     const processedFilter = this.processFilterItems(checkBoxes);
-    let filterOptions = {};
+    const filterOptions = {};
 
-    for(let i = 0; i < processedFilter.length; i += 1) {
+    for (let i = 0; i < processedFilter.length; i += 1) {
       filterOptions.push(this.renderRow(processedFilter[i]));
     }
 
@@ -210,54 +234,50 @@ class Filter extends React.Component {
   }
 
   render() {
-    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    const { checkBoxes, searchText, searchOptions } = this.state;
+    const { checkBoxes, searchOptions } = this.state;
     const processedFilter = this.processFilterItems(checkBoxes);
     return (
       <View style={styles.fullContainter}>
         <ScrollView contentContainerStyle={styles.container}>
-        <View style={{marginBottom: 150,}}>
-          {/*<ListView
-            dataSource={
-              ds.cloneWithRows(this.processFilterItems(checkBoxes))
-              }
-            renderRow={rowData => this.renderRow(rowData)}
-          />
-          {this.processFilterItems(checkBoxes).map((rowData) => {
-            this.renderRow(rowData);
-          })}*/}
-          {processedFilter.map(rowData => this.renderRow(rowData))}
-          <TextInput
-            style={styles.inputs}
-            placeholder="Frame number"
-            value={searchOptions.frameNumber}
-            onChangeText={text => this.setBikeData('frameNumber', text)}
-          />
-          <TextInput
-            style={styles.inputs}
-            placeholder="Anti Theft Code"
-            value={searchOptions.antiTheftCode}
-            onChangeText={text => this.setBikeData('antiTheftCode', text)}
-          />
-          <TextInput
-            style={styles.inputs}
-            placeholder="Brand"
-            value={searchOptions.brand}
-            onChangeText={text => this.setBikeData('brand', text)}
-          />
-          <TextInput
-            style={styles.inputs}
-            placeholder="Model"
-            value={searchOptions.model}
-            onChangeText={text => this.setBikeData('model', text)}
-          />
-          <TouchableOpacity
-            style={styles.searchButton}
-            onPress={this.search}
-          >
-            <Text style={styles.searchButtonText}>SEARCH</Text>
-          </TouchableOpacity>
-        </View>
+          <View style={{ marginBottom: 100 }}>
+            {processedFilter.map(rowData => this.renderRow(rowData))}
+            <TextInput
+              style={styles.inputs}
+              placeholder="Frame number"
+              value={searchOptions.frameNumber}
+              onChangeText={text => this.setSearchText('frameNumber', text)}
+            />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Anti Theft Code"
+              value={searchOptions.antiTheftCode}
+              onChangeText={text => this.setSearchText('antiTheftCode', text)}
+            />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Brand"
+              value={searchOptions.brand}
+              onChangeText={text => this.setSearchText('brand', text)}
+            />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Model"
+              value={searchOptions.model}
+              onChangeText={text => this.setSearchText('model', text)}
+            />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Color"
+              value={searchOptions.color}
+              onChangeText={text => this.setSearchText('color', text)}
+            />
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={this.search}
+            >
+              <Text style={styles.searchButtonText}>SEARCH</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
         <View style={styles.breakLine} />
       </View>
@@ -277,8 +297,11 @@ const mapDispatchToProps = dispatch => (
 );
 
 Filter.propTypes = {
-  filterState: PropTypes.object.isRequired,
   search: PropTypes.func.isRequired,
+  filterState: PropTypes.shape({
+    checkBoxes: PropTypes.array.isRequired,
+    categories: PropTypes.array.isRequired,
+  }).isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Filter);

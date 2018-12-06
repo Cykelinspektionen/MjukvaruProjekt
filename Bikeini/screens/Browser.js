@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, FlatList, TouchableOpacity, Platform, ImageBackground,
+  StyleSheet, Text, View, FlatList, TouchableOpacity, Platform, ImageBackground, 
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -301,7 +301,7 @@ class Browser extends React.Component {
 
 
   search = (searchOptions) => {
-    console.log(searchOptions);
+    //console.log(searchOptions);
   }
 
   render() {

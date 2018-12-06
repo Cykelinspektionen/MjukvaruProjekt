@@ -193,6 +193,7 @@ class BikeInformation extends React.Component {
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
       bikeData.showResolveBike = bikeData.submitter.username !== item.author.username && bikeData.type === 'FOUND';
+      console.log(item);
       return (
         <TouchableOpacity
           onPress={() => {}}

@@ -28,7 +28,7 @@ const AUTH_STATE = {
   error: '',
 };
 
-const authState = (state = AUTH_STATE, action) => {
+const authReducer = (state = AUTH_STATE, action) => {
   switch (action.type) {
     case LOGIN:
       return { ...state, jwt: [action.payload], isLoggedIn: true };
@@ -75,4 +75,4 @@ const authState = (state = AUTH_STATE, action) => {
   }
 };
 
-export default authState;
+export default authReducer;

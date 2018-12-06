@@ -190,7 +190,6 @@ class BikeInformation extends React.Component {
       const {
         body, author, date, rating,
       } = item;
-      console.log(item);
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
       bikeData.showResolveBike = bikeData.submitter.username !== item.author.username && bikeData.type === 'FOUND';

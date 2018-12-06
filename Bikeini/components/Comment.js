@@ -94,13 +94,13 @@ export default class Comment extends React.Component {
   }
 
   componentDidMount() {
+    // THIS IS TEMPORARY UNTIL BACKEND WORKS
     // const { myId, rating } = this.props;
     const { myId } = this.props;
     const rating = {
       up: [],
       down: [],
     };
-    // console.log(myId);
     rating.up.every(item => (item.up === myId ? this.setState({ thumbUp: true }) : null));
     rating.up.every(item => (item.down === myId ? this.setState({ thumbDown: true }) : null));
   }
@@ -151,7 +151,6 @@ export default class Comment extends React.Component {
       commentId,
       value,
     };
-    console.log(formBody);
     serverApi.fetchApi('/bikes/ratecomment/', JSON.stringify(formBody), 'application/json', jwt[0])
       .catch(error => console.log(error));
   }

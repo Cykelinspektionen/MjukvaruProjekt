@@ -159,7 +159,7 @@ class Filter extends React.Component {
     search(filterOptions);
   }
 
-  static processFilterItems(filterItems) {
+  processFilterItems(filterItems) {
     let row = [];
     const processedFilter = [];
     let item1 = {};

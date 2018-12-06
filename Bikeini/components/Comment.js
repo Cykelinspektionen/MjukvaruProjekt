@@ -95,15 +95,9 @@ export default class Comment extends React.Component {
   }
 
   componentDidMount() {
-    // THIS IS TEMPORARY UNTIL BACKEND WORKS
-    // const { myId, rating } = this.props;
-    const { myId } = this.props;
-    const rating = {
-      up: [],
-      down: [],
-    };
-    rating.up.every(item => (item.up === myId ? this.setState({ thumbUp: true }) : null));
-    rating.up.every(item => (item.down === myId ? this.setState({ thumbDown: true }) : null));
+    const { myId, rating } = this.props;
+    rating.up.every(item => (item.userId === myId ? this.setState({ thumbUp: true }) : null));
+    rating.down.every(item => (item.userId === myId ? this.setState({ thumbDown: true }) : null));
   }
 
   sendPointsToUser = (points, type, username) => {
@@ -152,16 +146,17 @@ export default class Comment extends React.Component {
       commentId,
       value,
     };
-    serverApi.fetchApi('/bikes/ratecomment/', JSON.stringify(formBody), 'application/json', jwt[0])
+    serverApi.fetchApi('bikes/ratecomment/', JSON.stringify(formBody), 'application/json', jwt[0])
       .catch(error => console.log(error));
   }
 
 
   handleThumbs = (action) => {
     const { thumbDown, thumbUp } = this.state;
-    const { username } = this.state;
+    const { username } = this.props;
     switch (action) {
       case 'UP':
+        this.sendThumbRating('up');
         if (!thumbUp) {
           this.sendPointsToUser(1, thumbScore, username);
         } else if (thumbUp) {
@@ -170,7 +165,6 @@ export default class Comment extends React.Component {
         if (thumbDown) {
           this.sendThumbRating('down');
         }
-        this.sendThumbRating('up');
         this.setState({ thumbUp: !thumbUp, thumbDown: false });
         break;
       case 'DW':
@@ -310,8 +304,14 @@ Comment.propTypes = {
   bikeType: PropTypes.string.isRequired,
   myId: PropTypes.string.isRequired,
   rating: PropTypes.shape({
-    up: PropTypes.arrayOf(PropTypes.string).isRequired,
-    down: PropTypes.arrayOf(PropTypes.string).isRequired,
+    up: PropTypes.arrayOf(PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      userId: PropTypes.string.isRequired,
+    })).isRequired,
+    down: PropTypes.arrayOf(PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      userId: PropTypes.string.isRequired,
+    })).isRequired,
   }).isRequired,
   commentId: PropTypes.string.isRequired,
 };

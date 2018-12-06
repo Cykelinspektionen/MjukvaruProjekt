@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: 'flex-start',
     flexDirection: 'column',
+    marginTop: 5,
     marginBottom: '5%',
     marginLeft: '5%',
   },

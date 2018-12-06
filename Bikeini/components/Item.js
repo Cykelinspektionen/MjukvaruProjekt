@@ -32,11 +32,11 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     flex: 1,
   },
-  description: {
+  title: {
     fontSize: 18,
     fontWeight: '400',
   },
-  model: {
+  brand: {
     fontSize: 16,
     fontWeight: '500',
   },
@@ -61,18 +61,18 @@ const styles = StyleSheet.create({
 export default class Item extends React.PureComponent {
   render() {
     const {
-      description, model, imageUrl, bikeData, navigation, refresh,
+      title, brand, imageUrl, bikeData, navigation, refresh,
     } = this.props;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={imgSource} />
         <View style={styles.textView}>
-          <Text style={styles.description}>
-            {description}
+          <Text style={styles.title}>
+            {title}
           </Text>
-          <Text style={styles.model}>
-            {model}
+          <Text style={styles.brand}>
+            {brand}
           </Text>
         </View>
         <View style={styles.buttonRow}>
@@ -99,8 +99,8 @@ export default class Item extends React.PureComponent {
 }
 
 Item.propTypes = {
-  description: PropTypes.string.isRequired,
-  model: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  brand: PropTypes.string.isRequired,
   imageUrl: PropTypes.string.isRequired,
   bikeData: PropTypes.shape({
     showComments: PropTypes.bool.isRequired,

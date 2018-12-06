@@ -2,10 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
-  StyleSheet, Text, View, ScrollView, Image, FlatList, ImageBackground,
+  StyleSheet, Text, View, ScrollView, Image, FlatList, ImageBackground, RefreshControl,
 } from 'react-native';
+import { bindActionCreators } from 'redux';
 import headerStyle from './header';
 import serverApi from '../utilities/serverApi';
+import * as profileActions from '../navigation/actions/ProfileActions';
 
 const profilePic = require('../assets/images/userPlaceholder.jpg');
 const background = require('../assets/images/background.jpeg');
@@ -94,6 +96,7 @@ class Gamification extends React.Component {
       this.state = {
         topPlayersSwe: '',
         topPlayersLocal: '',
+        isFetching: false,
       };
     }
 
@@ -102,7 +105,7 @@ class Gamification extends React.Component {
     }
 
       handleServerTopPlayers = () => {
-        const { authState, profileState } = this.props;
+        const { authState, profileState, loadProfileInit } = this.props;
         const { jwt } = authState;
 
         const { location } = profileState;
@@ -117,13 +120,13 @@ class Gamification extends React.Component {
         };
         const formBody = JSON.stringify(topScoreSwe);
         const formBodyLocal = JSON.stringify(topScoreLocal);
-
+        loadProfileInit(jwt[0]);
         serverApi.fetchApi('users/gethighscores/', formBody, 'application/json', jwt[0])
           .then((responseJson) => {
             for (let i = 0; i < responseJson.length; i += 1) {
               topPlayersSwe.push(responseJson[i]);
             }
-            this.setState({ topPlayersSwe });
+            this.setState({ topPlayersSwe, isFetching: false });
           }).catch(error => console.log(error));
 
         serverApi.fetchApi('users/gethighscores/', formBodyLocal, 'application/json', jwt[0])
@@ -131,7 +134,7 @@ class Gamification extends React.Component {
             for (let i = 0; i < responseJson.length; i += 1) {
               topPlayersLocal.push(responseJson[i]);
             }
-            this.setState({ topPlayersLocal });
+            this.setState({ topPlayersLocal, isFetching: false });
           }).catch(error => console.log(error));
       }
 
@@ -189,13 +192,28 @@ p
       );
     }
 
+    onRefresh = () => {
+      this.setState({ isFetching: true }, () => {
+        this.handleServerTopPlayers();
+      });
+    }
+
     render() {
+      const { isFetching } = this.state;
       const { profileState } = this.props;
       const { location } = profileState;
       const { game_score } = profileState;
       return (
         <ImageBackground style={styles.backImg} source={background}>
-          <ScrollView style={styles.background}>
+          <ScrollView
+            style={styles.background}
+            refreshControl={(
+              <RefreshControl
+                onRefresh={this.onRefresh}
+                refreshing={isFetching}
+              />
+          )}
+          >
             <View style={styles.container} />
             <View style={styles.rowContainer}>
               <Image style={styles.profile} source={profilePic} />
@@ -271,6 +289,7 @@ Gamification.propTypes = {
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
+  loadProfileInit: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
@@ -278,4 +297,10 @@ const mapStateToProps = (state) => {
   return { authState, profileState };
 };
 
-export default connect(mapStateToProps)(Gamification);
+const mapDispatchToProps = dispatch => bindActionCreators(
+  { ...profileActions },
+  dispatch,
+);
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Gamification);

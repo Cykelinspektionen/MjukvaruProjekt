@@ -68,7 +68,7 @@ class Login extends React.Component {
 
   componentDidUpdate() {
     const {
-      authState, profileState, navigation, loadProfileInit,
+      authState, profileState, navigation, loadProfileInit, setIsLoggedIn,
     } = this.props;
     if (
       !authState.loadingJwt
@@ -80,9 +80,11 @@ class Login extends React.Component {
       && !authState.deletingJwt
       && !authState.error) {
       loadProfileInit(authState.jwt[0]);
-    } else if (profileState.profileLoaded && profileState.location.length) {
+    } else if (profileState.profileLoaded && profileState.location.length && !authState.isLoggedIn) {
+      setIsLoggedIn(true);
       navigation.navigate('Browser');
-    } else if (profileState.profileLoaded && !profileState.location.length) {
+    } else if (profileState.profileLoaded && !profileState.location.length && !authState.isLoggedIn) {
+      setIsLoggedIn(true);
       navigation.navigate('Location');
     }
     return 'did update'; // what to return?
@@ -174,6 +176,7 @@ Login.propTypes = {
   loadJWTInit: PropTypes.func.isRequired,
   loadProfileInit: PropTypes.func.isRequired,
   loginInit: PropTypes.func.isRequired,
+  setIsLoggedIn: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {

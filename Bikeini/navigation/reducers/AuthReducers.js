@@ -1,6 +1,8 @@
 import {
   LOGIN,
   LOGOUT,
+  UNLOAD_PROFILE,
+  SET_IS_LOGGED_IN,
   LOAD_PROFILE_SUCCESS,
   LOAD_JWT_BEGIN,
   LOAD_JWT_FAILURE,
@@ -28,15 +30,19 @@ const AUTH_STATE = {
   error: '',
 };
 
-const authState = (state = AUTH_STATE, action) => {
+const authReducer = (state = AUTH_STATE, action) => {
   switch (action.type) {
     case LOGIN:
-      return { ...state, jwt: [action.payload], isLoggedIn: true };
+      return { ...state, jwt: [action.payload] };
     case LOGOUT:
       return { ...state, jwt: [], isLoggedIn: false };
+    case SET_IS_LOGGED_IN:
+      return { ...state, isLoggedIn: action.payload };
+    case UNLOAD_PROFILE:
+      return { ...state, isLoggedIn: false };
     case LOAD_PROFILE_SUCCESS:
       return {
-        ...state, isLoggedIn: true, error: '',
+        ...state, error: '',
       };
     case DELETE_JWT_BEGIN:
       return { ...state, deletingJwt: true };
@@ -75,4 +81,4 @@ const authState = (state = AUTH_STATE, action) => {
   }
 };
 
-export default authState;
+export default authReducer;

@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import serverApi from '../utilities/serverApi';
 import * as jwtActions from '../navigation/actions/JwtActions';
+import * as mapActions from '../navigation/actions/MapActions';
 import Item from '../components/Item';
 import Comment from '../components/Comment';
 import { bikeScore } from '../utilities/Const';
@@ -215,7 +216,6 @@ class BikeInformation extends React.Component {
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
       bikeData.showResolveBike = bikeData.submitter.username !== item.author.username && bikeData.type === 'FOUND';
-      console.log(item);
       return (
         <TouchableOpacity
           onPress={() => {}}
@@ -308,7 +308,9 @@ class BikeInformation extends React.Component {
   sendComment = () => {
     const { text, bikeData } = this.state;
     const { _id } = bikeData;
-    const { authState, profileState } = this.props;
+    const {
+      authState, profileState, mapState, cleanMapState,
+    } = this.props;
     const { username } = profileState;
     const { jwt } = authState;
 
@@ -316,17 +318,18 @@ class BikeInformation extends React.Component {
       username,
       bikeId: _id,
       body: text,
+      lat: mapState.userMarker.userMarkerSet ? mapState.userMarker.latitude : null,
+      long: mapState.userMarker.userMarkerSet ? mapState.userMarker.longitude : null,
     };
     if (text === '') {
       Alert.alert('You must add some text :0 !');
       return;
     }
-
     const formBody = this.jsonToFormData(commentInformation);
-
     serverApi.fetchApi('bikes/addcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then(() => {
         this.setState({ text: '' }, () => {
+          cleanMapState();
           this.fetchComments();
         });
       }).catch(error => console.log(error));
@@ -510,15 +513,23 @@ BikeInformation.propTypes = {
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
+  mapState: PropTypes.shape({
+    userMarker: PropTypes.shape({
+      latitude: PropTypes.number.isRequired,
+      longitude: PropTypes.number.isRequired,
+      userMarkerSet: PropTypes.bool.isRequired,
+    }).isRequired,
+  }).isRequired,
+  cleanMapState: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { profileState, authState } = state;
-  return { profileState, authState };
+  const { profileState, authState, mapState } = state;
+  return { profileState, authState, mapState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...jwtActions },
+  { ...jwtActions, ...mapActions },
   dispatch,
 );
 

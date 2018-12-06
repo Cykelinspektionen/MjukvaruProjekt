@@ -1,4 +1,6 @@
-import { SET_COORDS, SET_SHOW_MARKER, SET_MARKER, SET_USER_MARKER } from '../actions/types';
+import {
+  SET_COORDS, SET_SHOW_MARKER, SET_MARKER, SET_USER_MARKER, RESET_MAP_STATE,
+} from '../actions/types';
 
 
 const MAP_STATE = {
@@ -47,6 +49,8 @@ const mapReducer = (state = MAP_STATE, action) => {
       return { ...state, marker: { ...state.marker, ...action.payload } };
     case SET_USER_MARKER:
       return { ...state, userMarker: { ...state.userMarker, ...action.payload, userMarkerSet: true } };
+    case RESET_MAP_STATE:
+      return { ...MAP_STATE };
     default:
       return state;
   }

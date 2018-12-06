@@ -1,5 +1,5 @@
 import {
-  SET_COORDS, SET_SHOW_MARKER, SET_MARKER, SET_USER_MARKER,
+  SET_COORDS, SET_SHOW_MARKER, SET_MARKER, SET_USER_MARKER, RESET_MAP_STATE,
 } from './types';
 
 export const setMapLocation = coords => (
@@ -29,3 +29,10 @@ export const setUserMarker = coords => (
     payload: coords,
   }
 );
+
+export const cleanMapState = () => (
+  {
+    type: RESET_MAP_STATE,
+  }
+);
+

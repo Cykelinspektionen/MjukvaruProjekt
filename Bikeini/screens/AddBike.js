@@ -288,7 +288,7 @@ class AddBike extends React.Component {
   }
 
   setServerResponse(response, radioCallback, colorCallback) {
-    console.log(response); // <- Used for checking the structure of the ML-response, please leave it until it's been testsed on live! :)
+    // console.log(response); // <- Used for checking the structure of the ML-response, please leave it until it's been testsed on live! :)
     const { radios } = this.state;
 
     // For this to work the response from the server CAN'T have any nestled attrbiutes!

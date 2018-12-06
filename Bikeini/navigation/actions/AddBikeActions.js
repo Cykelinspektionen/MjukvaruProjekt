@@ -93,7 +93,6 @@ export function uploadBikeToServer(imgUri, bikeData2, jwt) {
   const formBody = new FormData();
   formBody.append('image', file);
   formBody.append('json', JSON.stringify(bikeData));
-  console.log(bikeData);
   return serverApi.postDispatch(
     'bikes/addbike/',
     formBody,

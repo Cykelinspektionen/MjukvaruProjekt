@@ -89,6 +89,7 @@ checkItem = (item) => {
 
 sendLocationToServer = () => {
   const { checked } = this.state;
+  const { navigation } = this.props;
   if (!checked.length) {
     return;
   }
@@ -96,6 +97,7 @@ sendLocationToServer = () => {
   const body = JSON.stringify({ location: checked });
   serverApi.fetchApi('users/updateuser/', body, 'application/json', authState.jwt[0]);
   setLocation(checked);
+  navigation.navigate('Browser');
 }
 
 searchFilterFunction = (text) => {

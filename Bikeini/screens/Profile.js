@@ -139,8 +139,8 @@ class Profile extends React.Component {
           }}
         >
           <Item
-            description={item.description || ''}
-            model={item.model || ''}
+            title={item.title || ''}
+            brand={item.brand || ''}
             imageUrl={item.image_url || ''}
             bikeData={bikeData}
             navigation={navigation}

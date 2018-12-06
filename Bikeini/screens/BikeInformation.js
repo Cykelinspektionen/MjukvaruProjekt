@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flexDirection: 'row',
     width: '100%',
-    flex: 0.2,
+    flex: 0.4,
   },
   colFlex: {
     flexDirection: 'column',
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
+    marginRight: 5,
   },
   buttonSmall: {
     justifyContent: 'center',
@@ -104,6 +105,11 @@ const styles = StyleSheet.create({
   greenButtonText: {
     color: 'white',
     margin: 5,
+  },
+  matchAndComText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    alignSelf: 'center',
   },
 });
 
@@ -228,8 +234,8 @@ class BikeInformation extends React.Component {
         }}
       >
         <Item
-          description={item.description || ''}
-          model={item.model || ''}
+          title={item.title || ''}
+          brand={item.brand || ''}
           imageUrl={item.image_url || ''}
           bikeData={bikeData}
           navigation={navigation}
@@ -249,23 +255,31 @@ class BikeInformation extends React.Component {
 
     if (bikeData.showComments) {
       return (
-        <FlatList
-          data={comments}
-          extraData={this.state}
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderItem}
-        />
+        <View>
+          <Text style={styles.matchAndComText}> COMMENTS </Text>
+          <View style={styles.breakLine} />
+          <FlatList
+            data={comments}
+            extraData={this.state}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderItem}
+          />
+        </View>
       );
     }
 
 
     return (
-      <FlatList
-        data={matchingBikesFiltered}
-        extraData={this.state}
-        keyExtractor={this.keyExtractor}
-        renderItem={this.renderItem}
-      />
+      <View>
+        <Text style={styles.matchAndComText}> MATCHING BIKES </Text>
+        <View style={styles.breakLine} />
+        <FlatList
+          data={matchingBikesFiltered}
+          extraData={this.state}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderItem}
+        />
+      </View>
     );
   }
 
@@ -392,7 +406,7 @@ class BikeInformation extends React.Component {
   render() {
     const { bikeData } = this.state;
     const {
-      title, location, description, brand, color,
+      title, location, description, brand, color, frameNumber, model,
     } = bikeData;
     const city = location ? location.city : '';
     const neighborhood = location ? location.neighborhood : '';
@@ -420,8 +434,15 @@ class BikeInformation extends React.Component {
             <Text style={styles.body}>{description}</Text>
             <Text style={styles.body}>
               {brand}
+              {' '}
+              {model}
               {', '}
               {color}
+            </Text>
+            <Text style={styles.body}>
+              Frame number:
+              {' '}
+              {frameNumber}
             </Text>
           </View>
           {foundButton}

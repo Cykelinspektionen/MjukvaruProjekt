@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, View, Text, Image, FlatList, TouchableHighlight,
+  StyleSheet, View, Text, Image, FlatList, TouchableHighlight, TextInput,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
     paddingTop: Constants.statusBarHeight,
     backgroundColor: '#ecf0f1',
   },
-
   buttonContainer: {
     height: 40,
     flexDirection: 'row',
@@ -45,6 +44,21 @@ const styles = StyleSheet.create({
     fontSize: 35,
     fontWeight: 'bold',
   },
+  inputContainer: {
+    backgroundColor: '#FAFAFA',
+    borderWidth: 1,
+    width: 400,
+    height: 40,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  inputs: {
+    height: 40,
+    marginLeft: 16,
+    borderBottomColor: '#FFFFFF',
+    flex: 1,
+  },
   city: {
     width: 400,
   },
@@ -59,6 +73,8 @@ class Location extends React.Component {
     super();
     this.state = {
       checked: '',
+      data: cities,
+      searchText: '',
     };
   }
 
@@ -73,25 +89,45 @@ checkItem = (item) => {
 
 sendLocationToServer = () => {
   const { checked } = this.state;
+  const { navigation } = this.props;
   if (!checked.length) {
-    // TODO: MUst select city
     return;
   }
   const { authState, setLocation } = this.props;
   const body = JSON.stringify({ location: checked });
   serverApi.fetchApi('users/updateuser/', body, 'application/json', authState.jwt[0]);
   setLocation(checked);
+  navigation.navigate('Browser');
 }
 
+searchFilterFunction = (text) => {
+  const newData = cities.filter((item) => {
+    const itemData = item.toUpperCase();
+    const textData = text.toUpperCase();
+
+    return itemData.indexOf(textData) > -1;
+  });
+
+  this.setState({ data: newData, searchText: text });
+};
+
 render() {
-  const { checked } = this.state;
+  const { checked, searchText, data } = this.state;
   return (
     <View style={styles.container}>
       <Image style={styles.logo} source={logo} />
       <Text style={styles.heading}>SELECT CITY</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.inputs}
+          placeholder="Search for a city..."
+          value={searchText}
+          onChangeText={text => this.searchFilterFunction(text)}
+        />
+      </View>
       <FlatList
         style={styles.city}
-        data={cities}
+        data={data}
         keyExtractor={(item, index) => index.toString()}
         extraData={this.state}
         renderItem={({ item }) => (

@@ -14,6 +14,9 @@
     "flow coverage": "flow coverage",
     "flow": "flow"
   },
+  "rnpm": {
+    "assets": ["assets/fonts"]
+   },
   "jest": {
     "preset": "jest-expo"
   },

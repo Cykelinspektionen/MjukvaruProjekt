@@ -3,9 +3,11 @@ import {
   LOAD_PROFILE_BEGIN,
   LOAD_PROFILE_SUCCESS,
   LOAD_PROFILE_FAILURE,
+  UNLOAD_PROFILE,
 } from '../actions/types';
 
 const PROFILE_INITIAL_STATE = {
+  id: null,
   location: '',
   username: '',
   email: '',
@@ -45,9 +47,12 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         phone_number: action.payload.phone_number,
         create_time: action.payload.create_time,
         game_score: action.payload.game_score,
+        id: action.payload._id,
         loadingProfile: false,
         profileLoaded: true,
       };
+    case UNLOAD_PROFILE:
+      return { ...PROFILE_INITIAL_STATE };
     default:
       return state;
   }

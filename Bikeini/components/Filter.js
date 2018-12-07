@@ -1,7 +1,8 @@
 import React from 'react';
 import {
-  StyleSheet, View, TouchableOpacity, Text, TextInput, ScrollView,
+  StyleSheet, View, TouchableOpacity, Text, TextInput, Platform,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -103,13 +104,7 @@ class Filter extends React.Component {
     this.state = {
       checkBoxes: filterState.checkBoxes,
       categories: filterState.categories,
-      searchOptions: {
-        frameNumber: '',
-        antiTheftCode: '',
-        brand: '',
-        model: '',
-        color: '',
-      },
+      searchOptions: filterState.searchOptions,
     };
 
     this.updateCheckBoxes = this.updateCheckBoxes.bind(this);
@@ -236,8 +231,15 @@ class Filter extends React.Component {
     const processedFilter = this.processFilterItems(checkBoxes);
     return (
       <View style={styles.fullContainter}>
-        <ScrollView contentContainerStyle={styles.container}>
-          <View style={{ marginBottom: 100 }}>
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.container}
+          enableOnAndroid
+          extraScrollHeight={100}
+          enableAutoAutomaticScroll={(Platform.OS === 'ios')}
+          innerRef={(ref) => { this.scroll = ref; }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={{ marginBottom: 10 }}>
             {processedFilter.map(rowData => this.renderRow(rowData))}
             <TextInput
               style={styles.inputs}
@@ -276,7 +278,7 @@ class Filter extends React.Component {
               <Text style={styles.searchButtonText}>SEARCH</Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
+        </KeyboardAwareScrollView>
         <View style={styles.breakLine} />
       </View>
     );

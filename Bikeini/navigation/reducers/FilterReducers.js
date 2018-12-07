@@ -24,7 +24,7 @@ import { CHANGEITEMS } from '../actions/types';
 
 const ITEMS_STATE = {
   checkBoxes: [
-    /*{
+    /* {
       category: 'Brand',
       items:
         [{ title: 'Monark', isChecked: false },
@@ -40,7 +40,7 @@ const ITEMS_STATE = {
           { title: 'Green', isChecked: false },
           { title: 'Blue', isChecked: false },
           { title: 'Yellow', isChecked: false }],
-    },*/
+    }, */
     {
       category: 'Type',
       items:
@@ -61,7 +61,14 @@ const ITEMS_STATE = {
            { title: 'Lamp', data: 'light', isChecked: false }],
     },
   ],
-  categories: [/*'Brand', 'Color',*/ 'Type', 'Other'],
+  categories: ['Type', 'Other'],
+  searchOptions: {
+    frameNumber: '',
+    antiTheftCode: '',
+    brand: '',
+    model: '',
+    color: '',
+  },
 };
 
 const filterReducer = (state = ITEMS_STATE, action) => {

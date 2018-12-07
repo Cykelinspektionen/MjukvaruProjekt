@@ -313,7 +313,6 @@ class Browser extends React.Component {
       searchJson.type = 'STOLEN';
       let formData = Object.entries(searchJson).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
       formData += (`&location.city=${location}`);
-      console.log(formData);
       serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
         .then((responseJson) => {
           this.setState({ missingBicycles: responseJson.message, isFetching: false, showFilter: false });

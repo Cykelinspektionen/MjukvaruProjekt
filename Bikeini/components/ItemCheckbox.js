@@ -40,7 +40,6 @@ export default class ItemCheckbox extends React.Component {
 
   render() {
     const { title, isChecked } = this.state;
-    console.log(title);
     if (title !== '') {
       return (
         <CheckBox

@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   container: {
     alignSelf: 'flex-start',
     alignItems: 'flex-start',
-    width: '80%',
+    width: '90%',
     marginLeft: '10%',
   },
   searchBar: {
@@ -75,8 +75,8 @@ const styles = StyleSheet.create({
   rowContainer: {
     flexDirection: 'row',
     height: 30,
-    width: '100%',
     backgroundColor: 'red',
+    width: '100%',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -110,6 +110,7 @@ class Filter extends React.Component {
 
   search = () => {
     const { checkBoxes, categories, searchOptions } = this.state;
+    const { search } = this.props;
     const {
       frameNumber, antiTheftCode, brand, model, color,
     } = searchOptions;
@@ -140,17 +141,17 @@ class Filter extends React.Component {
       filterOptions.color = color;
     }
 
-    this.props.search(filterOptions);
+    search(filterOptions);
   }
 
   reset = () => {
-    const { resetItems } = this.props;
+    const { resetItems, search, hideFilter } = this.props;
     resetItems(true);
-    this.props.search({});
-    this.props.hideFilter();
+    search({});
+    hideFilter();
   }
 
-  processFilterItems(filterItems) {
+  processFilterItems = (filterItems) => {
     let row = [];
     const processedFilter = [];
     let item1 = {};

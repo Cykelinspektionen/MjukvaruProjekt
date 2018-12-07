@@ -32,19 +32,25 @@ export default class ItemCheckbox extends React.Component {
     const {
       id, category, isChecked,
     } = this.state;
+    const { onChange } = this.props;
     this.setState({ isChecked: !isChecked }, () => {
-      this.props.onChange(id, category);
+      onChange(id, category);
     });
   }
 
   render() {
     const { title, isChecked } = this.state;
+    console.log(title);
     if (title !== '') {
       return (
         <CheckBox
           title={title}
           checked={isChecked}
-          containerStyle={{ backgroundColor: 'white', borderWidth: 0 }}
+          containerStyle={{
+            padding: 0,
+            backgroundColor: 'white',
+            borderWidth: 0,
+          }}
           onPress={this.changeStatus}
         />
       );

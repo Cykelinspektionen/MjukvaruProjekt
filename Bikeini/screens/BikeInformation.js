@@ -207,7 +207,9 @@ class BikeInformation extends React.Component {
       bikeData,
     } = this.state;
     const { refresh } = this.state;
-    const { authState, navigation, profileState } = this.props;
+    const {
+      authState, navigation, profileState, setMarker, setShowMarker,
+    } = this.props;
 
     if (bikeData.showComments) {
       const {
@@ -221,17 +223,19 @@ class BikeInformation extends React.Component {
           onPress={() => {}}
         >
           <Comment
-            body={body}
+            actions={{ setShowMarker, setMarker }}
+            body={item.body}
             commentId={item._id}
-            rating={rating}
-            myId={profileState.id}
-            username={author.username}
-            date={date}
-            jwt={jwt}
+            rating={item.rating}
+            date={item.date}
+            location={item.location || { lat: 0, long: 0 }}
             bikeSubUsername={bikeData.submitter.username || ''}
             bikeType={bikeData.type}
             showResolveBike={bikeData.showResolveBike}
             bikeId={bikeData._id}
+            myId={profileState.id}
+            username={author.username}
+            jwt={jwt}
             navigation={navigation}
             refresh={refresh}
             ownersComment={ownersComment}
@@ -521,6 +525,8 @@ BikeInformation.propTypes = {
     }).isRequired,
   }).isRequired,
   cleanMapState: PropTypes.func.isRequired,
+  setMarker: PropTypes.func.isRequired,
+  setShowMarker: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {

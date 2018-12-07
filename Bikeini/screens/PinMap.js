@@ -114,14 +114,12 @@ class PinMap extends React.Component {
   }
 
   render() {
-    const { mapState } = this.props;
-    console.log(mapState);
-
+    const { mapState, navigation, cleanMapState } = this.props;
     if (mapState.marker.showMarker) {
       return (
-        <View>
-          <View style={{ flex: 0.1 }}>
-            <Text>
+        <View style={styles.main}>
+          <View style={styles.header}>
+            <Text style={styles.headerText}>
             Marker shows tips location
             </Text>
           </View>
@@ -134,12 +132,22 @@ class PinMap extends React.Component {
               coordinate={{ latitude: mapState.marker.latitude, longitude: mapState.marker.longitude }}
             />
           </MapView>
+          <View style={styles.buttonView}>
+            <TouchableHighlight
+              style={[styles.buttonContainer, styles.greenButton]}
+              onPress={() => {
+                cleanMapState();
+                navigation.goBack();
+              }}
+            >
+              <Text style={styles.greenButtonText}>Back</Text>
+            </TouchableHighlight>
+          </View>
         </View>
       );
     }
 
     if (mapState.loadedCurrPos) {
-      const { navigation } = this.props;
       return (
         <View style={styles.main}>
           <View style={styles.header}>
@@ -191,6 +199,7 @@ PinMap.propTypes = {
   }).isRequired,
   setMapLocation: PropTypes.func.isRequired,
   setUserMarker: PropTypes.func.isRequired,
+  cleanMapState: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {

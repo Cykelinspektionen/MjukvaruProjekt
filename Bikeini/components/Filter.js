@@ -6,7 +6,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { changeItems } from '../navigation/actions/FilterActions';
+import * as filterActions from '../navigation/actions/FilterActions';
 import ItemCheckbox from './ItemCheckbox';
 
 const styles = StyleSheet.create({
@@ -37,7 +37,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#44ccad',
   },
+  resetButton: {
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 120,
+    height: 60,
+    borderRadius: 10,
+    backgroundColor: '#44ccad',
+  },
   searchButtonText: {
+    textAlignVertical: 'center',
+    fontSize: 24,
+    fontWeight: '100',
+    color: 'white',
+  },
+  resetButtonText: {
     textAlignVertical: 'center',
     fontSize: 24,
     fontWeight: '100',
@@ -71,31 +86,6 @@ const styles = StyleSheet.create({
   },
 });
 
-/*
- * THE STRUCTURE FOR FILTER IS IN BETA - WILL PROBABLY BE CHANGED LATER WHEN THE TIME IS RIGHT!
-  The 'checkBoxes' state is structured as following array:
-  [
-    {
-      category: 'the name of current category',
-      items: [
-        {
-          category:   {category},
-          id:         'index of item in current category',
-          isChecked:  'current value of the checkbox, true if checked',
-          title:      'the title of the checkbox',
-        }
-        ,
-        ...
-      ]
-    },
-    ...
-  ]
-
-  it's an array of JSON objects that consists of a 'category' property and an array 'items' property
-
-  FIND A GOOD WAY OF ONLY RECIEVING THE FILTER ITEMS FROM THE SERVER ONCE!!!
-*/
-
 class Filter extends React.Component {
   constructor(props) {
     super(props);
@@ -112,9 +102,10 @@ class Filter extends React.Component {
 
   setSearchText(type, text) {
     const { searchOptions } = this.state;
+    const { changeText } = this.props;
     searchOptions[type] = text;
 
-    this.setState({ searchOptions });
+    changeText(searchOptions);
   }
 
   search = () => {
@@ -152,6 +143,12 @@ class Filter extends React.Component {
     this.props.search(filterOptions);
   }
 
+  reset = () => {
+    const { resetItems } = this.props;
+    resetItems(true);
+    this.props.hideFilter();
+  }
+
   processFilterItems(filterItems) {
     let row = [];
     const processedFilter = [];
@@ -177,9 +174,6 @@ class Filter extends React.Component {
           item2.id = j + 1;
           row.push(item2);
         } else {
-          // empty checkbox for corrected rendering
-          // (e.g only a single checkbox on a row or and
-          // empty row to seperate the different categories)
           row.push(emptyItem);
         }
 
@@ -206,11 +200,12 @@ class Filter extends React.Component {
 
   updateCheckBoxes(id, category) {
     const { checkBoxes, categories } = this.state;
-    // get index of 'category' from the const 'categories' array
+    const { changeItems } = this.props;
+
     const categoryInd = categories.indexOf(category);
     checkBoxes[categoryInd].items[id].isChecked = !checkBoxes[categoryInd].items[id].isChecked;
 
-    this.setState({ checkBoxes });
+    changeItems(checkBoxes);
   }
 
   renderRow(rowData) {
@@ -271,12 +266,23 @@ class Filter extends React.Component {
               value={searchOptions.color}
               onChangeText={text => this.setSearchText('color', text)}
             />
-            <TouchableOpacity
-              style={styles.searchButton}
-              onPress={this.search}
+            <View style={{
+              flexDirection: 'row', marginTop: '5%', width: '100%', justifyContent: 'space-between',
+            }}
             >
-              <Text style={styles.searchButtonText}>SEARCH</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.resetButton}
+                onPress={this.reset}
+              >
+                <Text style={styles.resetButtonText}>RESET</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.searchButton}
+                onPress={this.search}
+              >
+                <Text style={styles.searchButtonText}>SEARCH</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </KeyboardAwareScrollView>
         <View style={styles.breakLine} />
@@ -291,17 +297,22 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => (
-  bindActionCreators({
-    changeItems,
-  }, dispatch)
+  bindActionCreators(
+    { ...filterActions },
+    dispatch,
+  )
 );
 
 Filter.propTypes = {
   search: PropTypes.func.isRequired,
+  hideFilter: PropTypes.func.isRequired,
   filterState: PropTypes.shape({
     checkBoxes: PropTypes.array.isRequired,
     categories: PropTypes.array.isRequired,
   }).isRequired,
+  changeText: PropTypes.func.isRequired,
+  resetItems: PropTypes.func.isRequired,
+  changeItems: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Filter);

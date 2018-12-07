@@ -176,7 +176,7 @@ class Browser extends React.Component {
     const { showFilter } = this.state;
 
     if (showFilter) {
-      return <Filter search={this.search} />;
+      return <Filter search={this.search} hideFilter={this.hideFilter} />;
     }
 
     return null;
@@ -326,6 +326,10 @@ class Browser extends React.Component {
           this.setState({ foundBicycles: responseJson.message, isFetching: false, showFilter: false });
         }).catch(error => console.log(error));
     }
+  }
+
+  hideFilter = () => {
+    this.setState({ showFilter: false });
   }
 
   render() {

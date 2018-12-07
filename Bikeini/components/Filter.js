@@ -146,6 +146,7 @@ class Filter extends React.Component {
   reset = () => {
     const { resetItems } = this.props;
     resetItems(true);
+    this.props.search({});
     this.props.hideFilter();
   }
 

@@ -176,7 +176,7 @@ class Browser extends React.Component {
     const { showFilter } = this.state;
 
     if (showFilter) {
-      return <Filter search={this.search} />;
+      return <Filter search={this.search} hideFilter={this.hideFilter} />;
     }
 
     return null;
@@ -303,7 +303,33 @@ class Browser extends React.Component {
 
 
   search = (searchOptions) => {
-    console.log(searchOptions);
+    const searchJson = searchOptions;
+    const { showMissing } = this.state;
+    const { authState, profileState } = this.props;
+    const { jwt } = authState;
+    const { location } = profileState;
+
+    if (showMissing) {
+      searchJson.type = 'STOLEN';
+      let formData = Object.entries(searchJson).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+      formData += (`&location.city=${location}`);
+      serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
+        .then((responseJson) => {
+          this.setState({ missingBicycles: responseJson.message, isFetching: false, showFilter: false });
+        }).catch(error => console.log(error));
+    } else {
+      searchJson.type = 'FOUND';
+      let formData = Object.entries(searchJson).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+      formData += (`&location.city=${location}`);
+      serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
+        .then((responseJson) => {
+          this.setState({ foundBicycles: responseJson.message, isFetching: false, showFilter: false });
+        }).catch(error => console.log(error));
+    }
+  }
+
+  hideFilter = () => {
+    this.setState({ showFilter: false });
   }
 
   render() {

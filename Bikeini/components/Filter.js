@@ -1,24 +1,24 @@
 import React from 'react';
 import {
-  StyleSheet, View, ListView, TouchableOpacity, Text, TextInput,
+  StyleSheet, View, TouchableOpacity, Text, TextInput, Platform,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import { changeItems } from '../navigation/actions/FilterActions';
+import * as filterActions from '../navigation/actions/FilterActions';
 import ItemCheckbox from './ItemCheckbox';
 
 const styles = StyleSheet.create({
   fullContainter: {
     width: '100%',
-    height: '50%',
+    height: '65%',
     marginTop: '2%',
   },
   container: {
     alignSelf: 'flex-start',
     alignItems: 'flex-start',
-    width: '80%',
-    height: '100%',
+    width: '90%',
     marginLeft: '10%',
   },
   searchBar: {
@@ -28,23 +28,42 @@ const styles = StyleSheet.create({
     marginBottom: '5%',
     borderWidth: 1,
   },
-  searchBarIcon: {
-    height: '100%',
-    width: '10%',
-    borderWidth: 1,
-    backgroundColor: 'red',
-  },
   searchButton: {
     alignSelf: 'flex-end',
     alignItems: 'center',
-    width: '40%',
-    height: '20%',
-    backgroundColor: 'blue',
+    justifyContent: 'center',
+    width: 120,
+    height: 60,
+    borderRadius: 10,
+    backgroundColor: '#44ccad',
+  },
+  resetButton: {
+    alignSelf: 'flex-end',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 120,
+    height: 60,
+    borderRadius: 10,
+    backgroundColor: '#44ccad',
   },
   searchButtonText: {
     textAlignVertical: 'center',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 24,
+    fontWeight: '100',
+    color: 'white',
+  },
+  resetButtonText: {
+    textAlignVertical: 'center',
+    fontSize: 24,
+    fontWeight: '100',
+    color: 'white',
+  },
+  inputs: {
+    height: '7%',
+    flex: 1,
+    marginBottom: '5%',
+    borderColor: '#d8d8d8',
+    borderBottomWidth: 1,
   },
   breakLine: {
     width: '100%',
@@ -56,8 +75,8 @@ const styles = StyleSheet.create({
   rowContainer: {
     flexDirection: 'row',
     height: 30,
-    width: '100%',
     backgroundColor: 'red',
+    width: '100%',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -67,31 +86,6 @@ const styles = StyleSheet.create({
   },
 });
 
-/*
- * THE STRUCTURE FOR FILTER IS IN BETA - WILL PROBABLY BE CHANGED LATER WHEN THE TIME IS RIGHT!
-  The 'checkBoxes' state is structured as following array:
-  [
-    {
-      category: 'the name of current category',
-      items: [
-        {
-          category:   {category},
-          id:         'index of item in current category',
-          isChecked:  'current value of the checkbox, true if checked',
-          title:      'the title of the checkbox',
-        }
-        ,
-        ...
-      ]
-    },
-    ...
-  ]
-
-  it's an array of JSON objects that consists of a 'category' property and an array 'items' property
-
-  FIND A GOOD WAY OF ONLY RECIEVING THE FILTER ITEMS FROM THE SERVER ONCE!!!
-*/
-
 class Filter extends React.Component {
   constructor(props) {
     super(props);
@@ -100,33 +94,64 @@ class Filter extends React.Component {
     this.state = {
       checkBoxes: filterState.checkBoxes,
       categories: filterState.categories,
-      searchText: '',
+      searchOptions: filterState.searchOptions,
     };
 
     this.updateCheckBoxes = this.updateCheckBoxes.bind(this);
   }
 
-  search = () => {
-    const { checkBoxes, categories, searchText } = this.state;
-    const filterOptions = [];
-    let categoryOptions = { attributes: [] };
+  setSearchText(type, text) {
+    const { searchOptions } = this.state;
+    const { changeText } = this.props;
+    searchOptions[type] = text;
 
-    for (let i = 0; i < categories.length; i += 1) {
-      const { items, category } = checkBoxes[i];
-      categoryOptions.category = category;
-      for (let j = 0; j < items.length; j += 1) {
-        if (items[j].isChecked) {
-          categoryOptions.attributes.push(items[j].title);
-        }
-      }
-      filterOptions.push(categoryOptions);
-      categoryOptions = { attributes: [] };
-    }
-
-    this.props.search(filterOptions);
+    changeText(searchOptions);
   }
 
-  processFilterItems(filterItems) {
+  search = () => {
+    const { checkBoxes, categories, searchOptions } = this.state;
+    const { search } = this.props;
+    const {
+      frameNumber, antiTheftCode, brand, model, color,
+    } = searchOptions;
+    const filterOptions = {};
+
+    for (let i = 0; i < categories.length; i += 1) {
+      const { items } = checkBoxes[i];
+      for (let j = 0; j < items.length; j += 1) {
+        if (items[j].isChecked) {
+          filterOptions[items[j].data] = true;
+        }
+      }
+    }
+
+    if (frameNumber !== '') {
+      filterOptions.frame_number = frameNumber;
+    }
+    if (antiTheftCode !== '') {
+      filterOptions.antitheft_code = antiTheftCode;
+    }
+    if (brand !== '') {
+      filterOptions.brand = brand;
+    }
+    if (model !== '') {
+      filterOptions.model = model;
+    }
+    if (color !== '') {
+      filterOptions.color = color;
+    }
+
+    search(filterOptions);
+  }
+
+  reset = () => {
+    const { resetItems, search, hideFilter } = this.props;
+    resetItems(true);
+    search({});
+    hideFilter();
+  }
+
+  processFilterItems = (filterItems) => {
     let row = [];
     const processedFilter = [];
     let item1 = {};
@@ -151,9 +176,6 @@ class Filter extends React.Component {
           item2.id = j + 1;
           row.push(item2);
         } else {
-          // empty checkbox for corrected rendering
-          // (e.g only a single checkbox on a row or and
-          // empty row to seperate the different categories)
           row.push(emptyItem);
         }
 
@@ -166,18 +188,31 @@ class Filter extends React.Component {
     return processedFilter;
   }
 
+  renderFilterOptions = () => {
+    const { checkBoxes } = this.state;
+    const processedFilter = this.processFilterItems(checkBoxes);
+    const filterOptions = {};
+
+    for (let i = 0; i < processedFilter.length; i += 1) {
+      filterOptions.push(this.renderRow(processedFilter[i]));
+    }
+
+    return filterOptions;
+  }
+
   updateCheckBoxes(id, category) {
     const { checkBoxes, categories } = this.state;
-    // get index of 'category' from the const 'categories' array
+    const { changeItems } = this.props;
+
     const categoryInd = categories.indexOf(category);
     checkBoxes[categoryInd].items[id].isChecked = !checkBoxes[categoryInd].items[id].isChecked;
 
-    this.setState({ checkBoxes });
+    changeItems(checkBoxes);
   }
 
   renderRow(rowData) {
     return (
-      <View style={styles.rowContainer}>
+      <View style={styles.rowContainer} key={Math.random() * 10000}>
         <View style={styles.itemContainer}>
           <ItemCheckbox title={rowData[0].title} category={rowData[0].category} id={rowData[0].id} isChecked={rowData[0].isChecked} onChange={this.updateCheckBoxes} />
         </View>
@@ -189,35 +224,69 @@ class Filter extends React.Component {
   }
 
   render() {
-    const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    const { checkBoxes, searchText } = this.state;
+    const { checkBoxes, searchOptions } = this.state;
+    const processedFilter = this.processFilterItems(checkBoxes);
     return (
       <View style={styles.fullContainter}>
-        <View style={styles.container}>
-          <View style={{
-            flexDirection: 'row', width: '100%', height: '10%', marginBottom: '5%',
-          }}
-          >
+        <KeyboardAwareScrollView
+          contentContainerStyle={styles.container}
+          enableOnAndroid
+          extraScrollHeight={100}
+          enableAutoAutomaticScroll={(Platform.OS === 'ios')}
+          innerRef={(ref) => { this.scroll = ref; }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={{ marginBottom: 10 }}>
+            {processedFilter.map(rowData => this.renderRow(rowData))}
             <TextInput
-              style={styles.searchBar}
-              onChangeText={text => this.setState({ searchText: text })}
-              value={searchText}
+              style={styles.inputs}
+              placeholder="Frame number"
+              value={searchOptions.frameNumber}
+              onChangeText={text => this.setSearchText('frameNumber', text)}
             />
-            <View style={styles.searchBarIcon} />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Anti Theft Code"
+              value={searchOptions.antiTheftCode}
+              onChangeText={text => this.setSearchText('antiTheftCode', text)}
+            />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Brand"
+              value={searchOptions.brand}
+              onChangeText={text => this.setSearchText('brand', text)}
+            />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Model"
+              value={searchOptions.model}
+              onChangeText={text => this.setSearchText('model', text)}
+            />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Color"
+              value={searchOptions.color}
+              onChangeText={text => this.setSearchText('color', text)}
+            />
+            <View style={{
+              flexDirection: 'row', marginTop: '5%', width: '100%', justifyContent: 'space-between',
+            }}
+            >
+              <TouchableOpacity
+                style={styles.resetButton}
+                onPress={this.reset}
+              >
+                <Text style={styles.resetButtonText}>RESET</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.searchButton}
+                onPress={this.search}
+              >
+                <Text style={styles.searchButtonText}>SEARCH</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          <ListView
-            dataSource={
-              ds.cloneWithRows(this.processFilterItems(checkBoxes))
-              }
-            renderRow={rowData => this.renderRow(rowData)}
-          />
-          <TouchableOpacity
-            style={styles.searchButton}
-            onPress={this.search}
-          >
-            <Text style={styles.searchButtonText}>Search</Text>
-          </TouchableOpacity>
-        </View>
+        </KeyboardAwareScrollView>
         <View style={styles.breakLine} />
       </View>
     );
@@ -230,14 +299,22 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => (
-  bindActionCreators({
-    changeItems,
-  }, dispatch)
+  bindActionCreators(
+    { ...filterActions },
+    dispatch,
+  )
 );
 
 Filter.propTypes = {
-  filterState: PropTypes.object.isRequired,
   search: PropTypes.func.isRequired,
+  hideFilter: PropTypes.func.isRequired,
+  filterState: PropTypes.shape({
+    checkBoxes: PropTypes.array.isRequired,
+    categories: PropTypes.array.isRequired,
+  }).isRequired,
+  changeText: PropTypes.func.isRequired,
+  resetItems: PropTypes.func.isRequired,
+  changeItems: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Filter);

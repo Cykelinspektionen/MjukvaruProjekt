@@ -3,16 +3,18 @@ import authReducer from './AuthReducers';
 import signUpReducer from './SignUpReducers';
 import filterReducer from './FilterReducers';
 import addBikeReducers from './AddBikeReducers';
-import PermissionsReducers from './PermissionsReducers';
+import PermissionsReducer from './PermissionsReducers';
 import profileReducer from './ProfileReducers';
 import resetPasswordReducer from './ResetPasswordReducers';
+import mapReducer from './MapReducers';
 
 export default combineReducers({
   authState: authReducer,
   signUpState: signUpReducer,
   filterState: filterReducer,
   addBikeState: addBikeReducers,
-  permissionState: PermissionsReducers,
+  permissionState: PermissionsReducer,
   profileState: profileReducer,
   resetState: resetPasswordReducer,
+  mapState: mapReducer,
 });

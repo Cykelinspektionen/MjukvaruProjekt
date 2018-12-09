@@ -23,7 +23,7 @@ function setCameraRollPermission(state, payload) {
   return newState;
 }
 
-const reportStolenReducers = (state = PERMISSION_STATE, action) => {
+const PermissionsReducer = (state = PERMISSION_STATE, action) => {
   switch (action.type) {
     case CAMERA:
       return setCameraPermission(state, action.payload);
@@ -34,4 +34,4 @@ const reportStolenReducers = (state = PERMISSION_STATE, action) => {
   }
 };
 
-export default reportStolenReducers;
+export default PermissionsReducer;

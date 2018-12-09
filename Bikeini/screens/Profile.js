@@ -31,11 +31,12 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   profile: {
-    flex: 1,
+    flex: 0.5,
     height: undefined,
     width: undefined,
   },
   columnContainer: {
+    flex: 0.5,
     flexDirection: 'column',
     backgroundColor: '#fff',
     alignContent: 'flex-start',
@@ -62,16 +63,18 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   editAndLogoutButtonContainer: {
-    height: '25%',
-    width: '90%',
+    alignItems: 'stretch',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    flex: 0.075,
     borderRadius: 5,
     flexDirection: 'row',
   },
   editButtonContainer: {
+    flex: 0.475,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    width: '40%',
     borderRadius: 5,
     margin: 2,
   },
@@ -122,21 +125,22 @@ class Profile extends React.Component {
 
     renderItem = ({ item }) => {
       if (!item.active) return null;
-      const { navigation } = this.props;
+      const { navigation, profileState } = this.props;
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
-      bikeData.showResolveBike = true;
+      bikeData.showResolveBike = profileState.username === bikeData.submitter.username;
       return (
         <TouchableOpacity
           onPress={() => {
-            bikeData.showResolveBike = true;
+            // This is if showcomments is true from browser or item
+            bikeData.showResolveBike = profileState.username === bikeData.submitter.username;
             bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
             navigation.navigate('BikeInformation', { bikeData, refresh: this.onRefresh });
           }}
         >
           <Item
-            description={item.description || ''}
-            model={item.model || ''}
+            title={item.title || ''}
+            brand={item.brand || ''}
             imageUrl={item.image_url || ''}
             bikeData={bikeData}
             navigation={navigation}
@@ -175,28 +179,28 @@ class Profile extends React.Component {
               source={profilePic}
               resizeMode="contain"
             />
-              <View style={styles.columnContainer}>
-                <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
-                  {''}
-                  {username}
-                </Text>
-                <Text style={styles.UserInfo}>
-                  {''}
-                  {location}
-                </Text>
-                <Text style={styles.UserInfo}>
-                  {''}
-                  {email}
-                </Text>
-                <View style={styles.editAndLogoutButtonContainer}>
-                  <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
-                    <Text style={styles.greenButtonText}>EDIT USER</Text>
-                  </TouchableHighlight>
-                  <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => this.onLogoutPress()}>
-                    <Text style={styles.greenButtonText}>LOG OUT</Text>
-                  </TouchableHighlight>
-                </View>
+            <View style={styles.columnContainer}>
+              <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
+                {''}
+                {username}
+              </Text>
+              <Text style={styles.UserInfo}>
+                {''}
+                {location}
+              </Text>
+              <Text style={styles.UserInfo}>
+                {''}
+                {email}
+              </Text>
             </View>
+          </View>
+          <View style={styles.editAndLogoutButtonContainer}>
+            <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
+              <Text style={styles.greenButtonText}>EDIT USER</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => this.onLogoutPress()}>
+              <Text style={styles.greenButtonText}>LOG OUT</Text>
+            </TouchableHighlight>
           </View>
           <Text style={styles.categories} adjustsFontSizeToFit>Your missing bikes:</Text>
           <View

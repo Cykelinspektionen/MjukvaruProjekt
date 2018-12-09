@@ -1,17 +1,18 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert,
+  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert, TouchableHighlight, KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-
 import serverApi from '../utilities/serverApi';
 import * as jwtActions from '../navigation/actions/JwtActions';
-
+import * as mapActions from '../navigation/actions/MapActions';
 import Item from '../components/Item';
 import Comment from '../components/Comment';
+import { bikeScore } from '../utilities/Const';
 
+const locationIcon = require('../assets/images/location.png');
 const stockBicycle = require('../assets/images/stockBicycle.png');
 
 const styles = StyleSheet.create({
@@ -24,8 +25,8 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignSelf: 'center',
     marginTop: 30,
-    width: 400,
-    height: 200,
+    width: '100%',
+    flex: 0.5,
   },
   image: {
     flex: 1,
@@ -33,8 +34,14 @@ const styles = StyleSheet.create({
     height: null,
   },
   descriptionContainer: {
-    alignSelf: 'flex-start',
-    marginLeft: 20,
+    marginLeft: 10,
+    flexDirection: 'row',
+    marginBottom: 5,
+    width: '100%',
+    height: 125,
+  },
+  colFlex: {
+    flexDirection: 'column',
   },
   headContainer: {
     marginTop: 10,
@@ -52,37 +59,77 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 10,
     width: '95%',
+    marginBottom: 30,
   },
   breakLine: {
     width: '100%',
-    height: '1%',
-    marginTop: '1%',
+    height: 5,
+    marginTop: 5,
     borderWidth: 0,
     borderBottomWidth: 1,
   },
   commentInputContainer: {
+    backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'flex-start',
     height: 40,
-    width: '95%',
+    width: '90%',
     borderWidth: 1,
-    marginBottom: 2,
+    marginBottom: 15,
+    paddingRight: 1,
   },
   send: {
     alignSelf: 'center',
-    width: '15%',
   },
   sendText: {
-    color: 'blue',
+    color: 'white',
     fontSize: 14,
     fontWeight: '300',
   },
   commentInput: {
+    flex: 1,
     height: '100%',
     marginLeft: '2%',
-    width: '83%',
+  },
+  closeButton: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    marginRight: 5,
+  },
+  buttonSmall: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5,
+    marginRight: '5%',
+  },
+  buttonCorner: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 1,
+    height: '100%',
+    borderWidth: 0.5,
+    paddingLeft: 5,
+    paddingRight: 5,
+  },
+  greenButton: {
+    backgroundColor: '#44ccad',
+  },
+  greenButtonText: {
+    color: 'white',
+    margin: 5,
+  },
+  matchAndComText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+  },
+  locationTag: {
+    width: 25,
+    height: '90%',
   },
 });
+
 
 class BikeInformation extends React.Component {
   constructor(props) {
@@ -95,7 +142,7 @@ class BikeInformation extends React.Component {
 
     this.state = {
       comments: [{
-        body: 'No comments yet! Be the first to make a comment! :)', author: '1', date: '1', _id: '1',
+        body: 'No comments yet! Be the first to make a comment! :)', author: { username: '1' }, date: '1', _id: '1', rating: { down: [], up: [] },
       }],
       matchingBikes: [],
       text: '',
@@ -145,7 +192,6 @@ class BikeInformation extends React.Component {
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
-          console.log(responseJson);
           this.setState({ comments: responseJson });
         }
       }).catch(error => console.log(error));
@@ -161,49 +207,60 @@ class BikeInformation extends React.Component {
       bikeData,
     } = this.state;
     const { refresh } = this.state;
-    const { _id } = bikeData;
-    const { authState, navigation } = this.props;
+    const {
+      authState, navigation, profileState, setMarker, setShowMarker,
+    } = this.props;
 
     if (bikeData.showComments) {
       const {
-        body, author, date,
+        body, author, date, rating,
       } = item;
       const { jwt } = authState;
+      const ownersComment = profileState.username === item.author.username;
+      bikeData.showResolveBike = bikeData.submitter.username !== item.author.username && bikeData.type === 'FOUND';
       return (
         <TouchableOpacity
           onPress={() => {}}
         >
           <Comment
-            body={body}
-            author={author}
-            date={date}
-            jwt={jwt}
+            actions={{ setShowMarker, setMarker }}
+            body={item.body}
+            commentId={item._id}
+            rating={item.rating}
+            date={item.date}
+            location={item.location || { lat: 0, long: 0 }}
+            bikeSubUsername={bikeData.submitter.username || ''}
+            bikeType={bikeData.type}
             showResolveBike={bikeData.showResolveBike}
-            bikeId={_id}
+            bikeId={bikeData._id}
+            myId={profileState.id}
+            username={author.username}
+            jwt={jwt}
             navigation={navigation}
             refresh={refresh}
+            ownersComment={ownersComment}
           />
         </TouchableOpacity>
       );
     }
-
     return (
       <TouchableOpacity
         onPress={() => {
           bikeData = item;
           bikeData.showComments = true;
-          bikeData.showResolveBike = true;
+          bikeData.showResolveBike = profileState.username === bikeData.submitter.username;
           this.setState({ bikeData }, () => {
             this.fetchComments();
           });
         }}
       >
         <Item
-          description={item.description || ''}
-          model={item.model || ''}
+          title={item.title || ''}
+          brand={item.brand || ''}
           imageUrl={item.image_url || ''}
           bikeData={bikeData}
           navigation={navigation}
+          refresh={refresh}
         />
       </TouchableOpacity>
     );
@@ -211,28 +268,39 @@ class BikeInformation extends React.Component {
 
   renderList = () => {
     const {
-      comments, matchingBikes, bikeData,
+      comments, bikeData,
     } = this.state;
+    const { matchingBikes } = this.state;
+    const matchingBikesFiltered = matchingBikes.filter(x => x.active === true);
+
 
     if (bikeData.showComments) {
       return (
-        <FlatList
-          data={comments}
-          extraData={this.state}
-          keyExtractor={this.keyExtractor}
-          renderItem={this.renderItem}
-        />
+        <View>
+          <Text style={styles.matchAndComText}> COMMENTS </Text>
+          <View style={styles.breakLine} />
+          <FlatList
+            data={comments}
+            extraData={this.state}
+            keyExtractor={this.keyExtractor}
+            renderItem={this.renderItem}
+          />
+        </View>
       );
     }
 
 
     return (
-      <FlatList
-        data={matchingBikes}
-        extraData={this.state}
-        keyExtractor={this.keyExtractor}
-        renderItem={this.renderItem}
-      />
+      <View>
+        <Text style={styles.matchAndComText}> MATCHING BIKES </Text>
+        <View style={styles.breakLine} />
+        <FlatList
+          data={matchingBikesFiltered}
+          extraData={this.state}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderItem}
+        />
+      </View>
     );
   }
 
@@ -244,25 +312,28 @@ class BikeInformation extends React.Component {
   sendComment = () => {
     const { text, bikeData } = this.state;
     const { _id } = bikeData;
-    const { authState } = this.props;
+    const {
+      authState, profileState, mapState, cleanMapState,
+    } = this.props;
+    const { username } = profileState;
     const { jwt } = authState;
 
     const commentInformation = {
+      username,
       bikeId: _id,
       body: text,
+      lat: mapState.userMarker.userMarkerSet ? mapState.userMarker.latitude : null,
+      long: mapState.userMarker.userMarkerSet ? mapState.userMarker.longitude : null,
     };
-
-
     if (text === '') {
       Alert.alert('You must add some text :0 !');
       return;
     }
-
     const formBody = this.jsonToFormData(commentInformation);
-
     serverApi.fetchApi('bikes/addcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then(() => {
         this.setState({ text: '' }, () => {
+          cleanMapState();
           this.fetchComments();
         });
       }).catch(error => console.log(error));
@@ -270,17 +341,26 @@ class BikeInformation extends React.Component {
 
   renderCommentField = () => {
     const { text, bikeData } = this.state;
-
+    const { navigation } = this.props;
     if (bikeData.showComments) {
       return (
         <View style={styles.commentInputContainer}>
+          <TouchableOpacity
+            style={[styles.locationTag, styles.send]}
+            onPress={() => navigation.navigate('PinMap')}
+          >
+            <Image
+              style={styles.locationTag}
+              source={locationIcon}
+            />
+          </TouchableOpacity>
           <TextInput
             style={styles.commentInput}
             onChangeText={newText => this.setState({ text: newText })}
             value={text}
             placeholder="Add comment..."
           />
-          <View style={styles.send}>
+          <View style={[styles.send, styles.buttonCorner, styles.greenButton]}>
             <TouchableOpacity
               onPress={() => {
                 this.sendComment();
@@ -297,44 +377,115 @@ class BikeInformation extends React.Component {
     return null;
   }
 
+  renderFoundButton = () => {
+    const { bikeData } = this.state;
+    const { profileState } = this.props;
+    // TODO: change to submitter.username, when backend fixes submitter
+    const bikeSubmitter = bikeData.submitter.username || bikeData.submitter;
+    if (bikeSubmitter === profileState.username || bikeData.type === 'FOUND') {
+      return (
+        <View style={styles.closeButton}>
+          <TouchableHighlight style={[styles.buttonSmall, styles.greenButton]} onPress={() => this.handleFound()}>
+            <Text style={styles.greenButtonText}>BIKE IS FOUND</Text>
+          </TouchableHighlight>
+        </View>
+      );
+    }
+    return null;
+  }
+
+  handleFound = () => {
+    Alert.alert(
+      'Close Ad',
+      'Are you sure you want to close your ad?',
+      [
+        { text: 'No', onPress: () => console.log('No'), style: 'cancel' },
+        { text: 'Yes', onPress: () => { this.setBikeToFound(); console.log('Yes'); } },
+      ],
+      { cancelable: false },
+    );
+  }
+
+  setBikeToFound = () => {
+    const { authState, navigation, profileState } = this.props;
+    const { bikeData, refresh } = this.state;
+    // TODO change to userName when backend fixes submitter to username
+    const bikeSubmitter = bikeData.submitter.username || bikeData.submitter;
+    const formBody = {
+      id: bikeData._id,
+      active: false,
+	    type: 'FOUND',
+    };
+    serverApi.fetchApi('bikes/updatebike/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
+      .then(
+        refresh(),
+        // TODO change to userName when backend fixes submitter to username
+        bikeData.type === 'FOUND' && profileState.id !== bikeSubmitter ? this.sendPointsToUser(5, bikeScore) : null,
+        navigation.navigate('Browser'),
+      );
+  }
+
+  sendPointsToUser = (points, type) => {
+    const { authState } = this.props;
+    const { bikeData } = this.state;
+    // TODO: change to submitter.username, when backend fixes submitter
+    const bikeSubmitter = bikeData.submitter.username || bikeData.submitter;
+    const formBody = { username: bikeSubmitter };
+    formBody[type] = points;
+    serverApi.fetchApi('users/updatehighscore/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
+      .catch(error => console.log(error));
+  }
+
   render() {
     const { bikeData } = this.state;
     const {
-      title, location, description, brand, color,
+      title, location, description, brand, color, frameNumber, model,
     } = bikeData;
     const city = location ? location.city : '';
     const neighborhood = location ? location.neighborhood : '';
 
     const list = this.renderList();
     const commentField = this.renderCommentField();
+    const foundButton = this.renderFoundButton();
     const imgSource = bikeData.image_url ? { uri: bikeData.image_url } : stockBicycle;
+
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
         <View style={styles.imageContainer}>
           <Image style={styles.image} resizeMode="contain" resizeMethod="scale" source={imgSource} />
         </View>
         <View style={styles.descriptionContainer}>
-          <View style={styles.headContainer}>
-            <Text style={styles.head}>{title}</Text>
+          <View style={styles.colFlex}>
+            <View style={styles.headContainer}>
+              <Text style={styles.head}>{title}</Text>
+            </View>
+            <Text style={styles.body}>
+              {city}
+              {', '}
+              {neighborhood}
+            </Text>
+            <Text style={styles.body}>{description}</Text>
+            <Text style={styles.body}>
+              {brand}
+              {' '}
+              {model}
+              {', '}
+              {color}
+            </Text>
+            <Text style={styles.body}>
+              Frame number:
+              {' '}
+              {frameNumber}
+            </Text>
           </View>
-          <Text style={styles.body}>
-            {city}
-            {', '}
-            {neighborhood}
-          </Text>
-          <Text style={styles.body}>{description}</Text>
-          <Text style={styles.body}>
-            {brand}
-            {', '}
-            {color}
-          </Text>
+          {foundButton}
         </View>
         <View style={styles.breakLine} />
         <View style={styles.listContainer}>
           {list}
         </View>
         {commentField}
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -350,6 +501,7 @@ BikeInformation.propTypes = {
     jwt: PropTypes.array.isRequired,
   }).isRequired,
   profileState: PropTypes.shape({
+    id: PropTypes.string.isRequired,
     location: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
@@ -365,15 +517,25 @@ BikeInformation.propTypes = {
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
+  mapState: PropTypes.shape({
+    userMarker: PropTypes.shape({
+      latitude: PropTypes.number.isRequired,
+      longitude: PropTypes.number.isRequired,
+      userMarkerSet: PropTypes.bool.isRequired,
+    }).isRequired,
+  }).isRequired,
+  cleanMapState: PropTypes.func.isRequired,
+  setMarker: PropTypes.func.isRequired,
+  setShowMarker: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { profileState, authState } = state;
-  return { profileState, authState };
+  const { profileState, authState, mapState } = state;
+  return { profileState, authState, mapState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...jwtActions },
+  { ...jwtActions, ...mapActions },
   dispatch,
 );
 

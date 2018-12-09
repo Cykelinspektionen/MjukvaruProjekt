@@ -7,6 +7,7 @@ import ResetPassword from '../screens/ResetPassword';
 import Camera from '../screens/Camera';
 import Location from '../screens/Location';
 import BikeInformation from '../screens/BikeInformation';
+import PinMap from '../screens/PinMap';
 
 const AppNavigator = createStackNavigator({
   Login: { screen: Login },
@@ -16,6 +17,7 @@ const AppNavigator = createStackNavigator({
   Camera: { screen: Camera },
   Location: { screen: Location },
   BikeInformation: { screen: BikeInformation },
+  PinMap: { screen: PinMap },
   TabNavigator,
 },
 {

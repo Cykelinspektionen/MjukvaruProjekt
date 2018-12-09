@@ -1,6 +1,7 @@
 import {
   LOGIN,
   LOGOUT,
+  SET_IS_LOGGED_IN,
   LOGIN_BEGIN,
   LOGIN_FAILURE,
   LOGIN_SUCCESS,
@@ -19,6 +20,13 @@ export const login = credentials => (
 export const logout = () => (
   {
     type: LOGOUT,
+  }
+);
+
+export const setIsLoggedIn = bool => (
+  {
+    type: SET_IS_LOGGED_IN,
+    payload: bool,
   }
 );
 

@@ -73,11 +73,17 @@ class ResetPassword extends React.Component {
   }
 
   componentDidUpdate() {
-    const { resetState, navigation } = this.props;
-    if (!resetState.loadingReset && resetState.passwordResetDone && !resetState.error) {
+    const { resetState, navigation, requestNewPasswordReset } = this.props;
+    if (!resetState.loadingReset && resetState.passwordResetDone && resetState.error === '') {
       navigation.navigate('Login');
+      requestNewPasswordReset();
     }
   }
+  /*
+  getErrorMessage(error) {
+    return error;
+  }
+  */
 
   requestNewPassword = () => {
     const { emailOrUserName } = this.state;
@@ -110,7 +116,9 @@ class ResetPassword extends React.Component {
             onChangeText={text => this.setState({ emailOrUserName: text })}
           />
         </View>
-        <Text style={{ color: 'red' }}>{resetState.error}</Text>
+        <Text style={{ color: 'red' }}>
+          { resetState.error ? resetState.error : ''}
+        </Text>
         <TouchableHighlight
           style={[styles.buttonContainer, styles.requestButton]}
           onPress={() => this.requestNewPassword()}
@@ -127,10 +135,13 @@ ResetPassword.propTypes = {
     navigate: PropTypes.func.isRequired,
   }).isRequired,
   resetState: PropTypes.shape({
+    init: PropTypes.bool.isRequired,
     loadingReset: PropTypes.bool.isRequired,
     passwordResetDone: PropTypes.bool.isRequired,
+    error: PropTypes.string.isRequired,
   }).isRequired,
   requestNewPasswordInit: PropTypes.func.isRequired,
+  requestNewPasswordReset: PropTypes.func.isRequired,
 };
 
 

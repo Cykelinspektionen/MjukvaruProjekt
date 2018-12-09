@@ -133,6 +133,10 @@ class Login extends React.Component {
             onChangeText={text => this.setState({ password: text })}
           />
         </View>
+        <Text style={{ color: 'red' }}>
+          { authState.error ? authState.error : ''}
+          { profileState.error ? profileState.error : ''}
+        </Text>
 
         <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={this.logInUser}>
           <Text style={styles.greenButtonText}>Login</Text>

@@ -7,10 +7,10 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
-import { ImagePicker, ImageManipulator } from 'expo';
+import { ImagePicker, ImageManipulator, Location } from 'expo';
 import permissions from '../utilities/permissions';
 import headerStyle from './header';
-
+import * as mapActions from '../navigation/actions/MapActions';
 import * as addBikeActions from '../navigation/actions/AddBikeActions';
 
 const locationIcon = require('../assets/images/location.png');
@@ -131,6 +131,7 @@ class AddBike extends React.Component {
     super();
     this.state = {
       hasCameraRollPermission: null,
+      hasCameraPermission: null,
       bikeData: {
         type: 'STOLEN',
         title: '',
@@ -299,6 +300,7 @@ class AddBike extends React.Component {
       ],
     };
     this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
+    this.cameraPermission = permissions.cameraPermission.bind(this);
   }
 
   componentDidUpdate() {
@@ -369,6 +371,31 @@ class AddBike extends React.Component {
     this.cameraRollPermission(this.pickImage);
   }
 
+  startCamera = () => {
+    this.cameraPermission(this.saveCamImage);
+  }
+
+  saveCamImage = async () => {
+    const { hasCameraPermission } = this.state;
+    if (!hasCameraPermission) {
+      Alert.alert('No Access');
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      exif: true,
+    });
+    if (!result.cancelled) {
+      const { saveImageToState, setMapLocation } = this.props;
+      const { bikeData } = this.state;
+      saveImageToState(result.uri);
+      const location = await Location.getCurrentPositionAsync({});
+      const geocode = await Location.reverseGeocodeAsync(location.coords);
+      setMapLocation({ ...geocode[0] });
+      this.setState({ bikeData: { ...bikeData, lat: location.coords.latitude, long: location.coords.longitude } });
+    }
+  }
+
   pickImage = async () => {
     const { hasCameraRollPermission } = this.state;
     if (!hasCameraRollPermission) {
@@ -378,11 +405,18 @@ class AddBike extends React.Component {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [4, 3],
+      exif: true,
     });
 
     if (!result.cancelled) {
-      const { saveImageToState } = this.props;
+      const { saveImageToState, setMapLocation } = this.props;
       saveImageToState(result.uri);
+      if (result.exif.GPSLatitude && result.exif.GPSLongitude) {
+        const { bikeData } = this.state;
+        const geocode = await Location.reverseGeocodeAsync({ latitude: result.exif.GPSLatitude, longitude: result.exif.GPSLongitude });
+        setMapLocation({ ...geocode[0] });
+        this.setState({ bikeData: { ...bikeData, lat: result.exif.GPSLatitude, long: result.exif.GPSLongitude } });
+      }
     }
   };
 
@@ -484,7 +518,7 @@ class AddBike extends React.Component {
                 />
               </View>
               <View style={styles.rowContainer}>
-                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={() => navigation.navigate('Camera')}>
+                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCamera}>
                   <Text style={styles.greenButtonText}>TAKE A PHOTO</Text>
                 </TouchableHighlight>
                 <Image
@@ -707,7 +741,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...addBikeActions },
+  { ...addBikeActions, ...mapActions },
   dispatch,
 );
 

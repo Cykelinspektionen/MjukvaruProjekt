@@ -11,10 +11,10 @@ import {
 import serverApi from '../../utilities/serverApi';
 
 
-export const saveImageToState = uri => (
+export const saveImageToState = imgUri => (
   {
     type: NEW_IMG_URI,
-    payload: uri,
+    payload: imgUri,
   }
 );
 
@@ -84,7 +84,6 @@ export function imgUploadInit(imgUri, addType, jwt) {
 
 
 export function uploadBikeToServer(imgUri, bikeData, jwt) {
-  console.log(bikeData);
   const file = {
     uri: imgUri,
     type: 'image/jpg',

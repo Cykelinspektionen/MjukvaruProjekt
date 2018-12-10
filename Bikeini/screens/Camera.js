@@ -1,4 +1,5 @@
 // Inspired by guide from expo camerja repository
+// NOW DEPRECATED
 import React from 'react';
 import {
   StyleSheet, Text, View, TouchableOpacity,
@@ -184,7 +185,7 @@ class CameraPage extends React.Component {
 
   takePicture = () => {
     if (this.camera) {
-      this.camera.takePictureAsync({ onPictureSaved: this.setUriDetails });
+      this.camera.takePictureAsync({ exif: true, onPictureSaved: this.setUriDetails });
       const { navigation } = this.props;
       navigation.navigate('AddBike');
     }
@@ -194,6 +195,7 @@ class CameraPage extends React.Component {
 
   setUriDetails = (photo) => {
     const { saveImageToState } = this.props;
+    console.log(photo);
     saveImageToState(photo.uri);
   }
 

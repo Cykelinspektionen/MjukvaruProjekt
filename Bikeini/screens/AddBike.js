@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, TouchableHighlight, TextInput, Alert, ScrollView,
+  StyleSheet, Text, View, Image, TouchableHighlight, TextInput, Alert, ScrollView, TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -13,7 +13,7 @@ import headerStyle from './header';
 
 import * as addBikeActions from '../navigation/actions/AddBikeActions';
 
-
+const locationIcon = require('../assets/images/location.png');
 const defaultBike = require('../assets/images/robot-dev.png');
 const cameraImg = require('../assets/images/albumImage.png');
 const albumImg = require('../assets/images/camera.png');
@@ -95,8 +95,27 @@ const styles = StyleSheet.create({
     marginRight: '4%',
   },
   radio: {
+    flex: 0.2,
     alignItems: 'flex-start',
     marginLeft: '15%',
+  },
+  locationFrame: {
+    flex: 1,
+    width: '60%',
+    borderWidth: 1,
+    alignSelf: 'center',
+    flexDirection: 'row',
+  },
+  adressFrame: {
+    flex: 0.8,
+    flexDirection: 'column',
+  },
+  locationTag: {
+    flex: 0.3,
+    flexDirection: 'row-reverse',
+    alignSelf: 'flex-end',
+    height: '100%',
+    padding: 2,
   },
 });
 
@@ -476,6 +495,24 @@ class AddBike extends React.Component {
           >
             <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
           </TouchableHighlight>
+          <Text style={styles.headerText}>
+              Last known loaction of your lost bike:
+          </Text>
+          <View style={styles.locationFrame}>
+            <View style={styles.adressFrame}>
+              <Text>City: </Text>
+              <Text>Street: </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.locationTag}
+              onPress={() => navigation.navigate('PinMap')}
+            >
+              <Image
+                style={styles.locationTag}
+                source={locationIcon}
+              />
+            </TouchableOpacity>
+          </View>
           <View style={styles.radio}>
             <RadioGroup
               horizontal="true"
@@ -626,11 +663,18 @@ AddBike.propTypes = {
   imgUploadInit: PropTypes.func.isRequired,
   uploadBikeToServer: PropTypes.func.isRequired,
   setBikePosted: PropTypes.func.isRequired,
+  mapState: PropTypes.shape({
+    userMarker: PropTypes.shape({
+      userMarkerSet: PropTypes.bool.isRequired,
+      latitude: PropTypes.number.isRequired,
+      longitude: PropTypes.number.isRequired,
+    }).isRequired,
+  }).isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { addBikeState, authState } = state;
-  return { addBikeState, authState };
+  const { addBikeState, authState, mapState } = state;
+  return { addBikeState, authState, mapState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(

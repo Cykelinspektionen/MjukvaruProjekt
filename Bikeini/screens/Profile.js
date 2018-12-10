@@ -150,7 +150,7 @@ class Profile extends React.Component {
           <Item
             title={item.title || ''}
             brand={item.brand || ''}
-            imageUrl={item.image_url || ''}
+            imageUrl={item.image_url.thumbnail || ''}
             bikeData={bikeData}
             navigation={navigation}
             refresh={this.onRefresh}

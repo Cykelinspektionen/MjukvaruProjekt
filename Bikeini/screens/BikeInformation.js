@@ -258,7 +258,7 @@ class BikeInformation extends React.Component {
         <Item
           title={item.title || ''}
           brand={item.brand || ''}
-          imageUrl={item.image_url || ''}
+          imageUrl={item.image_url.thumbnail || ''}
           bikeData={bikeData}
           navigation={navigation}
           refresh={refresh}
@@ -448,7 +448,7 @@ class BikeInformation extends React.Component {
     const list = this.renderList();
     const commentField = this.renderCommentField();
     const foundButton = this.renderFoundButton();
-    const imgSource = bikeData.image_url ? { uri: bikeData.image_url } : stockBicycle;
+    const imgSource = bikeData.image_url ? { uri: bikeData.image_url.img } : stockBicycle;
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>

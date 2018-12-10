@@ -180,9 +180,16 @@ export default class Comment extends React.Component {
     }
   }
 
+  handleLocation = (location) => {
+    const { actions, navigation } = this.props;
+    actions.setMarker({ latitude: location.lat, longitude: location.long });
+    actions.setShowMarker(true);
+    navigation.navigate('PinMap');
+  }
+
   renderButtonSet = () => {
     const {
-      showResolveBike, username, ownersComment,
+      showResolveBike, username, ownersComment, location,
     } = this.props;
     const { thumbDown, thumbUp } = this.state;
 
@@ -190,6 +197,21 @@ export default class Comment extends React.Component {
     let positionButton = null;
     let thumbUpButton = null;
     let thumbDwButton = null;
+
+    if (username !== '1' && location.lat && location.long) {
+      positionButton = (
+        <TouchableOpacity
+          style={styles.locationTag}
+          onPress={() => this.handleLocation(location)}
+        >
+          <Image
+            style={styles.locationTag}
+            source={locationIcon}
+          />
+        </TouchableOpacity>
+      );
+    }
+
     if (!ownersComment) {
       if (showResolveBike && username !== '1') {
         resolveButton = (
@@ -204,20 +226,6 @@ export default class Comment extends React.Component {
           </TouchableOpacity>
         );
       }
-      if (username !== '1') {
-        positionButton = (
-          <TouchableOpacity
-            style={styles.locationTag}
-            onPress={() => Alert.alert('Do something!')}
-          >
-            <Image
-              style={styles.locationTag}
-              source={locationIcon}
-            />
-          </TouchableOpacity>
-        );
-      }
-
       if (username !== '1') {
         thumbUpButton = (
           <TouchableOpacity
@@ -264,6 +272,7 @@ export default class Comment extends React.Component {
     const {
       resolveButton, positionButton, thumbUpButton, thumbDwButton,
     } = this.renderButtonSet();
+
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={avatarUri.length ? { uri: avatarUri } : userPlaceholder} />
@@ -315,4 +324,12 @@ Comment.propTypes = {
     })).isRequired,
   }).isRequired,
   commentId: PropTypes.string.isRequired,
+  location: PropTypes.shape({
+    lat: PropTypes.number.isRequired,
+    long: PropTypes.number.isRequired,
+  }).isRequired,
+  actions: PropTypes.shape({
+    setShowMarker: PropTypes.func.isRequired,
+    setMarker: PropTypes.func.isRequired,
+  }).isRequired,
 };

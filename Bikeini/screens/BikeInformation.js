@@ -1,17 +1,18 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert, TouchableHighlight,
+  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert, TouchableHighlight, KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import serverApi from '../utilities/serverApi';
 import * as jwtActions from '../navigation/actions/JwtActions';
+import * as mapActions from '../navigation/actions/MapActions';
 import Item from '../components/Item';
 import Comment from '../components/Comment';
 import { bikeScore } from '../utilities/Const';
 
-
+const locationIcon = require('../assets/images/location.png');
 const stockBicycle = require('../assets/images/stockBicycle.png');
 
 const styles = StyleSheet.create({
@@ -35,8 +36,9 @@ const styles = StyleSheet.create({
   descriptionContainer: {
     marginLeft: 10,
     flexDirection: 'row',
+    marginBottom: 5,
     width: '100%',
-    flex: 0.4,
+    height: 125,
   },
   colFlex: {
     flexDirection: 'column',
@@ -57,35 +59,37 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 10,
     width: '95%',
+    marginBottom: 30,
   },
   breakLine: {
     width: '100%',
-    height: '1%',
-    marginTop: '1%',
+    height: 5,
+    marginTop: 5,
     borderWidth: 0,
     borderBottomWidth: 1,
   },
   commentInputContainer: {
+    backgroundColor: 'white',
     flexDirection: 'row',
     alignItems: 'flex-start',
     height: 40,
-    width: '95%',
+    width: '90%',
     borderWidth: 1,
-    marginBottom: 2,
+    marginBottom: 15,
+    paddingRight: 1,
   },
   send: {
     alignSelf: 'center',
-    width: '15%',
   },
   sendText: {
-    color: 'blue',
+    color: 'white',
     fontSize: 14,
     fontWeight: '300',
   },
   commentInput: {
+    flex: 1,
     height: '100%',
     marginLeft: '2%',
-    width: '83%',
   },
   closeButton: {
     flex: 1,
@@ -99,6 +103,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: '5%',
   },
+  buttonCorner: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 1,
+    height: '100%',
+    borderWidth: 0.5,
+    paddingLeft: 5,
+    paddingRight: 5,
+  },
   greenButton: {
     backgroundColor: '#44ccad',
   },
@@ -110,6 +123,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     alignSelf: 'center',
+  },
+  locationTag: {
+    width: 25,
+    height: '90%',
   },
 });
 
@@ -190,7 +207,9 @@ class BikeInformation extends React.Component {
       bikeData,
     } = this.state;
     const { refresh } = this.state;
-    const { authState, navigation, profileState } = this.props;
+    const {
+      authState, navigation, profileState, setMarker, setShowMarker,
+    } = this.props;
 
     if (bikeData.showComments) {
       const {
@@ -204,18 +223,20 @@ class BikeInformation extends React.Component {
           onPress={() => {}}
         >
           <Comment
-            body={body}
+            actions={{ setShowMarker, setMarker }}
+            body={item.body}
             commentId={item._id}
-            rating={rating}
-            myId={profileState.id}
-            username={author.username}
-            date={date}
-            jwt={jwt}
+            rating={item.rating}
+            date={item.date}
+            location={item.location || { lat: 0, long: 0 }}
             bikeSubUsername={bikeData.submitter.username || ''}
             bikeType={bikeData.type}
             showResolveBike={bikeData.showResolveBike}
             bikeId={bikeData._id}
             avatarUri={author.avatar_url || ''}
+            myId={profileState.id}
+            username={author.username}
+            jwt={jwt}
             navigation={navigation}
             refresh={refresh}
             ownersComment={ownersComment}
@@ -292,7 +313,9 @@ class BikeInformation extends React.Component {
   sendComment = () => {
     const { text, bikeData } = this.state;
     const { _id } = bikeData;
-    const { authState, profileState } = this.props;
+    const {
+      authState, profileState, mapState, cleanMapState,
+    } = this.props;
     const { username } = profileState;
     const { jwt } = authState;
 
@@ -300,17 +323,18 @@ class BikeInformation extends React.Component {
       username,
       bikeId: _id,
       body: text,
+      lat: mapState.userMarker.userMarkerSet ? mapState.userMarker.latitude : null,
+      long: mapState.userMarker.userMarkerSet ? mapState.userMarker.longitude : null,
     };
     if (text === '') {
       Alert.alert('You must add some text :0 !');
       return;
     }
-
     const formBody = this.jsonToFormData(commentInformation);
-
     serverApi.fetchApi('bikes/addcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then(() => {
         this.setState({ text: '' }, () => {
+          cleanMapState();
           this.fetchComments();
         });
       }).catch(error => console.log(error));
@@ -318,17 +342,26 @@ class BikeInformation extends React.Component {
 
   renderCommentField = () => {
     const { text, bikeData } = this.state;
-
+    const { navigation } = this.props;
     if (bikeData.showComments) {
       return (
         <View style={styles.commentInputContainer}>
+          <TouchableOpacity
+            style={[styles.locationTag, styles.send]}
+            onPress={() => navigation.navigate('PinMap')}
+          >
+            <Image
+              style={styles.locationTag}
+              source={locationIcon}
+            />
+          </TouchableOpacity>
           <TextInput
             style={styles.commentInput}
             onChangeText={newText => this.setState({ text: newText })}
             value={text}
             placeholder="Add comment..."
           />
-          <View style={styles.send}>
+          <View style={[styles.send, styles.buttonCorner, styles.greenButton]}>
             <TouchableOpacity
               onPress={() => {
                 this.sendComment();
@@ -418,7 +451,7 @@ class BikeInformation extends React.Component {
     const imgSource = bikeData.image_url ? { uri: bikeData.image_url } : stockBicycle;
 
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
         <View style={styles.imageContainer}>
           <Image style={styles.image} resizeMode="contain" resizeMethod="scale" source={imgSource} />
         </View>
@@ -453,7 +486,7 @@ class BikeInformation extends React.Component {
           {list}
         </View>
         {commentField}
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -485,15 +518,25 @@ BikeInformation.propTypes = {
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
+  mapState: PropTypes.shape({
+    userMarker: PropTypes.shape({
+      latitude: PropTypes.number.isRequired,
+      longitude: PropTypes.number.isRequired,
+      userMarkerSet: PropTypes.bool.isRequired,
+    }).isRequired,
+  }).isRequired,
+  cleanMapState: PropTypes.func.isRequired,
+  setMarker: PropTypes.func.isRequired,
+  setShowMarker: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { profileState, authState } = state;
-  return { profileState, authState };
+  const { profileState, authState, mapState } = state;
+  return { profileState, authState, mapState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...jwtActions },
+  { ...jwtActions, ...mapActions },
   dispatch,
 );
 

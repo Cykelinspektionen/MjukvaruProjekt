@@ -101,21 +101,24 @@ const styles = StyleSheet.create({
   },
   locationFrame: {
     flex: 1,
-    width: '60%',
+    width: '75%',
     borderWidth: 1,
     alignSelf: 'center',
     flexDirection: 'row',
   },
   adressFrame: {
-    flex: 0.8,
+    flex: 0.9,
     flexDirection: 'column',
   },
   locationTag: {
-    flex: 0.3,
     flexDirection: 'row-reverse',
     alignSelf: 'flex-end',
     height: '100%',
-    padding: 2,
+    width: '100%',
+  },
+  locationIconTouch: {
+    flex: 0.1,
+    padding: 1,
   },
 });
 
@@ -427,9 +430,24 @@ class AddBike extends React.Component {
     return imgUri;
   }
 
+  handleSubmitt = () => {
+    const {
+      mapState, uploadBikeToServer, addBikeState, authState,
+    } = this.props;
+    const { userMarker } = mapState;
+    const { bikeData } = this.state;
+    if (userMarker.userMarkerSet) {
+      bikeData.lat = userMarker.latitude;
+      bikeData.long = userMarker.longitude;
+      uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
+    } else {
+      uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
+    }
+  }
+
   render() {
     const {
-      authState, addBikeState, navigation, uploadBikeToServer, imgUploadInit,
+      authState, addBikeState, navigation, imgUploadInit, mapState,
     } = this.props;
     const {
       bikeData, radios, Color,
@@ -500,11 +518,20 @@ class AddBike extends React.Component {
           </Text>
           <View style={styles.locationFrame}>
             <View style={styles.adressFrame}>
-              <Text>City: </Text>
-              <Text>Street: </Text>
+              <Text>
+                City:
+                {' '}
+                {mapState.city}
+                {' '}
+              </Text>
+              <Text>
+                Street:
+                {' '}
+                {mapState.name}
+              </Text>
             </View>
             <TouchableOpacity
-              style={styles.locationTag}
+              style={styles.locationIconTouch}
               onPress={() => navigation.navigate('PinMap')}
             >
               <Image
@@ -634,7 +661,7 @@ class AddBike extends React.Component {
                 Alert.alert('Picture is mandatory!');
                 return;
               }
-              uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
+              this.handleSubmitt();
             }
             }
           >
@@ -664,6 +691,8 @@ AddBike.propTypes = {
   uploadBikeToServer: PropTypes.func.isRequired,
   setBikePosted: PropTypes.func.isRequired,
   mapState: PropTypes.shape({
+    city: PropTypes.string.isRequired,
+    street: PropTypes.string.isRequired,
     userMarker: PropTypes.shape({
       userMarkerSet: PropTypes.bool.isRequired,
       latitude: PropTypes.number.isRequired,

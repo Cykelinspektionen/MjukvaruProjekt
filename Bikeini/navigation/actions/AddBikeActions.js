@@ -83,8 +83,8 @@ export function imgUploadInit(imgUri, addType, jwt) {
 }
 
 
-export function uploadBikeToServer(imgUri, bikeData2, jwt) {
-  const bikeData = bikeData2;
+export function uploadBikeToServer(imgUri, bikeData, jwt) {
+  console.log(bikeData);
   const file = {
     uri: imgUri,
     type: 'image/jpg',

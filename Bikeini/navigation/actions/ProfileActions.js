@@ -86,7 +86,6 @@ export function uploadProfilePicToServer(imgUri, username, jwt) {
     type: 'image/jpg',
     name: `${username}.jpg`,
   };
-  console.log('file:', file);
   const formBody = new FormData();
   formBody.append('image', file);
   return serverApi.postDispatch(

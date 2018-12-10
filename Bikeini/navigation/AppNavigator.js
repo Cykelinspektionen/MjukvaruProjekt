@@ -32,7 +32,6 @@ const AppNavigator = createStackNavigator({
 },
 {
   initialRouteName: 'Login',
-  // headerMode: 'screen',
 });
 
 export default AppNavigator;

@@ -35,5 +35,3 @@ export const headerBackStyle = {
     backgroundColor: '#fefefe',
   },
 };
-
-// export default headerStyle;

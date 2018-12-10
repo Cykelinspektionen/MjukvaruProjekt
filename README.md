@@ -1,2 +1,4 @@
 # MjukvaruProjekt
-![Bikeini!](./Bikeini/assets/images/biker.png "Bikeini!")
+<p align="center">
+  <img width="800" height="800" src="./Bikeini/assets/images/biker.png">
+</p>

@@ -200,7 +200,6 @@ class CameraPage extends React.Component {
 
   setUriDetails = (photo) => {
     const { saveImageToState } = this.props;
-    console.log(photo);
     saveImageToState(photo.uri);
   }
 

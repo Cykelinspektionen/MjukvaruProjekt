@@ -13,7 +13,6 @@ const RESET_STATE = {
 };
 
 const ResetPasswordReducer = (state = RESET_STATE, action) => {
-
   switch (action.type) {
     case REQUEST_NEW_PASSWORD_RESET:
       return { ...state, passwordResetDone: false };

@@ -21,7 +21,7 @@ export const headerStyle = {
 
 export const headerBackStyle = {
   title: 'Bikeini',
-  headerRight: (<View></View>),
+  headerRight: (<View />),
   headerTitleStyle: {
     fontFamily: 'CustomFont',
     fontSize: 26,
@@ -36,4 +36,4 @@ export const headerBackStyle = {
   },
 };
 
-//export default headerStyle;
+// export default headerStyle;

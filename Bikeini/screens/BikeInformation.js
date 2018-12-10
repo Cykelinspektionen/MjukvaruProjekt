@@ -11,7 +11,7 @@ import * as mapActions from '../navigation/actions/MapActions';
 import Item from '../components/Item';
 import Comment from '../components/Comment';
 import { bikeScore } from '../utilities/Const';
-import {headerBackStyle} from './header';
+import { headerBackStyle } from './header';
 
 const locationIcon = require('../assets/images/location.png');
 const stockBicycle = require('../assets/images/stockBicycle.png');

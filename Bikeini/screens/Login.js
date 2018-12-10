@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import * as authActions from '../navigation/actions/AuthActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as jwtActions from '../navigation/actions/JwtActions';
-import {headerStyle} from './header';
+import { headerStyle } from './header';
 
 const logo = require('../assets/images/biker.png');
 

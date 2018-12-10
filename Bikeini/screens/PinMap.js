@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import * as mapActions from '../navigation/actions/MapActions';
-import {headerBackStyle} from './header';
+import { headerBackStyle } from './header';
 
 const styles = StyleSheet.create({
   main: {

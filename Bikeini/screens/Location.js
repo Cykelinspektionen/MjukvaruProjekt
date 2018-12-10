@@ -10,7 +10,7 @@ import { CheckBox } from 'react-native-elements';
 import cities from '../assets/Cities';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import serverApi from '../utilities/serverApi';
-import {headerStyle} from './header';
+import { headerStyle } from './header';
 
 const logo = require('../assets/images/biker.png');
 

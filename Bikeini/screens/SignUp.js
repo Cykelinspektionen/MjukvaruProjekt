@@ -9,7 +9,7 @@ import * as authActions from '../navigation/actions/AuthActions';
 import serverApi from '../utilities/serverApi';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as jwtActions from '../navigation/actions/JwtActions';
-import {headerBackStyle} from './header';
+import { headerBackStyle } from './header';
 
 const logo = require('../assets/images/biker.png');
 

@@ -13,6 +13,8 @@ import Comment from '../components/Comment';
 import { bikeScore } from '../utilities/Const';
 import { headerBackStyle } from './header';
 
+import DialogInput from 'react-native-dialog-input';
+
 const locationIcon = require('../assets/images/location.png');
 const stockBicycle = require('../assets/images/stockBicycle.png');
 
@@ -153,7 +155,10 @@ class BikeInformation extends React.Component {
       text: '',
       bikeData,
       refresh,
+      isDialogVisible: false,
     };
+
+    this.editCommentId = 0;
   }
 
   componentDidMount() {
@@ -192,6 +197,7 @@ class BikeInformation extends React.Component {
     };
 
     const formBody = this.jsonToFormData(bikeInformation);
+    console.log(formBody);
 
     serverApi.fetchApi('bikes/getcomments', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
@@ -225,7 +231,23 @@ class BikeInformation extends React.Component {
       bikeData.showResolveBike = bikeData.submitter.username !== item.author.username && bikeData.type === 'FOUND';
       return (
         <TouchableOpacity
-          onPress={() => {}}
+          onLongPress={() => {
+            if(author._id === profileState.id) {
+              Alert.alert(
+                'Edit/remove comment',
+                'What action do you want to do? :]',
+                [
+                  {text: 'Edit', onPress: () => this.setState({isDialogVisible: true},
+                    () => {
+                      this.editCommentId = item._id;
+                    })},
+                  {text: 'Remove', onPress: () => console.log('TODO: REMOVE COMMENT!')},
+                  {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                ],
+                { cancelable: false }
+              )
+            }
+          }}
         >
           <Comment
             actions={{ setShowMarker, setMarker }}
@@ -442,6 +464,38 @@ class BikeInformation extends React.Component {
       .catch(error => console.log(error));
   }
 
+  changeCommentText = (text) => {
+    //bikes/editcomment/
+    /*
+    Key: bikeId (id of a bike)
+    Key: commentId (id of the comment)
+    Key: body (the comment text)
+    */
+    const { bikeData } = this.state;
+    const { authState } = this.props;
+    const { _id } = bikeData;
+    const { jwt } = authState;
+
+    const bikeInformation = {
+      bikeId: _id,
+    };
+
+    const body = {bikeId: _id, commentId: this.editCommentId, body: text};
+    const formBody = this.jsonToFormData(body);
+    console.log(formBody);
+
+    serverApi.fetchApi('bikes/editcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
+      .then((responseJson) => {
+        console.log(responseJson);
+        this.setState({isDialogVisible: false}, () => {
+          //this.fetchComments();
+        })
+      }).catch(error => {
+        console.log(error);
+        this.setState({isDialogVisible: false});
+      });
+  }
+
   render() {
     const { bikeData } = this.state;
     const {
@@ -457,6 +511,12 @@ class BikeInformation extends React.Component {
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+        <DialogInput isDialogVisible={this.state.isDialogVisible}
+              title={"Edit comment"}
+              hintInput ={"New comment..."}
+              submitInput={ (inputText) => {this.changeCommentText(inputText)} }
+              closeDialog={ () => {this.setState({isDialogVisible: false})}}>
+        </DialogInput>
         <View style={styles.imageContainer}>
           <Image style={styles.image} resizeMode="contain" resizeMethod="scale" source={imgSource} />
         </View>

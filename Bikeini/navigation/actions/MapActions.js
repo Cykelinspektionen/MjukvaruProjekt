@@ -35,4 +35,3 @@ export const cleanMapState = () => (
     type: RESET_MAP_STATE,
   }
 );
-

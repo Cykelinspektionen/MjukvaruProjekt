@@ -9,7 +9,7 @@ import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
 import { ImagePicker, ImageManipulator } from 'expo';
 import permissions from '../utilities/permissions';
-import headerStyle from './header';
+import { headerStyle } from './header';
 
 import * as addBikeActions from '../navigation/actions/AddBikeActions';
 

@@ -11,6 +11,7 @@ import * as mapActions from '../navigation/actions/MapActions';
 import Item from '../components/Item';
 import Comment from '../components/Comment';
 import { bikeScore } from '../utilities/Const';
+import { headerBackStyle } from './header';
 
 const locationIcon = require('../assets/images/location.png');
 const stockBicycle = require('../assets/images/stockBicycle.png');
@@ -132,6 +133,10 @@ const styles = StyleSheet.create({
 
 
 class BikeInformation extends React.Component {
+  static navigationOptions = {
+    ...headerBackStyle,
+  };
+
   constructor(props) {
     super(props);
 

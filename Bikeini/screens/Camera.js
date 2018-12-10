@@ -15,6 +15,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import permissions from '../utilities/permissions';
 import * as addBikeActions from '../navigation/actions/AddBikeActions';
+import { headerBackStyle } from './header';
 
 
 const flashModeOrder = {
@@ -116,6 +117,10 @@ const styles = StyleSheet.create({
 });
 
 class CameraPage extends React.Component {
+  static navigationOptions = {
+    ...headerBackStyle,
+  };
+
   constructor() {
     super();
     this.state = {

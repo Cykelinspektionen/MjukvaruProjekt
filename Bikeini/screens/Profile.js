@@ -5,6 +5,8 @@ import {
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { ImagePicker } from 'expo';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {headerStyle} from './header';
 import serverApi from '../utilities/serverApi';
 import permissions from '../utilities/permissions';

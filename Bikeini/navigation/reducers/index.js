@@ -5,6 +5,7 @@ import filterReducer from './FilterReducers';
 import addBikeReducers from './AddBikeReducers';
 import PermissionsReducer from './PermissionsReducers';
 import profileReducer from './ProfileReducers';
+import resetPasswordReducer from './ResetPasswordReducers';
 import mapReducer from './MapReducers';
 
 export default combineReducers({
@@ -14,5 +15,6 @@ export default combineReducers({
   addBikeState: addBikeReducers,
   permissionState: PermissionsReducer,
   profileState: profileReducer,
+  resetState: resetPasswordReducer,
   mapState: mapReducer,
 });

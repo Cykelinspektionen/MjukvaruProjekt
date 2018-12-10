@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, TextInput, TouchableHighlight,
+  StyleSheet, Text, View, TextInput, TouchableHighlight, Image,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -8,7 +8,9 @@ import { bindActionCreators } from 'redux';
 import * as authActions from '../navigation/actions/AuthActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as jwtActions from '../navigation/actions/JwtActions';
+import { headerStyle } from './header';
 
+const logo = require('../assets/images/biker.png');
 
 const styles = StyleSheet.create({
   container: {
@@ -49,10 +51,27 @@ const styles = StyleSheet.create({
   greenButtonText: {
     color: 'white',
   },
+  logo: {
+    height: 100,
+    width: 100,
+  },
+  logoTextCont: {
+    marginTop: 5,
+    marginBottom: 20,
+  },
+  logoText: {
+    fontStyle: 'italic',
+    fontWeight: '300',
+    fontSize: 14,
+  },
 });
 
 
 class Login extends React.Component {
+  static navigationOptions = {
+    ...headerStyle,
+  };
+
   constructor() {
     super();
     this.state = {
@@ -98,6 +117,7 @@ class Login extends React.Component {
     this.setState({ password: '' });
   }
 
+
   render() {
     const { email, password } = this.state;
     const { navigation, authState, profileState } = this.props;
@@ -111,9 +131,10 @@ class Login extends React.Component {
 
     return (
       <View style={styles.container}>
-        <Text>
-                Welcome to Bikeini
-        </Text>
+        <Image style={styles.logo} source={logo} />
+        <View style={styles.logoTextCont}>
+          <Text style={styles.logoText}> Cykelinspektionen </Text>
+        </View>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.inputs}
@@ -134,6 +155,9 @@ class Login extends React.Component {
             onChangeText={text => this.setState({ password: text })}
           />
         </View>
+        <Text style={{ color: 'red' }}>
+          { authState.error ? authState.error : ''}
+        </Text>
 
         <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={this.logInUser}>
           <Text style={styles.greenButtonText}>Login</Text>
@@ -141,6 +165,10 @@ class Login extends React.Component {
 
         <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.greenButtonText}>Sign up</Text>
+        </TouchableHighlight>
+
+        <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={() => navigation.navigate('ResetPassword')}>
+          <Text style={styles.greenButtonText}>Reset password</Text>
         </TouchableHighlight>
       </View>
     );

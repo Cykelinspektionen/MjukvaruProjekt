@@ -1,4 +1,8 @@
 import {
+  PROFILE_IMG_URI,
+  UPLOAD_IMG_BEGIN,
+  UPLOAD_IMG_FAILURE,
+  UPLOAD_IMG_SUCCESS,
   SET_LOCATION,
   SET_PROFILE_STATE,
   LOAD_PROFILE_BEGIN,
@@ -8,6 +12,33 @@ import {
 } from './types';
 import serverApi from '../../utilities/serverApi';
 import { deleteJWTInit } from './JwtActions';
+
+export const saveImageToState = uri => (
+  {
+    type: PROFILE_IMG_URI,
+    payload: uri,
+  }
+);
+
+export const imgUploadBegin = () => (
+  {
+    type: UPLOAD_IMG_BEGIN,
+  }
+);
+
+export const imgUploadFailure = error => (
+  {
+    type: UPLOAD_IMG_FAILURE,
+    payload: error,
+  }
+);
+
+export const imgUploadSuccess = avatarUri => (
+  {
+    type: UPLOAD_IMG_SUCCESS,
+    payload: avatarUri,
+  }
+);
 
 export const setLocation = location => (
   {
@@ -48,6 +79,25 @@ export const unloadProfile = () => (
     type: UNLOAD_PROFILE,
   }
 );
+
+export function uploadProfilePicToServer(imgUri, username, jwt) {
+  const file = {
+    uri: imgUri,
+    type: 'image/jpg',
+    name: `${username}.jpg`,
+  };
+  const formBody = new FormData();
+  formBody.append('image', file);
+  return serverApi.postDispatch(
+    'users/updateprofilepic/',
+    formBody,
+    'multipart/form-data',
+    jwt,
+    imgUploadBegin,
+    imgUploadFailure,
+    imgUploadSuccess,
+  );
+}
 
 function handleProfileData(data) {
   return (dispatch) => {

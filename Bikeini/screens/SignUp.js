@@ -9,6 +9,7 @@ import * as authActions from '../navigation/actions/AuthActions';
 import serverApi from '../utilities/serverApi';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as jwtActions from '../navigation/actions/JwtActions';
+import { headerBackStyle } from './header';
 
 const logo = require('../assets/images/biker.png');
 
@@ -74,6 +75,10 @@ const passNumbs = '1234567890';
 const passChars = ' !"#$%&()*+,-./:;<=>?@[\]^_`{|}~';
 
 class SignUp extends React.Component {
+  static navigationOptions = {
+    ...headerBackStyle,
+  };
+
   constructor(props) {
     super(props);
     this.state = {

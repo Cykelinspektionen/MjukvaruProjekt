@@ -3,6 +3,7 @@ import TabNavigator from './BottomNavigator';
 import Login from '../screens/Login';
 import TempPage from '../screens/TempPage';
 import SignUp from '../screens/SignUp';
+import ResetPassword from '../screens/ResetPassword';
 import Camera from '../screens/Camera';
 import Location from '../screens/Location';
 import BikeInformation from '../screens/BikeInformation';
@@ -12,15 +13,25 @@ const AppNavigator = createStackNavigator({
   Login: { screen: Login },
   TempPage: { screen: TempPage },
   SignUp: { screen: SignUp },
+  ResetPassword: { screen: ResetPassword },
   Camera: { screen: Camera },
-  Location: { screen: Location },
+  Location: {
+    screen: Location,
+    navigationOptions: {
+      headerLeft: null,
+    },
+  },
   BikeInformation: { screen: BikeInformation },
   PinMap: { screen: PinMap },
-  TabNavigator,
+  TabNavigator: {
+    screen: TabNavigator,
+    navigationOptions: {
+      header: null,
+    },
+  },
 },
 {
   initialRouteName: 'Login',
-  headerMode: 'none',
 });
 
 export default AppNavigator;

@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
-import headerStyle from './header';
+import { headerStyle } from './header';
 
 const background = require('../assets/images/background.jpeg');
 
@@ -130,7 +130,7 @@ class Browser extends React.Component {
         <Item
           title={item.title || ''}
           brand={item.brand || ''}
-          imageUrl={item.image_url || ''}
+          imageUrl={item.image_url.thumbnail || ''}
           bikeData={bikeData}
           navigation={navigation}
           refresh={this.onRefresh}

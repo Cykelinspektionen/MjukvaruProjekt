@@ -11,6 +11,7 @@ import * as mapActions from '../navigation/actions/MapActions';
 import Item from '../components/Item';
 import Comment from '../components/Comment';
 import { bikeScore } from '../utilities/Const';
+import { headerBackStyle } from './header';
 
 const locationIcon = require('../assets/images/location.png');
 const stockBicycle = require('../assets/images/stockBicycle.png');
@@ -132,6 +133,10 @@ const styles = StyleSheet.create({
 
 
 class BikeInformation extends React.Component {
+  static navigationOptions = {
+    ...headerBackStyle,
+  };
+
   constructor(props) {
     super(props);
 
@@ -142,7 +147,7 @@ class BikeInformation extends React.Component {
 
     this.state = {
       comments: [{
-        body: 'No comments yet! Be the first to make a comment! :)', author: { username: '1' }, date: '1', _id: '1', rating: { down: [], up: [] },
+        body: 'No comments yet! Be the first to make a comment! :)', author: { username: '1', avatar_url: '' }, date: '1', _id: '1', rating: { down: [], up: [] },
       }],
       matchingBikes: [],
       text: '',
@@ -233,6 +238,7 @@ class BikeInformation extends React.Component {
             bikeType={bikeData.type}
             showResolveBike={bikeData.showResolveBike}
             bikeId={bikeData._id}
+            avatarUri={author.avatar_url || ''}
             myId={profileState.id}
             username={author.username}
             jwt={jwt}
@@ -257,7 +263,7 @@ class BikeInformation extends React.Component {
         <Item
           title={item.title || ''}
           brand={item.brand || ''}
-          imageUrl={item.image_url || ''}
+          imageUrl={item.image_url.thumbnail || ''}
           bikeData={bikeData}
           navigation={navigation}
           refresh={refresh}
@@ -447,7 +453,7 @@ class BikeInformation extends React.Component {
     const list = this.renderList();
     const commentField = this.renderCommentField();
     const foundButton = this.renderFoundButton();
-    const imgSource = bikeData.image_url ? { uri: bikeData.image_url } : stockBicycle;
+    const imgSource = bikeData.image_url ? { uri: bikeData.image_url.img } : stockBicycle;
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>

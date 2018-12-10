@@ -5,7 +5,7 @@ import {
   StyleSheet, Text, View, ScrollView, Image, FlatList, ImageBackground, RefreshControl,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
-import headerStyle from './header';
+import { headerStyle } from './header';
 import serverApi from '../utilities/serverApi';
 import * as profileActions from '../navigation/actions/ProfileActions';
 
@@ -216,7 +216,7 @@ p
           >
             <View style={styles.container} />
             <View style={styles.rowContainer}>
-              <Image style={styles.profile} source={profilePic} />
+              <Image style={styles.profile} source={profileState.avatarUri.length ? { uri: profileState.avatarUri } : profilePic} />
               <View style={styles.columnContainer}>
                 <Text style={styles.UserInfo}>
                 Found Bikes:
@@ -279,6 +279,7 @@ Gamification.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
+    avatarUri: PropTypes.string.isRequired,
     game_score: PropTypes.shape({
       bike_score: PropTypes.number.isRequired,
       bikes_lost: PropTypes.number.isRequired,

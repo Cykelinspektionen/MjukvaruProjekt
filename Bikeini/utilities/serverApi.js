@@ -53,9 +53,16 @@ const serverApi = {
         .then(response => response.json())
         .then((json) => {
           if (json.error) {
-            Alert.alert(json.error);
-          } else if (json.status === 'error') {
+            if (!(typeof json.error === 'boolean')) {
+              dispatch(dispatchFailure(String(json.error)));
+            } else {
+              dispatch(dispatchFailure(String(json.message)));
+            }
+            return false;
+          } if (json.status === 'error') {
+            dispatch(dispatchFailure(String(json.message)));
             Alert.alert(json.message);
+            return false;
           }
           dispatch(dispatchSuccess(json));
           return json;

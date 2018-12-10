@@ -68,6 +68,22 @@ const styles = StyleSheet.create({
     height: 27,
     bottom: 6,
   },
+  totalThumbs: {
+    flexDirection: 'row-reverse',
+    alignSelf: 'flex-end',
+    justifyContent: 'flex-end',
+    height: 27,
+    bottom: 12,
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingLeft: 5,
+    paddingRight: 5,
+    marginLeft: 2,
+    marginRight: 2,
+    borderRadius: 5,
+    borderColor: 'black',
+    borderWidth: 1,
+  },
   answer: {
     position: 'absolute',
     alignSelf: 'flex-end',
@@ -261,6 +277,18 @@ export default class Comment extends React.Component {
     };
   }
 
+  getThumbTotal = () => {
+    const { rating } = this.props;
+    const upPoints = rating.up.length;
+    const downPoints = rating.down.length;
+    const total = upPoints - downPoints;
+    return (
+      <Text style={styles.totalThumbs}>
+        {total}
+      </Text>
+    );
+  }
+
   render() {
     const {
       body, username, date, avatarUri,
@@ -272,6 +300,8 @@ export default class Comment extends React.Component {
     const {
       resolveButton, positionButton, thumbUpButton, thumbDwButton,
     } = this.renderButtonSet();
+
+    const thumbTotal = this.getThumbTotal();
 
     return (
       <View style={styles.item}>
@@ -290,6 +320,7 @@ export default class Comment extends React.Component {
         </View>
         {positionButton}
         {thumbDwButton}
+        {thumbTotal}
         {thumbUpButton}
         {resolveButton}
       </View>

@@ -213,7 +213,7 @@ class BikeInformation extends React.Component {
 
     if (bikeData.showComments) {
       const {
-        body, author, date, rating,
+        author,
       } = item;
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;

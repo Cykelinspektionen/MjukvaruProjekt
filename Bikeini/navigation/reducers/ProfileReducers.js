@@ -67,7 +67,7 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         id: action.payload._id,
         loadingProfile: false,
         profileLoaded: true,
-        avatarUri: action.payload.avatar_url,
+        avatarUri: action.payload.avatar_url || '',
       };
     case UNLOAD_PROFILE:
       return { ...PROFILE_INITIAL_STATE };

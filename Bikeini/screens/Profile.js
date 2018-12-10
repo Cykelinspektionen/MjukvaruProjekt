@@ -203,7 +203,7 @@ class Profile extends React.Component {
       const { username } = profileState;
       const { location } = profileState;
       const { email } = profileState;
-
+      console.log('avatarURI', profileState);
       return (
         <View style={[styles.container, styles.background]}>
           <View style={styles.rowContainer}>

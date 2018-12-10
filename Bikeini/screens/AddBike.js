@@ -141,8 +141,8 @@ class AddBike extends React.Component {
         frame_number: 0,
         antitheft_code: '',
         description: '',
-        lat: 40.714224,
-        long: -73.961452,
+        lat: 0,
+        long: 0,
         keywords: {
           frame_type: 'MALE',
           child: false,
@@ -470,6 +470,10 @@ class AddBike extends React.Component {
     } = this.props;
     const { userMarker } = mapState;
     const { bikeData } = this.state;
+    if (bikeData.lat) {
+      Alert.alert('Please set a location');
+      return;
+    }
     if (userMarker.userMarkerSet) {
       bikeData.lat = userMarker.latitude;
       bikeData.long = userMarker.longitude;

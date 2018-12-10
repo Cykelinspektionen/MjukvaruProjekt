@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import * as mapActions from '../navigation/actions/MapActions';
-
+import {headerBackStyle} from './header';
 
 const styles = StyleSheet.create({
   main: {
@@ -74,6 +74,10 @@ const bikeIcon = require('../assets/images/biker.png');
 
 // TO ACTUALLY USE THIS WHEN DEPLOYED THERE IS MORE STEPS! Especially on ANDROID.
 class PinMap extends React.Component {
+  static navigationOptions = {
+    ...headerBackStyle,
+  };
+
   state = {
     errorMessage: null,
   };

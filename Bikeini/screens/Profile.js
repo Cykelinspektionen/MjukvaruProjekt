@@ -5,7 +5,7 @@ import {
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import headerStyle from './header';
+import {headerStyle} from './header';
 import serverApi from '../utilities/serverApi';
 import Item from '../components/Item';
 import * as jwtActions from '../navigation/actions/JwtActions';

@@ -5,6 +5,7 @@ import {
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
+import {headerBackStyle} from './header';
 
 import * as ResetPasswordActions from '../navigation/actions/ResetPasswordActions';
 
@@ -65,6 +66,10 @@ const styles = StyleSheet.create({
 
 
 class ResetPassword extends React.Component {
+  static navigationOptions = {
+    ...headerBackStyle,
+  };
+
   constructor(props) {
     super(props);
     this.state = {

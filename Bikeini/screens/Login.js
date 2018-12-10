@@ -63,7 +63,7 @@ class Login extends React.Component {
 
   componentDidMount() {
     const { loadJWTInit } = this.props;
-    loadJWTInit();
+    //loadJWTInit();
   }
 
   componentDidUpdate() {
@@ -137,7 +137,6 @@ class Login extends React.Component {
         </View>
         <Text style={{ color: 'red' }}>
           { authState.error ? authState.error : ''}
-          { profileState.error ? profileState.error : ''}
         </Text>
 
         <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={this.logInUser}>

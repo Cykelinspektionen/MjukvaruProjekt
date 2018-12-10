@@ -186,8 +186,6 @@ class Profile extends React.Component {
           saveImageToState, uploadProfilePicToServer, profileState, authState,
         } = this.props;
         saveImageToState(result.uri);
-        console.log('RESULT.URI:', result);
-        console.log(profileState);
         uploadProfilePicToServer(result.uri, profileState.username, authState.jwt[0]);
       }
     };
@@ -205,7 +203,6 @@ class Profile extends React.Component {
       const { username } = profileState;
       const { location } = profileState;
       const { email } = profileState;
-      console.log(profileState);
 
       return (
         <View style={[styles.container, styles.background]}>

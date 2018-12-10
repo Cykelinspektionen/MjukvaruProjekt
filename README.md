@@ -1,2 +1,2 @@
 # MjukvaruProjekt
-![Bikeini!](Bikeini\assets\images\biker.png "Bikeini!")
+![Bikeini!](./Bikeini/assets/images/biker.png "Bikeini!")

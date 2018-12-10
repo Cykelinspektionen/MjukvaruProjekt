@@ -98,6 +98,7 @@ class Login extends React.Component {
     this.setState({ password: '' });
   }
 
+
   render() {
     const { email, password } = this.state;
     const { navigation, authState, profileState } = this.props;
@@ -134,6 +135,9 @@ class Login extends React.Component {
             onChangeText={text => this.setState({ password: text })}
           />
         </View>
+        <Text style={{ color: 'red' }}>
+          { authState.error ? authState.error : ''}
+        </Text>
 
         <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={this.logInUser}>
           <Text style={styles.greenButtonText}>Login</Text>
@@ -141,6 +145,10 @@ class Login extends React.Component {
 
         <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.greenButtonText}>Sign up</Text>
+        </TouchableHighlight>
+
+        <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={() => navigation.navigate('ResetPassword')}>
+          <Text style={styles.greenButtonText}>Reset password</Text>
         </TouchableHighlight>
       </View>
     );

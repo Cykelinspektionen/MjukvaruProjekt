@@ -157,12 +157,13 @@ export default class Comment extends React.Component {
   }
 
   sendThumbRating = (value) => {
-    const { commentId, jwt } = this.props;
+    const { commentId, jwt, refreshComments } = this.props;
     const formBody = {
       commentId,
       value,
     };
     serverApi.fetchApi('bikes/ratecomment/', JSON.stringify(formBody), 'application/json', jwt[0])
+      .then(refreshComments())
       .catch(error => console.log(error));
   }
 
@@ -363,4 +364,5 @@ Comment.propTypes = {
     setShowMarker: PropTypes.func.isRequired,
     setMarker: PropTypes.func.isRequired,
   }).isRequired,
+  refreshComments: PropTypes.func.isRequired,
 };

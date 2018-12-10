@@ -153,6 +153,7 @@ class BikeInformation extends React.Component {
       text: '',
       bikeData,
       refresh,
+      isFetching: false,
     };
   }
 
@@ -199,6 +200,7 @@ class BikeInformation extends React.Component {
           responseJson.reverse();
           this.setState({ comments: responseJson });
         }
+        this.setState({ isFetching: false });
       }).catch(error => console.log(error));
   }
 
@@ -244,6 +246,7 @@ class BikeInformation extends React.Component {
             jwt={jwt}
             navigation={navigation}
             refresh={refresh}
+            refreshComments={this.onRefresh}
             ownersComment={ownersComment}
           />
         </TouchableOpacity>
@@ -272,11 +275,16 @@ class BikeInformation extends React.Component {
     );
   }
 
+  onRefresh = () => {
+    this.setState({ isFetching: true }, () => {
+      this.fetchComments();
+    });
+  }
+
   renderList = () => {
     const {
-      comments, bikeData,
+      comments, bikeData, isFetching, matchingBikes,
     } = this.state;
-    const { matchingBikes } = this.state;
     const matchingBikesFiltered = matchingBikes.filter(x => x.active === true);
 
 
@@ -288,6 +296,8 @@ class BikeInformation extends React.Component {
           <FlatList
             data={comments}
             extraData={this.state}
+            onRefresh={this.onRefresh}
+            refreshing={isFetching}
             keyExtractor={this.keyExtractor}
             renderItem={this.renderItem}
           />

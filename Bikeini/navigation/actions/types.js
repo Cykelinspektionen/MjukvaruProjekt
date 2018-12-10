@@ -43,4 +43,3 @@ export const SET_MARKER = 'SET_MARKER';
 export const SET_SHOW_MARKER = 'SET_SHOW_MARKER';
 export const SET_USER_MARKER = 'SET_USER_MARKER';
 export const RESET_MAP_STATE = 'RESET_MAP_STATE';
-

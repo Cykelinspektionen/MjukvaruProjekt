@@ -5,7 +5,7 @@ import {
   StyleSheet, Text, View, ScrollView, Image, FlatList, ImageBackground, RefreshControl,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
-import headerStyle from './header';
+import { headerStyle } from './header';
 import serverApi from '../utilities/serverApi';
 import * as profileActions from '../navigation/actions/ProfileActions';
 

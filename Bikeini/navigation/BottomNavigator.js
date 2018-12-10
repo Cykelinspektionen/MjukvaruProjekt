@@ -74,4 +74,6 @@ export default createBottomTabNavigator({
   NewStack,
   GameStack,
   ProfileStack,
+}, {
+
 });

@@ -15,14 +15,23 @@ const AppNavigator = createStackNavigator({
   SignUp: { screen: SignUp },
   ResetPassword: { screen: ResetPassword },
   Camera: { screen: Camera },
-  Location: { screen: Location },
+  Location: {
+    screen: Location,
+    navigationOptions: {
+      headerLeft: null,
+    },
+  },
   BikeInformation: { screen: BikeInformation },
   PinMap: { screen: PinMap },
-  TabNavigator,
+  TabNavigator: {
+    screen: TabNavigator,
+    navigationOptions: {
+      header: null,
+    },
+  },
 },
 {
   initialRouteName: 'Login',
-  headerMode: 'none',
 });
 
 export default AppNavigator;

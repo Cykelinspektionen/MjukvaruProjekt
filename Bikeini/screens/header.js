@@ -1,10 +1,16 @@
-const headerStyle = {
+import React from 'react';
+import {
+  View,
+} from 'react-native';
+
+export const headerStyle = {
   title: 'Bikeini',
   headerTitleStyle: {
     fontFamily: 'CustomFont',
     fontSize: 26,
     fontWeight: '200',
     textAlign: 'center',
+    alignSelf: 'center',
     flex: 1,
   },
   headerTintColor: '#44ccad',
@@ -13,4 +19,19 @@ const headerStyle = {
   },
 };
 
-export default headerStyle;
+export const headerBackStyle = {
+  title: 'Bikeini',
+  headerRight: (<View />),
+  headerTitleStyle: {
+    fontFamily: 'CustomFont',
+    fontSize: 26,
+    fontWeight: '200',
+    textAlign: 'center',
+    alignSelf: 'center',
+    flex: 1,
+  },
+  headerTintColor: '#44ccad',
+  headerStyle: {
+    backgroundColor: '#fefefe',
+  },
+};

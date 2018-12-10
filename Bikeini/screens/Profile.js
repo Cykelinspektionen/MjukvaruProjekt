@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ImagePicker } from 'expo';
 import Icon from 'react-native-vector-icons/Ionicons';
-import headerStyle from './header';
+import { headerStyle } from './header';
 import serverApi from '../utilities/serverApi';
 import permissions from '../utilities/permissions';
 import Item from '../components/Item';
@@ -150,7 +150,7 @@ class Profile extends React.Component {
           <Item
             title={item.title || ''}
             brand={item.brand || ''}
-            imageUrl={item.image_url || ''}
+            imageUrl={item.image_url.thumbnail || ''}
             bikeData={bikeData}
             navigation={navigation}
             refresh={this.onRefresh}

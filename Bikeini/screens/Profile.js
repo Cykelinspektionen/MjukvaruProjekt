@@ -1,12 +1,15 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TouchableHighlight, RefreshControl,
+  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TouchableHighlight, RefreshControl, Alert, Platform,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { ImagePicker } from 'expo';
+import Icon from 'react-native-vector-icons/Ionicons';
 import headerStyle from './header';
 import serverApi from '../utilities/serverApi';
+import permissions from '../utilities/permissions';
 import Item from '../components/Item';
 import * as jwtActions from '../navigation/actions/JwtActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
@@ -40,8 +43,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#fff',
     alignContent: 'flex-start',
-    marginLeft: 5,
-    marginRight: 5,
+    marginLeft: 2,
   },
   categories: {
     flex: 0.05,
@@ -86,6 +88,12 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
   },
+  addPic: {
+    justifyContent: 'flex-end',
+    alignSelf: 'flex-end',
+    bottom: -70,
+    right: 20,
+  },
 });
 
 class Profile extends React.Component {
@@ -100,6 +108,7 @@ class Profile extends React.Component {
         isFetching: false,
         yourTips: [],
       };
+      this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
     }
 
     componentDidMount() {
@@ -157,6 +166,29 @@ class Profile extends React.Component {
       navigation.navigate('Login');
     }
 
+    startCameraRoll = () => {
+      this.cameraRollPermission(this.pickImage);
+    }
+
+    pickImage = async () => {
+      const { hasCameraRollPermission } = this.state;
+      if (!hasCameraRollPermission) {
+        Alert.alert('No Access');
+        return;
+      }
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+      });
+
+      if (!result.cancelled) {
+        const {
+          saveImageToState, uploadProfilePicToServer, profileState, authState,
+        } = this.props;
+        saveImageToState(result.uri);
+        uploadProfilePicToServer(result.uri, profileState.username, authState.jwt[0]);
+      }
+    };
 
     onRefresh = () => {
       this.setState({ isFetching: true }, () => {
@@ -164,21 +196,24 @@ class Profile extends React.Component {
       });
     }
 
+
     render() {
       const { yourBicycles, isFetching, yourTips } = this.state;
       const { profileState } = this.props;
       const { username } = profileState;
       const { location } = profileState;
       const { email } = profileState;
-
       return (
         <View style={[styles.container, styles.background]}>
           <View style={styles.rowContainer}>
-            <Image
-              style={styles.profile}
-              source={profilePic}
-              resizeMode="contain"
-            />
+            <Image source={profileState.avatarUri.length ? { uri: profileState.avatarUri } : profilePic} style={styles.profile} resizeMode="contain" />
+            <TouchableHighlight
+              style={styles.showTypeRight}
+              onPress={this.startCameraRoll}
+            >
+              <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" style={styles.addPic} />
+            </TouchableHighlight>
+
             <View style={styles.columnContainer}>
               <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
                 {''}
@@ -250,11 +285,13 @@ Profile.propTypes = {
     jwt: PropTypes.array.isRequired,
   }).isRequired,
   profileState: PropTypes.shape({
+    imgToUploadUri: PropTypes.string.isRequired,
     location: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
+    avatarUri: PropTypes.string.isRequired,
     game_score: PropTypes.shape({
       bike_score: PropTypes.number.isRequired,
       bikes_lost: PropTypes.number.isRequired,
@@ -265,6 +302,7 @@ Profile.propTypes = {
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
+  uploadProfilePicToServer: PropTypes.func.isRequired,
   deleteJWTInit: PropTypes.func.isRequired,
   unloadProfile: PropTypes.func.isRequired,
 };

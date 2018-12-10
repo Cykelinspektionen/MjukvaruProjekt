@@ -90,6 +90,20 @@ const serverApi = {
       .then(response => response.json());
   },
 
+  post(_urlEnd, _body, _contentType, _jwt) {
+    // application/x-www-form-urlencoded ??
+    // const formBody = Object.entries(_body).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+    return fetch(`https://bikeify.herokuapp.com/${_urlEnd}`, {
+    method: 'POST',
+    body: _body,
+      headers: {
+        'Content-Type': _contentType,
+        'x-access-token': _jwt,
+      },
+    })
+      .then(handleErrors);
+  },
+
   get(_urlEnd, _jwt) {
     return fetch(`https://bikeify.herokuapp.com/${_urlEnd}`, {
       method: 'GET',

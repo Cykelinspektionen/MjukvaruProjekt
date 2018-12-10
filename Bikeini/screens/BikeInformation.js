@@ -229,19 +229,23 @@ class BikeInformation extends React.Component {
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
       bikeData.showResolveBike = bikeData.submitter.username !== item.author.username && bikeData.type === 'FOUND';
+      if(author._id === profileState.id) {
+        console.log(item._id);
+      }
       return (
         <TouchableOpacity
           onLongPress={() => {
             if(author._id === profileState.id) {
+              this.editCommentId = item._id;
               Alert.alert(
                 'Edit/remove comment',
                 'What action do you want to do? :]',
                 [
                   {text: 'Edit', onPress: () => this.setState({isDialogVisible: true},
                     () => {
-                      this.editCommentId = item._id;
+                      //this.editCommentId = item._id;
                     })},
-                  {text: 'Remove', onPress: () => console.log('TODO: REMOVE COMMENT!')},
+                  {text: 'Remove', onPress: () => {this.removeComment()} },
                   {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                 ],
                 { cancelable: false }
@@ -465,12 +469,6 @@ class BikeInformation extends React.Component {
   }
 
   changeCommentText = (text) => {
-    //bikes/editcomment/
-    /*
-    Key: bikeId (id of a bike)
-    Key: commentId (id of the comment)
-    Key: body (the comment text)
-    */
     const { bikeData } = this.state;
     const { authState } = this.props;
     const { _id } = bikeData;
@@ -482,17 +480,36 @@ class BikeInformation extends React.Component {
 
     const body = {bikeId: _id, commentId: this.editCommentId, body: text};
     const formBody = this.jsonToFormData(body);
-    console.log(formBody);
-
-    serverApi.fetchApi('bikes/editcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('bikes/editcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
-        console.log(responseJson);
         this.setState({isDialogVisible: false}, () => {
-          //this.fetchComments();
+          this.fetchComments();
         })
       }).catch(error => {
         console.log(error);
         this.setState({isDialogVisible: false});
+      });
+  }
+
+  removeComment = () => {
+    const { bikeData } = this.state;
+    const { authState } = this.props;
+    const { _id } = bikeData;
+    const { jwt } = authState;
+
+    const bikeInformation = {
+      bikeId: _id,
+    };
+
+    const body = { bikeId: _id, commentId: this.editCommentId };
+    const formBody = this.jsonToFormData(body);
+    console.log('formBody: ' + formBody);
+
+    serverApi.post('bikes/removecomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
+      .then((responseJson) => {
+        this.fetchComments();
+      }).catch(error => {
+        console.log(error);
       });
   }
 

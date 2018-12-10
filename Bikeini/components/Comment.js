@@ -263,7 +263,7 @@ export default class Comment extends React.Component {
 
   render() {
     const {
-      body, username, date,
+      body, username, date, avatarUri,
     } = this.props;
     const dateRaw = date.split('-');
     let day = `${dateRaw[2]}`;
@@ -275,7 +275,7 @@ export default class Comment extends React.Component {
 
     return (
       <View style={styles.item}>
-        <Image style={styles.image} source={userPlaceholder} />
+        <Image style={styles.image} source={avatarUri.length ? { uri: avatarUri } : userPlaceholder} />
         <View style={styles.textView}>
           <Text>
             {username}
@@ -304,6 +304,7 @@ Comment.propTypes = {
   jwt: PropTypes.arrayOf(PropTypes.string).isRequired,
   showResolveBike: PropTypes.bool.isRequired,
   bikeId: PropTypes.string.isRequired,
+  avatarUri: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,

@@ -147,7 +147,7 @@ class BikeInformation extends React.Component {
 
     this.state = {
       comments: [{
-        body: 'No comments yet! Be the first to make a comment! :)', author: { username: '1' }, date: '1', _id: '1', rating: { down: [], up: [] },
+        body: 'No comments yet! Be the first to make a comment! :)', author: { username: '1', avatar_url: '' }, date: '1', _id: '1', rating: { down: [], up: [] },
       }],
       matchingBikes: [],
       text: '',
@@ -218,7 +218,7 @@ class BikeInformation extends React.Component {
 
     if (bikeData.showComments) {
       const {
-        body, author, date, rating,
+        author,
       } = item;
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
@@ -238,6 +238,7 @@ class BikeInformation extends React.Component {
             bikeType={bikeData.type}
             showResolveBike={bikeData.showResolveBike}
             bikeId={bikeData._id}
+            avatarUri={author.avatar_url || ''}
             myId={profileState.id}
             username={author.username}
             jwt={jwt}

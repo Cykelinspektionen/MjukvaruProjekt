@@ -1,7 +1,8 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert, TouchableHighlight, KeyboardAvoidingView,
+  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert, TouchableHighlight,
 } from 'react-native';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -25,7 +26,6 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignSelf: 'center',
-    marginTop: 30,
     width: '100%',
     flex: 0.5,
   },
@@ -35,44 +35,53 @@ const styles = StyleSheet.create({
     height: null,
   },
   descriptionContainer: {
+    flex: 0.5,
     marginLeft: 10,
     flexDirection: 'row',
-    marginBottom: 5,
     width: '100%',
-    height: 125,
+    alignItems: 'flex-end',
   },
   colFlex: {
     flexDirection: 'column',
   },
+  rowFlex: {
+    flexDirection: 'row',
+  },
   headContainer: {
-    marginTop: 10,
-    marginBottom: 10,
+    alignItems: 'flex-start',
+    marginTop: 1,
+    marginBottom: 1,
   },
   head: {
     fontSize: 24,
-    fontWeight: '500',
+    fontWeight: '200',
   },
   body: {
-    fontSize: 16,
-    fontWeight: '200',
+    fontSize: 18,
+    fontWeight: '100',
+  },
+  infoBox: {
+    flex: 1,
   },
   listContainer: {
     flex: 1,
     marginTop: 10,
     width: '95%',
-    marginBottom: 30,
+  },
+  commentContainer: {
+    flex: 1.2,
+    width: '95%',
   },
   breakLine: {
     width: '100%',
-    height: 5,
-    marginTop: 5,
     borderWidth: 0,
     borderBottomWidth: 1,
+    borderTopWidth: 1,
   },
   commentInputContainer: {
     backgroundColor: 'white',
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignSelf: 'center',
     height: 40,
     width: '90%',
     borderWidth: 1,
@@ -123,7 +132,8 @@ const styles = StyleSheet.create({
   matchAndComText: {
     fontSize: 18,
     fontWeight: 'bold',
-    alignSelf: 'center',
+    textAlign: 'center',
+    width: '100%',
   },
   locationTag: {
     width: 25,
@@ -154,6 +164,7 @@ class BikeInformation extends React.Component {
       bikeData,
       refresh,
       isFetching: false,
+      // keyBoardVisible: false,
     };
   }
 
@@ -292,9 +303,10 @@ class BikeInformation extends React.Component {
 
     if (bikeData.showComments) {
       return (
-        <View>
-          <Text style={styles.matchAndComText}> COMMENTS </Text>
-          <View style={styles.breakLine} />
+        <View style={styles.listContainer}>
+          <View style={styles.breakLine}>
+            <Text style={styles.matchAndComText}> COMMENTS </Text>
+          </View>
           <FlatList
             data={comments}
             extraData={this.state}
@@ -309,7 +321,7 @@ class BikeInformation extends React.Component {
 
 
     return (
-      <View>
+      <View style={styles.listContainer}>
         <Text style={styles.matchAndComText}> MATCHING BIKES </Text>
         <View style={styles.breakLine} />
         <FlatList
@@ -462,6 +474,13 @@ class BikeInformation extends React.Component {
     navigation.navigate('PinMap');
   }
 
+  /*
+  handleKeyboard = (keyboardState, keyboardSpace) => {
+    // Was used before but might still be useful
+   this.setState({ keyBoardVisible: keyboardState });
+  }
+  */
+
   render() {
     const { bikeData } = this.state;
     const {
@@ -493,45 +512,48 @@ class BikeInformation extends React.Component {
     }
 
     return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+      <View style={styles.container}>
         <View style={styles.imageContainer}>
           <Image style={styles.image} resizeMode="contain" resizeMethod="scale" source={imgSource} />
         </View>
         <View style={styles.descriptionContainer}>
           <View style={styles.colFlex}>
             <View style={[styles.headContainer, styles.rowFlex]}>
-              <Text style={styles.head}>{title}</Text>
+              <Text style={styles.head} adjustsFontSizeToFit>{title}</Text>
               {positionButton}
             </View>
-            <View style={styles.infoBox}>
-              <Text style={styles.body}>
-                {city}
-                {', '}
-                {neighborhood}
-              </Text>
-              <Text style={styles.body}>{description}</Text>
-              <Text style={styles.body}>
-                {brand}
-                {' '}
-                {model}
-                {', '}
-                {color}
-              </Text>
-              <Text style={styles.body}>
+            <Text style={styles.body} adjustsFontSizeToFit>
+              {city}
+              {', '}
+              {neighborhood}
+            </Text>
+            <Text
+              style={styles.body}
+              adjustsFontSizeToFit
+            >
+              {description}
+            </Text>
+            <Text style={styles.body} adjustsFontSizeToFit>
+              {brand}
+              {' '}
+              {model}
+              {', '}
+              {color}
+            </Text>
+            <Text style={styles.body} adjustsFontSizeToFit>
               Frame number:
-                {' '}
-                {frameNumber}
-              </Text>
-            </View>
+              {' '}
+              {frameNumber}
+            </Text>
           </View>
           {foundButton}
         </View>
-        <View style={styles.breakLine} />
-        <View style={styles.listContainer}>
+        <View style={styles.commentContainer}>
           {list}
         </View>
         {commentField}
-      </KeyboardAvoidingView>
+        <KeyboardSpacer /* onToggle={this.handleKeyboard} *//>
+      </View>
     );
   }
 }

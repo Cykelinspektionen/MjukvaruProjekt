@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: 'row',
     width: '100%',
-    height: 100,
+    height: 75,
     borderWidth: 0,
     borderBottomWidth: 1,
   },
@@ -35,6 +35,11 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: '5%',
     marginLeft: '5%',
+  },
+  userText: {
+    fontSize: 16,
+    fontWeight: '400',
+    marginBottom: 1,
   },
   description: {
     fontSize: 14,
@@ -308,12 +313,10 @@ export default class Comment extends React.Component {
       <View style={styles.item}>
         <Image style={styles.image} source={avatarUri.length ? { uri: avatarUri } : userPlaceholder} />
         <View style={styles.textView}>
-          <Text>
+          <Text style={styles.userText}>
             {username}
-            {', '}
             {dateClean}
           </Text>
-          <Text>{' '}</Text>
           <Text style={styles.description}>{body}</Text>
         </View>
         <View style={styles.answer}>

@@ -264,6 +264,8 @@ class BikeInformation extends React.Component {
         }}
       >
         <Item
+          actions={{ setShowMarker, setMarker }}
+          location={item.location || { lat: 0, long: 0 }}
           title={item.title || ''}
           brand={item.brand || ''}
           imageUrl={item.image_url.thumbnail || ''}

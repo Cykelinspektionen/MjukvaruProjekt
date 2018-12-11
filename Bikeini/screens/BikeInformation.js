@@ -44,6 +44,9 @@ const styles = StyleSheet.create({
   colFlex: {
     flexDirection: 'column',
   },
+  rowFlex: {
+    flexDirection: 'row',
+  },
   headContainer: {
     marginTop: 10,
     marginBottom: 10,
@@ -454,11 +457,20 @@ class BikeInformation extends React.Component {
       .catch(error => console.log(error));
   }
 
+  handleLocation = () => {
+    const { bikeData } = this.state;
+    const { setMarker, setShowMarker, navigation } = this.props;
+    setMarker({ latitude: bikeData.location.lat, longitude: bikeData.location.long });
+    setShowMarker(true);
+    navigation.navigate('PinMap');
+  }
+
   render() {
     const { bikeData } = this.state;
     const {
       title, location, description, brand, color, frameNumber, model,
     } = bikeData;
+    console.log(bikeData);
     const city = location ? location.city : '';
     const neighborhood = location ? location.neighborhood : '';
 
@@ -467,6 +479,21 @@ class BikeInformation extends React.Component {
     const foundButton = this.renderFoundButton();
     const imgSource = bikeData.image_url ? { uri: bikeData.image_url.img } : stockBicycle;
 
+    let positionButton = null;
+    if (location.lat && location.long) {
+      positionButton = (
+        <TouchableOpacity
+          style={styles.locationTag}
+          onPress={() => this.handleLocation()}
+        >
+          <Image
+            style={styles.locationTag}
+            source={locationIcon}
+          />
+        </TouchableOpacity>
+      );
+    }
+
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
         <View style={styles.imageContainer}>
@@ -474,8 +501,9 @@ class BikeInformation extends React.Component {
         </View>
         <View style={styles.descriptionContainer}>
           <View style={styles.colFlex}>
-            <View style={styles.headContainer}>
+            <View style={[styles.headContainer, styles.rowFlex]}>
               <Text style={styles.head}>{title}</Text>
+              {positionButton}
             </View>
             <Text style={styles.body}>
               {city}

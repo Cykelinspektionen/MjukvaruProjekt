@@ -197,8 +197,8 @@ export default class Comment extends React.Component {
     }
   }
 
-  handleLocation = (location) => {
-    const { actions, navigation } = this.props;
+  handleLocation = () => {
+    const { actions, navigation, location } = this.props;
     actions.setMarker({ latitude: location.lat, longitude: location.long });
     actions.setShowMarker(true);
     navigation.navigate('PinMap');
@@ -219,7 +219,7 @@ export default class Comment extends React.Component {
       positionButton = (
         <TouchableOpacity
           style={styles.locationTag}
-          onPress={() => this.handleLocation(location)}
+          onPress={() => this.handleLocation()}
         >
           <Image
             style={styles.locationTag}

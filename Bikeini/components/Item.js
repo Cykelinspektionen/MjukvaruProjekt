@@ -70,7 +70,6 @@ export default class Item extends React.PureComponent {
     const {
       title, brand, imageUrl, bikeData, navigation, refresh, location,
     } = this.props;
-    console.log('latte', location);
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
     let locationButton = null;
     if (location.lat && location.long) {

@@ -90,7 +90,6 @@ const styles = StyleSheet.create({
   },
   addPic: {
     justifyContent: 'flex-end',
-    alignSelf: 'flex-end',
   },
 });
 
@@ -207,10 +206,10 @@ class Profile extends React.Component {
 
             <Image source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} style={styles.profile} resizeMode="contain" />
             <TouchableOpacity
-              style={styles.showTypeRight}
+              style={styles.addPic}
               onPress={this.startCameraRoll}
             >
-              <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" style={styles.addPic} />
+              <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
             </TouchableOpacity>
 
             <View style={styles.columnContainer}>

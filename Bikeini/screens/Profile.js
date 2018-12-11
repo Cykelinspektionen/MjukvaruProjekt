@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { ImagePicker } from 'expo';
+import { AndroidBackHandler } from 'react-navigation-backhandler';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { headerStyle } from './header';
 import serverApi from '../utilities/serverApi';
@@ -193,6 +194,7 @@ class Profile extends React.Component {
       });
     }
 
+    onBackButtonPressAndroid = () => true;
 
     render() {
       const { yourBicycles, isFetching, yourTips } = this.state;
@@ -201,6 +203,7 @@ class Profile extends React.Component {
       const { location } = profileState;
       const { email } = profileState;
       return (
+        <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
         <View style={[styles.container, styles.background]}>
           <View style={styles.rowContainer}>
 
@@ -212,62 +215,64 @@ class Profile extends React.Component {
               <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
             </TouchableOpacity>
 
-            <View style={styles.columnContainer}>
-              <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
-                {''}
-                {username}
-              </Text>
-              <Text style={styles.UserInfo}>
-                {''}
-                {location}
-              </Text>
-              <Text style={styles.UserInfo}>
-                {''}
-                {email}
-              </Text>
+              <View style={styles.columnContainer}>
+                <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
+                  {''}
+                  {username}
+                </Text>
+                <Text style={styles.UserInfo}>
+                  {''}
+                  {location}
+                </Text>
+                <Text style={styles.UserInfo}>
+                  {''}
+                  {email}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.editAndLogoutButtonContainer}>
+              <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
+                <Text style={styles.greenButtonText}>EDIT USER</Text>
+              </TouchableHighlight>
+              <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => this.onLogoutPress()}>
+                <Text style={styles.greenButtonText}>LOG OUT</Text>
+              </TouchableHighlight>
+            </View>
+            <Text style={styles.categories} adjustsFontSizeToFit>Your missing bikes:</Text>
+            <View
+              style={styles.browserList}
+            >
+              <FlatList
+                data={yourBicycles}
+                keyExtractor={this.keyExtractor}
+                extraData={this.state}
+                renderItem={this.renderItem}
+                refreshControl={(
+                  <RefreshControl
+                    onRefresh={this.onRefresh}
+                    refreshing={isFetching}
+                  />
+            )}
+              />
+            </View>
+            <Text style={[styles.categories, styles.tipsBikes]}>Bikes you have submitted tips about:</Text>
+            <View style={styles.browserList}>
+              <FlatList
+                data={yourTips}
+                keyExtractor={this.keyExtractor}
+                extraData={this.state}
+                renderItem={this.renderItem}
+                refreshControl={(
+                  <RefreshControl
+                    onRefresh={this.onRefresh}
+                    refreshing={isFetching}
+                  />
+          )}
+              />
             </View>
           </View>
-          <View style={styles.editAndLogoutButtonContainer}>
-            <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
-              <Text style={styles.greenButtonText}>EDIT USER</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => this.onLogoutPress()}>
-              <Text style={styles.greenButtonText}>LOG OUT</Text>
-            </TouchableHighlight>
-          </View>
-          <Text style={styles.categories} adjustsFontSizeToFit>Your missing bikes:</Text>
-          <View
-            style={styles.browserList}
-          >
-            <FlatList
-              data={yourBicycles}
-              keyExtractor={this.keyExtractor}
-              extraData={this.state}
-              renderItem={this.renderItem}
-              refreshControl={(
-                <RefreshControl
-                  onRefresh={this.onRefresh}
-                  refreshing={isFetching}
-                />
-            )}
-            />
-          </View>
-          <Text style={[styles.categories, styles.tipsBikes]}>Bikes you have submitted tips about:</Text>
-          <View style={styles.browserList}>
-            <FlatList
-              data={yourTips}
-              keyExtractor={this.keyExtractor}
-              extraData={this.state}
-              renderItem={this.renderItem}
-              refreshControl={(
-                <RefreshControl
-                  onRefresh={this.onRefresh}
-                  refreshing={isFetching}
-                />
-          )}
-            />
-          </View>
-        </View>
+        </AndroidBackHandler>
+
       );
     }
 }

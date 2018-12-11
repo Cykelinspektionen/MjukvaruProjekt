@@ -5,7 +5,7 @@ import {
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import { AndroidBackHandler } from 'react-navigation-backhandler';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
@@ -93,14 +93,14 @@ class Browser extends React.Component {
 
     let formData = `type=FOUND&location.city=${location}`;
 
-    serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
         this.setState({ foundBicycles: responseJson.message, isFetching: false });
       }).catch(error => console.log(error));
 
     formData = `type=STOLEN&location.city=${location}`;
 
-    serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
         this.setState({ missingBicycles: responseJson.message, isFetching: false });
       }).catch(error => console.log(error));
@@ -313,7 +313,7 @@ class Browser extends React.Component {
       searchJson.type = 'STOLEN';
       let formData = Object.entries(searchJson).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
       formData += (`&location.city=${location}`);
-      serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
+      serverApi.post('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
         .then((responseJson) => {
           this.setState({ missingBicycles: responseJson.message, isFetching: false, showFilter: false });
         }).catch(error => console.log(error));
@@ -321,7 +321,7 @@ class Browser extends React.Component {
       searchJson.type = 'FOUND';
       let formData = Object.entries(searchJson).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
       formData += (`&location.city=${location}`);
-      serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
+      serverApi.post('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
         .then((responseJson) => {
           this.setState({ foundBicycles: responseJson.message, isFetching: false, showFilter: false });
         }).catch(error => console.log(error));
@@ -332,6 +332,8 @@ class Browser extends React.Component {
     this.setState({ showFilter: false });
   }
 
+  onBackButtonPressAndroid = () => true;
+
   render() {
     const header = this.renderHeader();
     const filterHeader = this.renderFilterHeader();
@@ -339,16 +341,19 @@ class Browser extends React.Component {
     const list = this.renderList();
     const switchArrow = this.renderSwitchType();
     return (
-      <View style={styles.container}>
-        <ImageBackground style={styles.headerContainer} source={background}>
-          {header}
-          {switchArrow}
-          {filterHeader}
-        </ImageBackground>
-        <View style={styles.breakLine} />
-        {filter}
-        {list}
-      </View>
+      <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
+        <View style={styles.container}>
+          <ImageBackground style={styles.headerContainer} source={background}>
+            {header}
+            {switchArrow}
+            {filterHeader}
+          </ImageBackground>
+          <View style={styles.breakLine} />
+          {filter}
+          {list}
+        </View>
+      </AndroidBackHandler>
+
     );
   }
 }

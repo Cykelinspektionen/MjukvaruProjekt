@@ -206,7 +206,7 @@ class Profile extends React.Component {
       return (
         <View style={[styles.container, styles.background]}>
           <View style={styles.rowContainer}>
-            <Image source={profileState.avatarUri.length ? { uri: profileState.avatarUri } : profilePic} style={styles.profile} resizeMode="contain" />
+            <Image source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} style={styles.profile} resizeMode="contain" />
             <TouchableHighlight
               style={styles.showTypeRight}
               onPress={this.startCameraRoll}
@@ -291,7 +291,7 @@ Profile.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    avatarUri: PropTypes.string.isRequired,
+    avatarUri: PropTypes.object.isRequired,
     game_score: PropTypes.shape({
       bike_score: PropTypes.number.isRequired,
       bikes_lost: PropTypes.number.isRequired,

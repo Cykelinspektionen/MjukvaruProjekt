@@ -25,20 +25,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   profile: {
-    height: '80%',
-    width: '25%',
-    margin: '3%',
+    flex: 0.38,
+    height: undefined,
+    width: undefined,
+    margin: 10,
     borderRadius: 10,
+    borderColor: 'black',
+    borderWidth: 1,
   },
   rowContainer: {
+    flex: 0.20,
     flexDirection: 'row',
   },
   columnContainer: {
+    flex: 0.6,
     flexDirection: 'column',
-    margin: '5%',
+    margin: 20,
     borderRadius: 10,
+    borderColor: 'black',
+    borderWidth: 1,
     backgroundColor: 'white',
-    padding: '2%',
+    padding: 4,
   },
   categories: {
     alignSelf: 'center',
@@ -53,10 +60,11 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   scoreList: {
+    flex: 1,
     backgroundColor: 'transparent',
     alignSelf: 'flex-start',
-    marginTop: '5%',
-    marginLeft: '3%',
+    marginTop: 10,
+    marginLeft: 10,
     width: '88%',
     height: '90%',
   },
@@ -79,10 +87,14 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   listBack: {
+    flex: 1,
     backgroundColor: 'white',
     width: '75%',
     left: '12%',
+    paddingBottom: 15,
     borderRadius: 15,
+    borderColor: 'black',
+    borderWidth: 1,
   },
 });
 
@@ -216,7 +228,7 @@ p
           >
             <View style={styles.container} />
             <View style={styles.rowContainer}>
-              <Image style={styles.profile} source={profileState.avatarUri.length ? { uri: profileState.avatarUri } : profilePic} />
+              <Image style={styles.profile} source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} />
               <View style={styles.columnContainer}>
                 <Text style={styles.UserInfo}>
                 Found Bikes:
@@ -279,7 +291,7 @@ Gamification.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    avatarUri: PropTypes.string.isRequired,
+    avatarUri: PropTypes.object.isRequired,
     game_score: PropTypes.shape({
       bike_score: PropTypes.number.isRequired,
       bikes_lost: PropTypes.number.isRequired,

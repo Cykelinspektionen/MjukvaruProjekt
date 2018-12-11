@@ -35,25 +35,18 @@ const styles = StyleSheet.create({
     height: null,
   },
   descriptionContainer: {
-    flex: 0.3,
     marginLeft: 10,
     flexDirection: 'row',
     marginBottom: 5,
     width: '100%',
-    alignItems: 'flex-end',
     height: 125,
   },
   colFlex: {
     flexDirection: 'column',
   },
-  rowFlex: {
-    flexDirection: 'row',
-  },
   headContainer: {
-    alignItems: 'flex-start',
-    flex: 0.3,
-    marginTop: 2,
-    marginBottom: 2,
+    marginTop: 10,
+    marginBottom: 10,
   },
   head: {
     fontSize: 24,
@@ -62,9 +55,6 @@ const styles = StyleSheet.create({
   body: {
     fontSize: 16,
     fontWeight: '200',
-  },
-  infoBox: {
-    flex: 0.7,
   },
   listContainer: {
     flex: 1,

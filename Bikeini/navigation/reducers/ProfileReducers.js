@@ -67,14 +67,14 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         id: action.payload._id,
         loadingProfile: false,
         profileLoaded: true,
-        avatarUri: action.payload.avatar_url || {},
+        avatarUri: action.payload.avatar_url || { img: '', thumbnail: '' },
       };
     case UNLOAD_PROFILE:
       return { ...PROFILE_INITIAL_STATE };
     case UPLOAD_IMG_BEGIN:
       return { ...state, uploadingImg: true };
     case UPLOAD_IMG_SUCCESS:
-      return { ...state, avatarUri: action.payload.avatar_url.thumbnail };
+      return { ...state, avatarUri: action.payload.avatar_url };
     case UPLOAD_IMG_FAILURE:
       return { ...state, imgUploaded: false };
     default:

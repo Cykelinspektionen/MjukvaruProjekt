@@ -5,6 +5,7 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
+import DialogInput from 'react-native-dialog-input';
 import serverApi from '../utilities/serverApi';
 import * as jwtActions from '../navigation/actions/JwtActions';
 import * as mapActions from '../navigation/actions/MapActions';
@@ -12,6 +13,7 @@ import Item from '../components/Item';
 import Comment from '../components/Comment';
 import { bikeScore } from '../utilities/Const';
 import { headerBackStyle } from './header';
+
 
 const locationIcon = require('../assets/images/location.png');
 const stockBicycle = require('../assets/images/stockBicycle.png');
@@ -154,7 +156,10 @@ class BikeInformation extends React.Component {
       bikeData,
       refresh,
       isFetching: false,
+      isDialogVisible: false,
     };
+
+    this.editCommentId = 0;
   }
 
   componentDidMount() {
@@ -173,7 +178,7 @@ class BikeInformation extends React.Component {
 
     const formBody = this.jsonToFormData(bikeData);
 
-    serverApi.fetchApi('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
@@ -194,7 +199,7 @@ class BikeInformation extends React.Component {
 
     const formBody = this.jsonToFormData(bikeInformation);
 
-    serverApi.fetchApi('bikes/getcomments', formBody, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('bikes/getcomments', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
@@ -213,6 +218,7 @@ class BikeInformation extends React.Component {
     let {
       bikeData,
     } = this.state;
+    const bikeId = bikeData._id;
     const { refresh } = this.state;
     const {
       authState, navigation, profileState, setMarker, setShowMarker,
@@ -222,24 +228,45 @@ class BikeInformation extends React.Component {
       const {
         author,
       } = item;
+      const { _id } = item;
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
       bikeData.showResolveBike = bikeData.submitter.username !== item.author.username && bikeData.type === 'FOUND';
       return (
         <TouchableOpacity
-          onPress={() => {}}
+          onLongPress={() => {
+            if (author._id === profileState.id) {
+              this.editCommentId = _id;
+              Alert.alert(
+                'Edit/remove comment',
+                'What action do you want to do? :]',
+                [
+                  {
+                    text: 'Edit',
+                    onPress: () => this.setState({ isDialogVisible: true },
+                      () => {
+                      // this.editCommentId = item._id;
+                      }),
+                  },
+                  { text: 'Remove', onPress: () => { this.removeComment(); } },
+                  { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                ],
+                { cancelable: false },
+              );
+            }
+          }}
         >
           <Comment
             actions={{ setShowMarker, setMarker }}
             body={item.body}
-            commentId={item._id}
+            commentId={_id}
             rating={item.rating}
             date={item.date}
             location={item.location || { lat: 0, long: 0 }}
             bikeSubUsername={bikeData.submitter.username || ''}
             bikeType={bikeData.type}
             showResolveBike={bikeData.showResolveBike}
-            bikeId={bikeData._id}
+            bikeId={bikeId}
             avatarUri={author.avatar_url || ''}
             myId={profileState.id}
             username={author.username}
@@ -346,7 +373,7 @@ class BikeInformation extends React.Component {
       return;
     }
     const formBody = this.jsonToFormData(commentInformation);
-    serverApi.fetchApi('bikes/addcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('bikes/addcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then(() => {
         this.setState({ text: '' }, () => {
           cleanMapState();
@@ -425,14 +452,15 @@ class BikeInformation extends React.Component {
   setBikeToFound = () => {
     const { authState, navigation, profileState } = this.props;
     const { bikeData, refresh } = this.state;
+    const { _id } = bikeData;
     // TODO change to userName when backend fixes submitter to username
     const bikeSubmitter = bikeData.submitter.username || bikeData.submitter;
     const formBody = {
-      id: bikeData._id,
+      id: _id,
       active: false,
 	    type: 'FOUND',
     };
-    serverApi.fetchApi('bikes/updatebike/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
+    serverApi.post('bikes/updatebike/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
       .then(
         refresh(),
         // TODO change to userName when backend fixes submitter to username
@@ -448,12 +476,48 @@ class BikeInformation extends React.Component {
     const bikeSubmitter = bikeData.submitter.username || bikeData.submitter;
     const formBody = { username: bikeSubmitter };
     formBody[type] = points;
-    serverApi.fetchApi('users/updatehighscore/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
+    serverApi.post('users/updatehighscore/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
       .catch(error => console.log(error));
   }
 
-  render() {
+  changeCommentText = (text) => {
     const { bikeData } = this.state;
+    const { authState } = this.props;
+    const { _id } = bikeData;
+    const { jwt } = authState;
+
+    const body = { bikeId: _id, commentId: this.editCommentId, body: text };
+    const formBody = this.jsonToFormData(body);
+    serverApi.post('bikes/editcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
+      .then(() => {
+        this.setState({ isDialogVisible: false }, () => {
+          this.fetchComments();
+        });
+      }).catch((error) => {
+        console.log(error);
+        this.setState({ isDialogVisible: false });
+      });
+  }
+
+  removeComment = () => {
+    const { bikeData } = this.state;
+    const { authState } = this.props;
+    const { _id } = bikeData;
+    const { jwt } = authState;
+
+    const body = { bikeId: _id, commentId: this.editCommentId };
+    const formBody = this.jsonToFormData(body);
+
+    serverApi.post('bikes/removecomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
+      .then(() => {
+        this.fetchComments();
+      }).catch((error) => {
+        console.log(error);
+      });
+  }
+
+  render() {
+    const { bikeData, isDialogVisible } = this.state;
     const {
       title, location, description, brand, color, frameNumber, model,
     } = bikeData;
@@ -467,6 +531,13 @@ class BikeInformation extends React.Component {
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+        <DialogInput
+          isDialogVisible={isDialogVisible}
+          title="Edit comment"
+          hintInput="New comment..."
+          submitInput={(inputText) => { this.changeCommentText(inputText); }}
+          closeDialog={() => { this.setState({ isDialogVisible: false }); }}
+        />
         <View style={styles.imageContainer}>
           <Image style={styles.image} resizeMode="contain" resizeMethod="scale" source={imgSource} />
         </View>

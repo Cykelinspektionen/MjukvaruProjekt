@@ -1,19 +1,19 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, TouchableHighlight, TextInput, Alert, ScrollView,
+  StyleSheet, Text, View, Image, TouchableHighlight, TextInput, Alert, ScrollView, TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
-import { ImagePicker, ImageManipulator } from 'expo';
+import { ImagePicker, ImageManipulator, Location } from 'expo';
 import permissions from '../utilities/permissions';
 import { headerStyle } from './header';
-
+import * as mapActions from '../navigation/actions/MapActions';
 import * as addBikeActions from '../navigation/actions/AddBikeActions';
 
-
+const locationIcon = require('../assets/images/location.png');
 const defaultBike = require('../assets/images/robot-dev.png');
 const cameraImg = require('../assets/images/albumImage.png');
 const albumImg = require('../assets/images/camera.png');
@@ -95,8 +95,30 @@ const styles = StyleSheet.create({
     marginRight: '4%',
   },
   radio: {
+    flex: 0.2,
     alignItems: 'flex-start',
     marginLeft: '15%',
+  },
+  locationFrame: {
+    flex: 1,
+    width: '75%',
+    borderWidth: 1,
+    alignSelf: 'center',
+    flexDirection: 'row',
+  },
+  adressFrame: {
+    flex: 0.9,
+    flexDirection: 'column',
+  },
+  locationTag: {
+    flexDirection: 'row-reverse',
+    alignSelf: 'flex-end',
+    height: '100%',
+    width: '100%',
+  },
+  locationIconTouch: {
+    flex: 0.1,
+    padding: 1,
   },
 });
 
@@ -109,6 +131,7 @@ class AddBike extends React.Component {
     super();
     this.state = {
       hasCameraRollPermission: null,
+      hasCameraPermission: null,
       bikeData: {
         type: 'STOLEN',
         title: '',
@@ -118,8 +141,8 @@ class AddBike extends React.Component {
         frame_number: 0,
         antitheft_code: '',
         description: '',
-        lat: 40.714224,
-        long: -73.961452,
+        lat: 0,
+        long: 0,
         keywords: {
           frame_type: 'MALE',
           child: false,
@@ -277,6 +300,7 @@ class AddBike extends React.Component {
       ],
     };
     this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
+    this.cameraPermission = permissions.cameraPermission.bind(this);
   }
 
   componentDidUpdate() {
@@ -347,6 +371,31 @@ class AddBike extends React.Component {
     this.cameraRollPermission(this.pickImage);
   }
 
+  startCamera = () => {
+    this.cameraPermission(this.saveCamImage);
+  }
+
+  saveCamImage = async () => {
+    const { hasCameraPermission } = this.state;
+    if (!hasCameraPermission) {
+      Alert.alert('No Access');
+      return;
+    }
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      exif: true,
+    });
+    if (!result.cancelled) {
+      const { saveImageToState, setMapLocation } = this.props;
+      const { bikeData } = this.state;
+      saveImageToState(result.uri);
+      const location = await Location.getCurrentPositionAsync({});
+      const geocode = await Location.reverseGeocodeAsync(location.coords);
+      setMapLocation({ ...geocode[0] });
+      this.setState({ bikeData: { ...bikeData, lat: location.coords.latitude, long: location.coords.longitude } });
+    }
+  }
+
   pickImage = async () => {
     const { hasCameraRollPermission } = this.state;
     if (!hasCameraRollPermission) {
@@ -356,11 +405,18 @@ class AddBike extends React.Component {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
       aspect: [4, 3],
+      exif: true,
     });
 
     if (!result.cancelled) {
-      const { saveImageToState } = this.props;
+      const { saveImageToState, setMapLocation } = this.props;
       saveImageToState(result.uri);
+      if (result.exif.GPSLatitude && result.exif.GPSLongitude) {
+        const { bikeData } = this.state;
+        const geocode = await Location.reverseGeocodeAsync({ latitude: result.exif.GPSLatitude, longitude: result.exif.GPSLongitude });
+        setMapLocation({ ...geocode[0] });
+        this.setState({ bikeData: { ...bikeData, lat: result.exif.GPSLatitude, long: result.exif.GPSLongitude } });
+      }
     }
   };
 
@@ -408,9 +464,28 @@ class AddBike extends React.Component {
     return imgUri;
   }
 
+  handleSubmitt = () => {
+    const {
+      mapState, uploadBikeToServer, addBikeState, authState,
+    } = this.props;
+    const { userMarker } = mapState;
+    const { bikeData } = this.state;
+    if (bikeData.lat) {
+      Alert.alert('Please set a location');
+      return;
+    }
+    if (userMarker.userMarkerSet) {
+      bikeData.lat = userMarker.latitude;
+      bikeData.long = userMarker.longitude;
+      uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
+    } else {
+      uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
+    }
+  }
+
   render() {
     const {
-      authState, addBikeState, navigation, uploadBikeToServer, imgUploadInit,
+      authState, addBikeState, navigation, imgUploadInit, mapState,
     } = this.props;
     const {
       bikeData, radios, Color,
@@ -447,7 +522,7 @@ class AddBike extends React.Component {
                 />
               </View>
               <View style={styles.rowContainer}>
-                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={() => navigation.navigate('Camera')}>
+                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCamera}>
                   <Text style={styles.greenButtonText}>TAKE A PHOTO</Text>
                 </TouchableHighlight>
                 <Image
@@ -476,6 +551,33 @@ class AddBike extends React.Component {
           >
             <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
           </TouchableHighlight>
+          <Text style={styles.headerText}>
+              Last known loaction of your lost bike:
+          </Text>
+          <View style={styles.locationFrame}>
+            <View style={styles.adressFrame}>
+              <Text>
+                City:
+                {' '}
+                {mapState.city}
+                {' '}
+              </Text>
+              <Text>
+                Street:
+                {' '}
+                {mapState.name}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.locationIconTouch}
+              onPress={() => navigation.navigate('PinMap')}
+            >
+              <Image
+                style={styles.locationTag}
+                source={locationIcon}
+              />
+            </TouchableOpacity>
+          </View>
           <View style={styles.radio}>
             <RadioGroup
               horizontal="true"
@@ -597,7 +699,7 @@ class AddBike extends React.Component {
                 Alert.alert('Picture is mandatory!');
                 return;
               }
-              uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
+              this.handleSubmitt();
             }
             }
           >
@@ -626,15 +728,24 @@ AddBike.propTypes = {
   imgUploadInit: PropTypes.func.isRequired,
   uploadBikeToServer: PropTypes.func.isRequired,
   setBikePosted: PropTypes.func.isRequired,
+  mapState: PropTypes.shape({
+    city: PropTypes.string.isRequired,
+    street: PropTypes.string.isRequired,
+    userMarker: PropTypes.shape({
+      userMarkerSet: PropTypes.bool.isRequired,
+      latitude: PropTypes.number.isRequired,
+      longitude: PropTypes.number.isRequired,
+    }).isRequired,
+  }).isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { addBikeState, authState } = state;
-  return { addBikeState, authState };
+  const { addBikeState, authState, mapState } = state;
+  return { addBikeState, authState, mapState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...addBikeActions },
+  { ...addBikeActions, ...mapActions },
   dispatch,
 );
 

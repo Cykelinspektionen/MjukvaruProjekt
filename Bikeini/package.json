@@ -31,6 +31,7 @@
     "prop-types": "^15.6.2",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
+    "react-native-dialog-input": "^1.0.6",
     "react-native-elements": "^0.19.1",
     "react-native-keyboard-aware-scroll-view": "^0.7.4",
     "react-native-material-dropdown": "^0.11.1",

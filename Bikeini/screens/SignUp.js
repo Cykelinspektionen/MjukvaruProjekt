@@ -107,7 +107,7 @@ class SignUp extends React.Component {
 
     const formBody = this.jsonToFormData(userInformation);
 
-    return serverApi.fetchApi('auth/adduser', formBody, 'application/x-www-form-urlencoded', '')
+    return serverApi.post('auth/adduser', formBody, 'application/x-www-form-urlencoded', '')
       .then((responseJson) => {
         const responseErr = this.handleSignUpReponse(responseJson);
 
@@ -132,7 +132,7 @@ class SignUp extends React.Component {
 
     const formBody = this.jsonToFormData(userInformation);
 
-    serverApi.fetchApi('auth', formBody, 'application/x-www-form-urlencoded', '')
+    serverApi.post('auth', formBody, 'application/x-www-form-urlencoded', '')
       .then((responseJson) => {
         const { token } = responseJson.data;
 

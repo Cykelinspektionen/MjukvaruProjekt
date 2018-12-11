@@ -121,7 +121,7 @@ export default class Comment extends React.Component {
     const formBody = {};
     formBody.user_name = username;
     formBody[type] = points;
-    serverApi.fetchApi('users/updatehighscore/', JSON.stringify(formBody), 'application/json', jwt[0])
+    serverApi.post('users/updatehighscore/', JSON.stringify(formBody), 'application/json', jwt[0])
       .catch(error => console.log(error));
   }
 
@@ -134,7 +134,7 @@ export default class Comment extends React.Component {
       active: false,
 	    type: 'FOUND',
     };
-    serverApi.fetchApi('bikes/updatebike/', JSON.stringify(formBody), 'application/json', jwt[0])
+    serverApi.post('bikes/updatebike/', JSON.stringify(formBody), 'application/json', jwt[0])
       .then(
         this.sendPointsToUser(5, bikeScore, username),
         bikeType === 'FOUND' ? this.sendPointsToUser(5, bikeScore, bikeSubUsername) : null,
@@ -162,7 +162,7 @@ export default class Comment extends React.Component {
       commentId,
       value,
     };
-    serverApi.fetchApi('bikes/ratecomment/', JSON.stringify(formBody), 'application/json', jwt[0])
+    serverApi.post('bikes/ratecomment/', JSON.stringify(formBody), 'application/json', jwt[0])
       .then(refreshComments())
       .catch(error => console.log(error));
   }

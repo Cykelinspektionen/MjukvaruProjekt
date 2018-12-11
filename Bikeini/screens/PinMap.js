@@ -167,7 +167,13 @@ class PinMap extends React.Component {
             <Image style={[styles.markerFixed, styles.marker]} source={bikeIcon} />
           </MapView>
           <View style={styles.buttonView}>
-            <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={() => navigation.goBack()}>
+            <TouchableHighlight
+              style={[styles.buttonContainer, styles.greenButton]}
+              onPress={() => {
+                cleanMapState();
+                navigation.goBack();
+              }}
+            >
               <Text style={styles.greenButtonText}>Cancel</Text>
             </TouchableHighlight>
             <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={() => this.handleSubmit()}>

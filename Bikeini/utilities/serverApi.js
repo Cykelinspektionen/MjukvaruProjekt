@@ -75,7 +75,7 @@ const serverApi = {
     };
   },
 
-  fetchApi(_urlEnd, _body, _contentType, _jwt) {
+  post(_urlEnd, _body, _contentType, _jwt) {
     // application/x-www-form-urlencoded ??
     // const formBody = Object.entries(_body).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
     return fetch(`https://bikeify.herokuapp.com/${_urlEnd}`, {
@@ -87,21 +87,10 @@ const serverApi = {
       },
     })
       .then(handleErrors)
-      .then(response => response.json());
-  },
-
-  post(_urlEnd, _body, _contentType, _jwt) {
-    // application/x-www-form-urlencoded ??
-    // const formBody = Object.entries(_body).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
-    return fetch(`https://bikeify.herokuapp.com/${_urlEnd}`, {
-      method: 'POST',
-      body: _body,
-      headers: {
-        'Content-Type': _contentType,
-        'x-access-token': _jwt,
-      },
-    })
-      .then(handleErrors);
+      .then(response => response.json())
+      .catch((error) => {
+        console.log('POST:', error);
+      });
   },
 
   get(_urlEnd, _jwt) {
@@ -113,7 +102,10 @@ const serverApi = {
     // Authorization: 'Bearer ' + 'SECRET_OAUTH2_TOKEN_IF_AUTH' },
     })
       .then(handleErrors)
-      .then(response => response.json());
+      .then(response => response.json())
+      .catch((error) => {
+        console.log('POST:', error);
+      });
   },
 };
 

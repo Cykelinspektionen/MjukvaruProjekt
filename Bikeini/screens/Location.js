@@ -100,7 +100,7 @@ sendLocationToServer = () => {
   }
   const { authState, setLocation } = this.props;
   const body = JSON.stringify({ location: checked });
-  serverApi.fetchApi('users/updateuser/', body, 'application/json', authState.jwt[0]);
+  serverApi.post('users/updateuser/', body, 'application/json', authState.jwt[0]);
   setLocation(checked);
   navigation.navigate('Browser');
 }

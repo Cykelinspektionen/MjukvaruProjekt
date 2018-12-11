@@ -177,7 +177,7 @@ class BikeInformation extends React.Component {
 
     const formBody = this.jsonToFormData(bikeData);
 
-    serverApi.fetchApi('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
@@ -198,7 +198,7 @@ class BikeInformation extends React.Component {
 
     const formBody = this.jsonToFormData(bikeInformation);
 
-    serverApi.fetchApi('bikes/getcomments', formBody, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('bikes/getcomments', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
@@ -216,8 +216,7 @@ class BikeInformation extends React.Component {
     let {
       bikeData,
     } = this.state;
-    const { _id } = bikeData;
-    const bikeId = _id;
+    const bikeId = bikeData._id;
     const { refresh } = this.state;
     const {
       authState, navigation, profileState, setMarker, setShowMarker,
@@ -364,7 +363,7 @@ class BikeInformation extends React.Component {
       return;
     }
     const formBody = this.jsonToFormData(commentInformation);
-    serverApi.fetchApi('bikes/addcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('bikes/addcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then(() => {
         this.setState({ text: '' }, () => {
           cleanMapState();
@@ -451,7 +450,7 @@ class BikeInformation extends React.Component {
       active: false,
 	    type: 'FOUND',
     };
-    serverApi.fetchApi('bikes/updatebike/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
+    serverApi.post('bikes/updatebike/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
       .then(
         refresh(),
         // TODO change to userName when backend fixes submitter to username
@@ -467,7 +466,7 @@ class BikeInformation extends React.Component {
     const bikeSubmitter = bikeData.submitter.username || bikeData.submitter;
     const formBody = { username: bikeSubmitter };
     formBody[type] = points;
-    serverApi.fetchApi('users/updatehighscore/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
+    serverApi.post('users/updatehighscore/', JSON.stringify(formBody), 'application/json', authState.jwt[0])
       .catch(error => console.log(error));
   }
 

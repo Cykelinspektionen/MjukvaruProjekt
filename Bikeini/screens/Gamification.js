@@ -121,7 +121,7 @@ class Gamification extends React.Component {
         const formBody = JSON.stringify(topScoreSwe);
         const formBodyLocal = JSON.stringify(topScoreLocal);
         loadProfileInit(jwt[0]);
-        serverApi.fetchApi('users/gethighscores/', formBody, 'application/json', jwt[0])
+        serverApi.post('users/gethighscores/', formBody, 'application/json', jwt[0])
           .then((responseJson) => {
             for (let i = 0; i < responseJson.length; i += 1) {
               topPlayersSwe.push(responseJson[i]);
@@ -129,7 +129,7 @@ class Gamification extends React.Component {
             this.setState({ topPlayersSwe, isFetching: false });
           }).catch(error => console.log(error));
 
-        serverApi.fetchApi('users/gethighscores/', formBodyLocal, 'application/json', jwt[0])
+        serverApi.post('users/gethighscores/', formBodyLocal, 'application/json', jwt[0])
           .then((responseJson) => {
             for (let i = 0; i < responseJson.length; i += 1) {
               topPlayersLocal.push(responseJson[i]);

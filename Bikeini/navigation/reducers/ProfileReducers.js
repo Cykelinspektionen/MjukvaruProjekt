@@ -74,7 +74,7 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
     case UPLOAD_IMG_BEGIN:
       return { ...state, uploadingImg: true };
     case UPLOAD_IMG_SUCCESS:
-      return { ...state, avatarUri: action.payload.message.avatar_url };
+      return { ...state, avatarUri: action.payload.avatar_url.thumbnail };
     case UPLOAD_IMG_FAILURE:
       return { ...state, imgUploaded: false };
     default:

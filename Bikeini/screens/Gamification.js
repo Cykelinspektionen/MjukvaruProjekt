@@ -228,7 +228,7 @@ p
           >
             <View style={styles.container} />
             <View style={styles.rowContainer}>
-              <Image style={styles.profile} source={profileState.avatarUri.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} />
+              <Image style={styles.profile} source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} />
               <View style={styles.columnContainer}>
                 <Text style={styles.UserInfo}>
                 Found Bikes:
@@ -291,7 +291,10 @@ Gamification.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    avatarUri: PropTypes.object.isRequired,
+    avatarUri: PropTypes.shape({
+      img: PropTypes.string.isRequired,
+      thumbnail: PropTypes.string.isRequired,
+    }).isRequired,
     game_score: PropTypes.shape({
       bike_score: PropTypes.number.isRequired,
       bikes_lost: PropTypes.number.isRequired,

@@ -1,5 +1,10 @@
 import {
-  SET_COORDS, SET_SHOW_MARKER, SET_MARKER, SET_USER_MARKER, RESET_MAP_STATE,
+  SET_COORDS,
+  SET_SHOW_MARKER,
+  SET_MARKER,
+  SET_USER_MARKER,
+  RESET_MAP_STATE,
+  UPLOAD_BIKE_SUCCESS,
 } from '../actions/types';
 
 
@@ -50,6 +55,8 @@ const mapReducer = (state = MAP_STATE, action) => {
     case SET_USER_MARKER:
       return { ...state, userMarker: { ...state.userMarker, ...action.payload, userMarkerSet: true } };
     case RESET_MAP_STATE:
+      return { ...MAP_STATE };
+    case UPLOAD_BIKE_SUCCESS:
       return { ...MAP_STATE };
     default:
       return state;

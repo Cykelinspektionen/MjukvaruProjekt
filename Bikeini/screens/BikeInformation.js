@@ -322,8 +322,9 @@ class BikeInformation extends React.Component {
 
     return (
       <View style={styles.listContainer}>
-        <Text style={styles.matchAndComText}> MATCHING BIKES </Text>
-        <View style={styles.breakLine} />
+        <View style={styles.breakLine}>
+          <Text style={styles.matchAndComText}> MATCHING BIKES </Text>
+        </View>
         <FlatList
           data={matchingBikesFiltered}
           extraData={this.state}

@@ -11,7 +11,6 @@ import * as mapActions from '../navigation/actions/MapActions';
 import Item from '../components/Item';
 import Comment from '../components/Comment';
 import { bikeScore } from '../utilities/Const';
-import { headerBackStyle } from './header';
 
 const locationIcon = require('../assets/images/location.png');
 const stockBicycle = require('../assets/images/stockBicycle.png');
@@ -133,10 +132,6 @@ const styles = StyleSheet.create({
 
 
 class BikeInformation extends React.Component {
-  static navigationOptions = {
-    ...headerBackStyle,
-  };
-
   constructor(props) {
     super(props);
 
@@ -263,7 +258,7 @@ class BikeInformation extends React.Component {
         <Item
           title={item.title || ''}
           brand={item.brand || ''}
-          imageUrl={item.image_url.thumbnail || ''}
+          imageUrl={item.image_url || ''}
           bikeData={bikeData}
           navigation={navigation}
           refresh={refresh}
@@ -453,7 +448,7 @@ class BikeInformation extends React.Component {
     const list = this.renderList();
     const commentField = this.renderCommentField();
     const foundButton = this.renderFoundButton();
-    const imgSource = bikeData.image_url ? { uri: bikeData.image_url.img } : stockBicycle;
+    const imgSource = bikeData.image_url ? { uri: bikeData.image_url } : stockBicycle;
 
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>

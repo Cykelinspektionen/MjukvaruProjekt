@@ -5,9 +5,12 @@ import {
   StyleSheet, Text, View, ScrollView, Image, FlatList, ImageBackground, RefreshControl,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
+import { AndroidBackHandler } from 'react-navigation-backhandler';
+
 import { headerStyle } from './header';
 import serverApi from '../utilities/serverApi';
 import * as profileActions from '../navigation/actions/ProfileActions';
+
 
 const profilePic = require('../assets/images/userPlaceholder.jpg');
 const background = require('../assets/images/background.jpeg');
@@ -104,39 +107,39 @@ class Gamification extends React.Component {
       this.handleServerTopPlayers();
     }
 
-      handleServerTopPlayers = () => {
-        const { authState, profileState, loadProfileInit } = this.props;
-        const { jwt } = authState;
+    handleServerTopPlayers = () => {
+      const { authState, profileState, loadProfileInit } = this.props;
+      const { jwt } = authState;
 
-        const { location } = profileState;
-        const topPlayersSwe = [];
-        const topPlayersLocal = [];
-        const topScoreSwe = {
-          limit: 5,
-        };
-        const topScoreLocal = {
-          limit: 5,
-          location,
-        };
-        const formBody = JSON.stringify(topScoreSwe);
-        const formBodyLocal = JSON.stringify(topScoreLocal);
-        loadProfileInit(jwt[0]);
-        serverApi.fetchApi('users/gethighscores/', formBody, 'application/json', jwt[0])
-          .then((responseJson) => {
-            for (let i = 0; i < responseJson.length; i += 1) {
-              topPlayersSwe.push(responseJson[i]);
-            }
-            this.setState({ topPlayersSwe, isFetching: false });
-          }).catch(error => console.log(error));
+      const { location } = profileState;
+      const topPlayersSwe = [];
+      const topPlayersLocal = [];
+      const topScoreSwe = {
+        limit: 5,
+      };
+      const topScoreLocal = {
+        limit: 5,
+        location,
+      };
+      const formBody = JSON.stringify(topScoreSwe);
+      const formBodyLocal = JSON.stringify(topScoreLocal);
+      loadProfileInit(jwt[0]);
+      serverApi.fetchApi('users/gethighscores/', formBody, 'application/json', jwt[0])
+        .then((responseJson) => {
+          for (let i = 0; i < responseJson.length; i += 1) {
+            topPlayersSwe.push(responseJson[i]);
+          }
+          this.setState({ topPlayersSwe, isFetching: false });
+        }).catch(error => console.log(error));
 
-        serverApi.fetchApi('users/gethighscores/', formBodyLocal, 'application/json', jwt[0])
-          .then((responseJson) => {
-            for (let i = 0; i < responseJson.length; i += 1) {
-              topPlayersLocal.push(responseJson[i]);
-            }
-            this.setState({ topPlayersLocal, isFetching: false });
-          }).catch(error => console.log(error));
-      }
+      serverApi.fetchApi('users/gethighscores/', formBodyLocal, 'application/json', jwt[0])
+        .then((responseJson) => {
+          for (let i = 0; i < responseJson.length; i += 1) {
+            topPlayersLocal.push(responseJson[i]);
+          }
+          this.setState({ topPlayersLocal, isFetching: false });
+        }).catch(error => console.log(error));
+    }
 
     renderSweList = () => {
       const { topPlayersSwe } = this.state;
@@ -198,70 +201,75 @@ p
       });
     }
 
+    onBackButtonPressAndroid = () => true
+    ;
+
     render() {
       const { isFetching } = this.state;
       const { profileState } = this.props;
       const { location } = profileState;
       const { game_score } = profileState;
       return (
-        <ImageBackground style={styles.backImg} source={background}>
-          <ScrollView
-            style={styles.background}
-            refreshControl={(
-              <RefreshControl
-                onRefresh={this.onRefresh}
-                refreshing={isFetching}
-              />
+        <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
+          <ImageBackground style={styles.backImg} source={background}>
+            <ScrollView
+              style={styles.background}
+              refreshControl={(
+                <RefreshControl
+                  onRefresh={this.onRefresh}
+                  refreshing={isFetching}
+                />
           )}
-          >
-            <View style={styles.container} />
-            <View style={styles.rowContainer}>
-              <Image style={styles.profile} source={profileState.avatarUri.length ? { uri: profileState.avatarUri } : profilePic} />
-              <View style={styles.columnContainer}>
-                <Text style={styles.UserInfo}>
+            >
+              <View style={styles.container} />
+              <View style={styles.rowContainer}>
+                <Image style={styles.profile} source={profileState.avatarUri.length ? { uri: profileState.avatarUri } : profilePic} />
+                <View style={styles.columnContainer}>
+                  <Text style={styles.UserInfo}>
                 Found Bikes:
-                  {' '}
-                  {game_score.bike_score}
-                </Text>
-                <Text style={styles.UserInfo}>
+                    {' '}
+                    {game_score.bike_score}
+                  </Text>
+                  <Text style={styles.UserInfo}>
                 Helpful tips:
-                  {' '}
-                  {game_score.thumb_score}
-                </Text>
-                <Text style={styles.UserInfo}>
+                    {' '}
+                    {game_score.thumb_score}
+                  </Text>
+                  <Text style={styles.UserInfo}>
                 Your stolen Bikes:
-                  {' '}
-                  {game_score.bikes_lost}
-                </Text>
-                <Text style={[styles.UserInfo, { fontWeight: 'bold' },
-                ]}
-                >
+                    {' '}
+                    {game_score.bikes_lost}
+                  </Text>
+                  <Text style={[styles.UserInfo, { fontWeight: 'bold' },
+                  ]}
+                  >
                 Total points earned:
-                  {' '}
-                  {game_score.total_score}
-                </Text>
+                    {' '}
+                    {game_score.total_score}
+                  </Text>
+                </View>
               </View>
-            </View>
-            <View style={styles.listBack}>
-              <Text style={styles.categories}>
+              <View style={styles.listBack}>
+                <Text style={styles.categories}>
             Top list in
-                {' '}
-                {location}
+                  {' '}
+                  {location}
             :
-              </Text>
-              <View>
-                {this.renderLocalList()}
+                </Text>
+                <View>
+                  {this.renderLocalList()}
+                </View>
               </View>
-            </View>
-            <Text>{' '}</Text>
-            <View style={styles.listBack}>
-              <Text style={styles.categories}>Top list in Sweden:</Text>
-              <View>
-                {this.renderSweList()}
+              <Text>{' '}</Text>
+              <View style={styles.listBack}>
+                <Text style={styles.categories}>Top list in Sweden:</Text>
+                <View>
+                  {this.renderSweList()}
+                </View>
               </View>
-            </View>
-          </ScrollView>
-        </ImageBackground>
+            </ScrollView>
+          </ImageBackground>
+        </AndroidBackHandler>
       );
     }
 }

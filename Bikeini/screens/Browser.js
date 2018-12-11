@@ -5,7 +5,7 @@ import {
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import { AndroidBackHandler } from 'react-navigation-backhandler';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
@@ -85,6 +85,9 @@ class Browser extends React.Component {
   componentDidMount() {
     this.handleServerBicycles();
   }
+
+  onBackButtonPressAndroid = () => true
+  ;
 
   handleServerBicycles = () => {
     const { authState, profileState } = this.props;
@@ -339,16 +342,19 @@ class Browser extends React.Component {
     const list = this.renderList();
     const switchArrow = this.renderSwitchType();
     return (
-      <View style={styles.container}>
-        <ImageBackground style={styles.headerContainer} source={background}>
-          {header}
-          {switchArrow}
-          {filterHeader}
-        </ImageBackground>
-        <View style={styles.breakLine} />
-        {filter}
-        {list}
-      </View>
+      <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
+
+        <View style={styles.container}>
+          <ImageBackground style={styles.headerContainer} source={background}>
+            {header}
+            {switchArrow}
+            {filterHeader}
+          </ImageBackground>
+          <View style={styles.breakLine} />
+          {filter}
+          {list}
+        </View>
+      </AndroidBackHandler>
     );
   }
 }

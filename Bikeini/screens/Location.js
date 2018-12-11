@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Constants } from 'expo';
 import { CheckBox } from 'react-native-elements';
+import { AndroidBackHandler } from 'react-navigation-backhandler';
 import cities from '../assets/Cities';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import serverApi from '../utilities/serverApi';
@@ -116,43 +117,48 @@ searchFilterFunction = (text) => {
   this.setState({ data: newData, searchText: text });
 };
 
+onBackButtonPressAndroid = () => true
+;
+
 render() {
   const { checked, searchText, data } = this.state;
   return (
-    <View style={styles.container}>
-      <Image style={styles.logo} source={logo} />
-      <Text style={styles.heading}>SELECT CITY</Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.inputs}
-          placeholder="Search for a city..."
-          value={searchText}
-          onChangeText={text => this.searchFilterFunction(text)}
-        />
-      </View>
-      <FlatList
-        style={styles.city}
-        data={data}
-        keyExtractor={(item, index) => index.toString()}
-        extraData={this.state}
-        renderItem={({ item }) => (
-          <CheckBox
-            title={item}
-            onPress={() => this.checkItem(item)}
-            checked={checked.includes(item)}
+    <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
+      <View style={styles.container}>
+        <Image style={styles.logo} source={logo} />
+        <Text style={styles.heading}>SELECT CITY</Text>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputs}
+            placeholder="Search for a city..."
+            value={searchText}
+            onChangeText={text => this.searchFilterFunction(text)}
           />
-        )}
-      />
-      <TouchableHighlight
-        style={[styles.buttonContainer, styles.loginButton]}
-        onPress={() => {
-          this.sendLocationToServer();
+        </View>
+        <FlatList
+          style={styles.city}
+          data={data}
+          keyExtractor={(item, index) => index.toString()}
+          extraData={this.state}
+          renderItem={({ item }) => (
+            <CheckBox
+              title={item}
+              onPress={() => this.checkItem(item)}
+              checked={checked.includes(item)}
+            />
+          )}
+        />
+        <TouchableHighlight
+          style={[styles.buttonContainer, styles.loginButton]}
+          onPress={() => {
+            this.sendLocationToServer();
           // navigation.navigate(this.logOutUser);
-        }}
-      >
-        <Text style={styles.loginText}>Submit</Text>
-      </TouchableHighlight>
-    </View>
+          }}
+        >
+          <Text style={styles.loginText}>Submit</Text>
+        </TouchableHighlight>
+      </View>
+    </AndroidBackHandler>
   );
 }
 }

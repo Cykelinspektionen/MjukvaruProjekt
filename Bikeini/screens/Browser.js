@@ -93,14 +93,14 @@ class Browser extends React.Component {
 
     let formData = `type=FOUND&location.city=${location}`;
 
-    serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
         this.setState({ foundBicycles: responseJson.message, isFetching: false });
       }).catch(error => console.log(error));
 
     formData = `type=STOLEN&location.city=${location}`;
 
-    serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
       .then((responseJson) => {
         this.setState({ missingBicycles: responseJson.message, isFetching: false });
       }).catch(error => console.log(error));
@@ -313,7 +313,7 @@ class Browser extends React.Component {
       searchJson.type = 'STOLEN';
       let formData = Object.entries(searchJson).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
       formData += (`&location.city=${location}`);
-      serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
+      serverApi.post('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
         .then((responseJson) => {
           this.setState({ missingBicycles: responseJson.message, isFetching: false, showFilter: false });
         }).catch(error => console.log(error));
@@ -321,7 +321,7 @@ class Browser extends React.Component {
       searchJson.type = 'FOUND';
       let formData = Object.entries(searchJson).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
       formData += (`&location.city=${location}`);
-      serverApi.fetchApi('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
+      serverApi.post('bikes/filterbikes', formData, 'application/x-www-form-urlencoded', jwt[0])
         .then((responseJson) => {
           this.setState({ foundBicycles: responseJson.message, isFetching: false, showFilter: false });
         }).catch(error => console.log(error));

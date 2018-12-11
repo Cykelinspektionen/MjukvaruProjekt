@@ -35,10 +35,12 @@ const styles = StyleSheet.create({
     height: null,
   },
   descriptionContainer: {
+    flex: 0.3,
     marginLeft: 10,
     flexDirection: 'row',
     marginBottom: 5,
     width: '100%',
+    alignItems: 'flex-end',
     height: 125,
   },
   colFlex: {
@@ -48,8 +50,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   headContainer: {
-    marginTop: 10,
-    marginBottom: 10,
+    alignItems: 'flex-start',
+    flex: 0.3,
+    marginTop: 2,
+    marginBottom: 2,
   },
   head: {
     fontSize: 24,
@@ -58,6 +62,9 @@ const styles = StyleSheet.create({
   body: {
     fontSize: 16,
     fontWeight: '200',
+  },
+  infoBox: {
+    flex: 0.7,
   },
   listContainer: {
     flex: 1,
@@ -470,7 +477,6 @@ class BikeInformation extends React.Component {
     const {
       title, location, description, brand, color, frameNumber, model,
     } = bikeData;
-    console.log(bikeData);
     const city = location ? location.city : '';
     const neighborhood = location ? location.neighborhood : '';
 
@@ -487,7 +493,9 @@ class BikeInformation extends React.Component {
           onPress={() => this.handleLocation()}
         >
           <Image
-            style={styles.locationTag}
+            style={styles.image}
+            resizeMode="contain"
+            resizeMethod="scale"
             source={locationIcon}
           />
         </TouchableOpacity>
@@ -505,24 +513,26 @@ class BikeInformation extends React.Component {
               <Text style={styles.head}>{title}</Text>
               {positionButton}
             </View>
-            <Text style={styles.body}>
-              {city}
-              {', '}
-              {neighborhood}
-            </Text>
-            <Text style={styles.body}>{description}</Text>
-            <Text style={styles.body}>
-              {brand}
-              {' '}
-              {model}
-              {', '}
-              {color}
-            </Text>
-            <Text style={styles.body}>
+            <View style={styles.infoBox}>
+              <Text style={styles.body}>
+                {city}
+                {', '}
+                {neighborhood}
+              </Text>
+              <Text style={styles.body}>{description}</Text>
+              <Text style={styles.body}>
+                {brand}
+                {' '}
+                {model}
+                {', '}
+                {color}
+              </Text>
+              <Text style={styles.body}>
               Frame number:
-              {' '}
-              {frameNumber}
-            </Text>
+                {' '}
+                {frameNumber}
+              </Text>
+            </View>
           </View>
           {foundButton}
         </View>

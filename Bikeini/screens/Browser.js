@@ -3,8 +3,10 @@ import {
   StyleSheet, Text, View, FlatList, TouchableOpacity, Platform, ImageBackground,
 } from 'react-native';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/Ionicons';
+import * as mapActions from '../navigation/actions/MapActions';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
@@ -113,7 +115,9 @@ class Browser extends React.Component {
 
   renderItem = ({ item }) => {
     if (!item.active) return null;
-    const { navigation, profileState } = this.props;
+    const {
+      navigation, profileState, setMarker, setShowMarker,
+    } = this.props;
     const bikeData = item;
     bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
     // needed for items comment button
@@ -128,6 +132,8 @@ class Browser extends React.Component {
         }}
       >
         <Item
+          actions={{ setShowMarker, setMarker }}
+          location={item.location || { lat: 0, long: 0 }}
           title={item.title || ''}
           brand={item.brand || ''}
           imageUrl={item.image_url.thumbnail || ''}
@@ -384,6 +390,8 @@ Browser.propTypes = {
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
+  setMarker: PropTypes.func.isRequired,
+  setShowMarker: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
@@ -391,4 +399,9 @@ const mapStateToProps = (state) => {
   return { authState, profileState };
 };
 
-export default connect(mapStateToProps)(Browser);
+const mapDispatchToProps = dispatch => bindActionCreators(
+  { ...mapActions },
+  dispatch,
+);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Browser);

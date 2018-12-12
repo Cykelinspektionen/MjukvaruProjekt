@@ -229,45 +229,39 @@ export default class Comment extends React.Component {
           </TouchableOpacity>
         );
       }
-      if (username !== '1') {
-        thumbUpButton = (
-          <TouchableOpacity
-            style={styles.thumbDownTag}
-            onPress={() => this.handleThumbs('DW')}
-          >
-            <Image
-              style={[styles.thumbDownTag, thumbDown ? styles.setRed : []]}
-              source={thumbDownIcon}
-            />
-          </TouchableOpacity>
-        );
-      }
-      if (username !== '1') {
-        thumbDwButton = (
-          <TouchableOpacity
-            style={styles.thumbUpTag}
-            onPress={() => this.handleThumbs('UP')}
-          >
-            <Image
-              style={[styles.thumbUpTag, thumbUp ? styles.setGreen : []]}
-              source={thumbUpIcon}
-            />
-          </TouchableOpacity>
-        );
-      }
     }
-    if (ownersComment) {
+    if (username !== '1') {
       thumbUpButton = (
-        <Image
-          style={[styles.thumbDownTag, styles.ownCommentThumbs]}
-          source={thumbDownIcon}
-        />
+        <TouchableOpacity
+          disabled={ownersComment}
+          style={styles.thumbDownTag}
+          onPress={() => this.handleThumbs('DW')}
+        >
+          <Image
+            style={[
+              styles.thumbDownTag,
+              thumbDown ? styles.setRed : [],
+              ownersComment ? styles.ownCommentThumbs : [],
+            ]}
+            source={thumbDownIcon}
+          />
+        </TouchableOpacity>
       );
       thumbDwButton = (
-        <Image
-          style={[styles.thumbUpTag, styles.ownCommentThumbs]}
-          source={thumbUpIcon}
-        />
+        <TouchableOpacity
+          disabled={ownersComment}
+          style={styles.thumbUpTag}
+          onPress={() => this.handleThumbs('UP')}
+        >
+          <Image
+            style={[
+              styles.thumbUpTag,
+              thumbUp ? styles.setGreen : [],
+              ownersComment ? styles.ownCommentThumbs : [],
+            ]}
+            source={thumbUpIcon}
+          />
+        </TouchableOpacity>
       );
     }
     return {

@@ -308,6 +308,7 @@ class BikeInformation extends React.Component {
           brand={item.brand || ''}
           imageUrl={item.image_url.thumbnail || ''}
           bikeData={bikeData}
+          commentsLength={bikeData.comments.length}
           navigation={navigation}
           refresh={refresh}
         />

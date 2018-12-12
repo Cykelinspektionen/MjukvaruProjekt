@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
-const commentIcon = require('../assets/images/comment.png');
+const emptyCommentIcon = require('../assets/images/emptyComment.png');
 const locationIcon = require('../assets/images/location.png');
 const stockBicycle = require('../assets/images/stockBicycle.png');
 
@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   commentsTag: {
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 35,
     marginBottom: 5,
   },
   locationTag: {
@@ -56,6 +56,13 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     alignContent: 'flex-end',
   },
+  commentsNumber: {
+    position: 'absolute',
+    top: 5,
+    left: 7,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default class Item extends React.PureComponent {
@@ -68,7 +75,7 @@ export default class Item extends React.PureComponent {
 
   render() {
     const {
-      title, brand, imageUrl, bikeData, navigation, refresh, location,
+      title, brand, imageUrl, bikeData, navigation, refresh,location, commentsLength,
     } = this.props;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
     let locationButton = null;
@@ -101,8 +108,10 @@ export default class Item extends React.PureComponent {
               navigation.navigate('BikeInformation', { bikeData, refresh });
             }}
           >
-            <Image style={styles.commentsTag} source={commentIcon} />
-
+            <Image style={styles.commentsTag} source={emptyCommentIcon} />
+            <Text style={styles.commentsNumber}>
+              {commentsLength}
+            </Text>
           </TouchableOpacity>
           {locationButton}
         </View>
@@ -118,6 +127,7 @@ Item.propTypes = {
   bikeData: PropTypes.shape({
     showComments: PropTypes.bool.isRequired,
   }).isRequired,
+  commentsLength: PropTypes.number.isRequired,
   refresh: PropTypes.func.isRequired,
   location: PropTypes.shape({
     lat: PropTypes.number.isRequired,

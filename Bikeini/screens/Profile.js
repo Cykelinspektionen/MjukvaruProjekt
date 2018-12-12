@@ -14,6 +14,7 @@ import permissions from '../utilities/permissions';
 import Item from '../components/Item';
 import * as jwtActions from '../navigation/actions/JwtActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
+import * as mapActions from '../navigation/actions/MapActions';
 
 const profilePic = require('../assets/images/userPlaceholder.jpg');
 
@@ -135,7 +136,7 @@ class Profile extends React.Component {
 
     renderItem = ({ item }) => {
       if (!item.active) return null;
-      const { navigation, profileState } = this.props;
+      const { navigation, profileState,setMarker, setShowMarker, } = this.props;
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
       bikeData.showResolveBike = profileState.username === bikeData.submitter.username;
@@ -149,6 +150,8 @@ class Profile extends React.Component {
           }}
         >
           <Item
+                    actions={{ setShowMarker, setMarker }}
+                    location={item.location || { lat: 0, long: 0 }}
             title={item.title || ''}
             brand={item.brand || ''}
             imageUrl={item.image_url.thumbnail || ''}
@@ -312,6 +315,8 @@ Profile.propTypes = {
   uploadProfilePicToServer: PropTypes.func.isRequired,
   deleteJWTInit: PropTypes.func.isRequired,
   unloadProfile: PropTypes.func.isRequired,
+  setMarker: PropTypes.func.isRequired,
+  setShowMarker: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
@@ -320,7 +325,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...jwtActions, ...profileActions },
+  { ...jwtActions, ...profileActions, ...mapActions },
   dispatch,
 );
 

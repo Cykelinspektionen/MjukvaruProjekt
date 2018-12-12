@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import RadioGroup from 'react-native-radio-buttons-group';
 import { Dropdown } from 'react-native-material-dropdown';
 import { ImagePicker, ImageManipulator, Location } from 'expo';
+import { AndroidBackHandler } from 'react-navigation-backhandler';
 import permissions from '../utilities/permissions';
 import { headerStyle } from './header';
 import * as mapActions from '../navigation/actions/MapActions';
@@ -483,6 +484,8 @@ class AddBike extends React.Component {
     }
   }
 
+  onBackButtonPressAndroid = () => true;
+
   render() {
     const {
       authState, addBikeState, navigation, imgUploadInit, mapState,
@@ -495,218 +498,223 @@ class AddBike extends React.Component {
     } = bikeData;
     if (addBikeState.uploadingBike) {
       return (
-        <View style={styles.container}>
-          <Text>Posting Ad...</Text>
-        </View>
+        <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
+          <View style={styles.container}>
+            <Text>Posting Ad...</Text>
+          </View>
+        </AndroidBackHandler>
+
       );
     }
     return (
-      <ScrollView style={styles.background}>
-        <View style={styles.container}>
-          <Text style={styles.headerText}>
+      <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
+        <ScrollView style={styles.background}>
+          <View style={styles.container}>
+            <Text style={styles.headerText}>
           Add a picture of your bike
-          </Text>
-          <View style={styles.rowContainer}>
-            <View>
-              {!addBikeState.uriSet && <Image source={defaultBike} /> }
-              {addBikeState.uriSet && <Image source={{ uri: addBikeState.imgToUploadUri }} style={styles.thumbnail} />}
-            </View>
-            <View>
-              <View style={styles.rowContainer}>
-                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCameraRoll}>
-                  <Text style={styles.greenButtonText}>ADD FROM ALBUM</Text>
-                </TouchableHighlight>
-                <Image
-                  style={styles.icons}
-                  source={cameraImg}
-                />
+            </Text>
+            <View style={styles.rowContainer}>
+              <View>
+                {!addBikeState.uriSet && <Image source={defaultBike} /> }
+                {addBikeState.uriSet && <Image source={{ uri: addBikeState.imgToUploadUri }} style={styles.thumbnail} />}
               </View>
-              <View style={styles.rowContainer}>
-                <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCamera}>
-                  <Text style={styles.greenButtonText}>TAKE A PHOTO</Text>
-                </TouchableHighlight>
-                <Image
-                  style={styles.icons}
-                  source={albumImg}
-                />
+              <View>
+                <View style={styles.rowContainer}>
+                  <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCameraRoll}>
+                    <Text style={styles.greenButtonText}>ADD FROM ALBUM</Text>
+                  </TouchableHighlight>
+                  <Image
+                    style={styles.icons}
+                    source={cameraImg}
+                  />
+                </View>
+                <View style={styles.rowContainer}>
+                  <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCamera}>
+                    <Text style={styles.greenButtonText}>TAKE A PHOTO</Text>
+                  </TouchableHighlight>
+                  <Image
+                    style={styles.icons}
+                    source={albumImg}
+                  />
+                </View>
               </View>
             </View>
-          </View>
-          <TouchableHighlight
-            style={[
-              styles.smallButtonContainer,
-              styles.actionButton,
-              styles.greenButton,
-              styles.uploadPhotoButton,
-              !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
-            ]}
-            disabled={addBikeState.uploadDisabled}
-            onPress={() => {
-              this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
-                imgUploadInit(compressedUri.uri, bikeData.type, authState.jwt[0])
-                  .then(response => this.setServerResponse(response, this.radioUpdater, this.setBikeData));
-              });
-            }
-            }
-          >
-            <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
-          </TouchableHighlight>
-          <Text style={styles.headerText}>
-              Last known loaction of your lost bike:
-          </Text>
-          <View style={styles.locationFrame}>
-            <View style={styles.adressFrame}>
-              <Text>
-                City:
-                {' '}
-                {mapState.city}
-                {' '}
-              </Text>
-              <Text>
-                Street:
-                {' '}
-                {mapState.name}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={styles.locationIconTouch}
-              onPress={() => navigation.navigate('PinMap')}
-            >
-              <Image
-                style={styles.locationTag}
-                source={locationIcon}
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.radio}>
-            <RadioGroup
-              horizontal="true"
-              radioButtons={radios.type}
-              onPress={(data) => { this.radioUpdater(data, 'type'); }}
-              flexDirection="row"
-            />
-            <RadioGroup
-              horizontal="true"
-              radioButtons={radios.frame_type}
-              onPress={(data) => { this.radioUpdater(data, 'frame_type', true); }}
-              flexDirection="row"
-            />
-            <RadioGroup
-              radioButtons={radios.child}
-              onPress={(data) => { this.radioUpdater(data, 'child', true); }}
-              flexDirection="row"
-            />
-            <RadioGroup
-              radioButtons={radios.sport}
-              onPress={(data) => { this.radioUpdater(data, 'sport', true); }}
-              flexDirection="row"
-            />
-            <RadioGroup
-              radioButtons={radios.tandem}
-              onPress={(data) => { this.radioUpdater(data, 'tandem', true); }}
-              flexDirection="row"
-            />
-            <RadioGroup
-              radioButtons={radios.basket}
-              onPress={(data) => { this.radioUpdater(data, 'basket', true); }}
-              flexDirection="row"
-            />
-            <RadioGroup
-              radioButtons={radios.rack}
-              onPress={(data) => { this.radioUpdater(data, 'rack', true); }}
-              flexDirection="row"
-            />
-            <RadioGroup
-              radioButtons={radios.mudguard}
-              onPress={(data) => { this.radioUpdater(data, 'mudguard', true); }}
-              flexDirection="row"
-            />
-            <RadioGroup
-              radioButtons={radios.chainProtection}
-              onPress={(data) => { this.radioUpdater(data, 'chainProtection', true); }}
-              flexDirection="row"
-            />
-            <RadioGroup
-              radioButtons={radios.net}
-              onPress={(data) => { this.radioUpdater(data, 'net', true); }}
-              flexDirection="row"
-            />
-            <RadioGroup
-              radioButtons={radios.winterTires}
-              onPress={(data) => { this.radioUpdater(data, 'winterTires', true); }}
-              flexDirection="row"
-            />
-            <RadioGroup
-              radioButtons={radios.light}
-              onPress={(data) => { this.radioUpdater(data, 'light', true); }}
-              flexDirection="row"
-            />
-          </View>
-          <View style={styles.dropdowns}>
-            <Dropdown
-              value={color}
-              label="Color"
-              data={Color}
-              onChangeText={value => this.setBikeData('color', value)}
-            />
-          </View>
-          <TextInput
-            style={styles.inputs}
-            placeholder="Frame number"
-            underlineColorAndroid="transparent"
-            value={bikeData.frameNumber}
-            onChangeText={text => this.setBikeData('frameNumber', text)}
-          />
-          <TextInput
-            style={styles.inputs}
-            placeholder="Anti Theft Code"
-            underlineColorAndroid="transparent"
-            value={bikeData.antiTheftCode}
-            onChangeText={text => this.setBikeData('antiTheftCode', text)}
-          />
-          <TextInput
-            style={styles.inputs}
-            placeholder="Brand"
-            underlineColorAndroid="transparent"
-            value={bikeData.brand}
-            onChangeText={text => this.setBikeData('brand', text)}
-          />
-          <TextInput
-            style={styles.inputs}
-            placeholder="Model"
-            underlineColorAndroid="transparent"
-            value={bikeData.model}
-            onChangeText={text => this.setBikeData('model', text)}
-          />
-          <TextInput
-            style={styles.inputs}
-            placeholder="Title"
-            underlineColorAndroid="transparent"
-            value={bikeData.title}
-            onChangeText={text => this.setBikeData('title', text)}
-          />
-          <TextInput
-            style={styles.inputs}
-            placeholder="Description"
-            underlineColorAndroid="transparent"
-            value={bikeData.description}
-            onChangeText={text => this.setBikeData('description', text)}
-          />
-          <TouchableHighlight
-            style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.submitButton]}
-            onPress={() => {
-              if (!addBikeState.uriSet) {
-                Alert.alert('Picture is mandatory!');
-                return;
+            <TouchableHighlight
+              style={[
+                styles.smallButtonContainer,
+                styles.actionButton,
+                styles.greenButton,
+                styles.uploadPhotoButton,
+                !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
+              ]}
+              disabled={addBikeState.uploadDisabled}
+              onPress={() => {
+                this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
+                  imgUploadInit(compressedUri.uri, bikeData.type, authState.jwt[0])
+                    .then(response => this.setServerResponse(response, this.radioUpdater, this.setBikeData));
+                });
               }
-              this.handleSubmitt();
             }
+            >
+              <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
+            </TouchableHighlight>
+            <Text style={styles.headerText}>
+              Last known loaction of your lost bike:
+            </Text>
+            <View style={styles.locationFrame}>
+              <View style={styles.adressFrame}>
+                <Text>
+                City:
+                  {' '}
+                  {mapState.city}
+                  {' '}
+                </Text>
+                <Text>
+                Street:
+                  {' '}
+                  {mapState.name}
+                </Text>
+              </View>
+              <TouchableOpacity
+                style={styles.locationIconTouch}
+                onPress={() => navigation.navigate('PinMap')}
+              >
+                <Image
+                  style={styles.locationTag}
+                  source={locationIcon}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.radio}>
+              <RadioGroup
+                horizontal="true"
+                radioButtons={radios.type}
+                onPress={(data) => { this.radioUpdater(data, 'type'); }}
+                flexDirection="row"
+              />
+              <RadioGroup
+                horizontal="true"
+                radioButtons={radios.frame_type}
+                onPress={(data) => { this.radioUpdater(data, 'frame_type', true); }}
+                flexDirection="row"
+              />
+              <RadioGroup
+                radioButtons={radios.child}
+                onPress={(data) => { this.radioUpdater(data, 'child', true); }}
+                flexDirection="row"
+              />
+              <RadioGroup
+                radioButtons={radios.sport}
+                onPress={(data) => { this.radioUpdater(data, 'sport', true); }}
+                flexDirection="row"
+              />
+              <RadioGroup
+                radioButtons={radios.tandem}
+                onPress={(data) => { this.radioUpdater(data, 'tandem', true); }}
+                flexDirection="row"
+              />
+              <RadioGroup
+                radioButtons={radios.basket}
+                onPress={(data) => { this.radioUpdater(data, 'basket', true); }}
+                flexDirection="row"
+              />
+              <RadioGroup
+                radioButtons={radios.rack}
+                onPress={(data) => { this.radioUpdater(data, 'rack', true); }}
+                flexDirection="row"
+              />
+              <RadioGroup
+                radioButtons={radios.mudguard}
+                onPress={(data) => { this.radioUpdater(data, 'mudguard', true); }}
+                flexDirection="row"
+              />
+              <RadioGroup
+                radioButtons={radios.chainProtection}
+                onPress={(data) => { this.radioUpdater(data, 'chainProtection', true); }}
+                flexDirection="row"
+              />
+              <RadioGroup
+                radioButtons={radios.net}
+                onPress={(data) => { this.radioUpdater(data, 'net', true); }}
+                flexDirection="row"
+              />
+              <RadioGroup
+                radioButtons={radios.winterTires}
+                onPress={(data) => { this.radioUpdater(data, 'winterTires', true); }}
+                flexDirection="row"
+              />
+              <RadioGroup
+                radioButtons={radios.light}
+                onPress={(data) => { this.radioUpdater(data, 'light', true); }}
+                flexDirection="row"
+              />
+            </View>
+            <View style={styles.dropdowns}>
+              <Dropdown
+                value={color}
+                label="Color"
+                data={Color}
+                onChangeText={value => this.setBikeData('color', value)}
+              />
+            </View>
+            <TextInput
+              style={styles.inputs}
+              placeholder="Frame number"
+              underlineColorAndroid="transparent"
+              value={bikeData.frameNumber}
+              onChangeText={text => this.setBikeData('frameNumber', text)}
+            />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Anti Theft Code"
+              underlineColorAndroid="transparent"
+              value={bikeData.antiTheftCode}
+              onChangeText={text => this.setBikeData('antiTheftCode', text)}
+            />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Brand"
+              underlineColorAndroid="transparent"
+              value={bikeData.brand}
+              onChangeText={text => this.setBikeData('brand', text)}
+            />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Model"
+              underlineColorAndroid="transparent"
+              value={bikeData.model}
+              onChangeText={text => this.setBikeData('model', text)}
+            />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Title"
+              underlineColorAndroid="transparent"
+              value={bikeData.title}
+              onChangeText={text => this.setBikeData('title', text)}
+            />
+            <TextInput
+              style={styles.inputs}
+              placeholder="Description"
+              underlineColorAndroid="transparent"
+              value={bikeData.description}
+              onChangeText={text => this.setBikeData('description', text)}
+            />
+            <TouchableHighlight
+              style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.submitButton]}
+              onPress={() => {
+                if (!addBikeState.uriSet) {
+                  Alert.alert('Picture is mandatory!');
+                  return;
+                }
+                this.handleSubmitt();
+              }
             }
-          >
-            <Text style={styles.greenButtonText}>SUBMIT</Text>
-          </TouchableHighlight>
-        </View>
-      </ScrollView>
+            >
+              <Text style={styles.greenButtonText}>SUBMIT</Text>
+            </TouchableHighlight>
+          </View>
+        </ScrollView>
+      </AndroidBackHandler>
     );
   }
 }

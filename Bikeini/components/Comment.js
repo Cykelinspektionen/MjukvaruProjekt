@@ -99,6 +99,9 @@ const styles = StyleSheet.create({
   setRed: {
     backgroundColor: 'red',
   },
+  ownCommentThumbs: {
+    opacity: 0.2,
+  },
 });
 
 export default class Comment extends React.Component {
@@ -121,7 +124,7 @@ export default class Comment extends React.Component {
     const formBody = {};
     formBody.user_name = username;
     formBody[type] = points;
-    serverApi.fetchApi('users/updatehighscore/', JSON.stringify(formBody), 'application/json', jwt[0])
+    serverApi.post('users/updatehighscore/', JSON.stringify(formBody), 'application/json', jwt[0])
       .catch(error => console.log(error));
   }
 
@@ -134,7 +137,7 @@ export default class Comment extends React.Component {
       active: false,
 	    type: 'FOUND',
     };
-    serverApi.fetchApi('bikes/updatebike/', JSON.stringify(formBody), 'application/json', jwt[0])
+    serverApi.post('bikes/updatebike/', JSON.stringify(formBody), 'application/json', jwt[0])
       .then(
         this.sendPointsToUser(5, bikeScore, username),
         bikeType === 'FOUND' ? this.sendPointsToUser(5, bikeScore, bikeSubUsername) : null,
@@ -162,8 +165,8 @@ export default class Comment extends React.Component {
       commentId,
       value,
     };
-    serverApi.fetchApi('bikes/ratecomment/', JSON.stringify(formBody), 'application/json', jwt[0])
-      .then(refreshComments())
+    
+    serverApi.post('bikes/ratecomment/', JSON.stringify(formBody), 'application/json', jwt[0])
       .catch(error => console.log(error));
   }
 
@@ -243,32 +246,40 @@ export default class Comment extends React.Component {
           </TouchableOpacity>
         );
       }
-      if (username !== '1') {
-        thumbUpButton = (
-          <TouchableOpacity
-            style={styles.thumbDownTag}
-            onPress={() => this.handleThumbs('DW')}
-          >
-            <Image
-              style={[styles.thumbDownTag, thumbDown ? styles.setRed : []]}
-              source={thumbDownIcon}
-            />
-          </TouchableOpacity>
-        );
-      }
-      if (username !== '1') {
-        thumbDwButton = (
-          <TouchableOpacity
-            style={styles.thumbUpTag}
-            onPress={() => this.handleThumbs('UP')}
-          >
-            <Image
-              style={[styles.thumbUpTag, thumbUp ? styles.setGreen : []]}
-              source={thumbUpIcon}
-            />
-          </TouchableOpacity>
-        );
-      }
+    }
+    if (username !== '1') {
+      thumbUpButton = (
+        <TouchableOpacity
+          disabled={ownersComment}
+          style={styles.thumbDownTag}
+          onPress={() => this.handleThumbs('DW')}
+        >
+          <Image
+            style={[
+              styles.thumbDownTag,
+              thumbDown ? styles.setRed : [],
+              ownersComment ? styles.ownCommentThumbs : [],
+            ]}
+            source={thumbDownIcon}
+          />
+        </TouchableOpacity>
+      );
+      thumbDwButton = (
+        <TouchableOpacity
+          disabled={ownersComment}
+          style={styles.thumbUpTag}
+          onPress={() => this.handleThumbs('UP')}
+        >
+          <Image
+            style={[
+              styles.thumbUpTag,
+              thumbUp ? styles.setGreen : [],
+              ownersComment ? styles.ownCommentThumbs : [],
+            ]}
+            source={thumbUpIcon}
+          />
+        </TouchableOpacity>
+      );
     }
     return {
       resolveButton,

@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
-const commentIcon = require('../assets/images/comment.png');
+const emptyCommentIcon = require('../assets/images/emptyComment.png');
 const locationIcon = require('../assets/images/location.png');
 const stockBicycle = require('../assets/images/stockBicycle.png');
 
@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   commentsTag: {
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 35,
     marginBottom: 5,
   },
   locationTag: {
@@ -56,14 +56,39 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     alignContent: 'flex-end',
   },
+  commentsNumber: {
+    position: 'absolute',
+    top: 5,
+    left: 7,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default class Item extends React.PureComponent {
+  handleLocation = () => {
+    const { actions, location, navigation } = this.props;
+    actions.setMarker({ latitude: location.lat, longitude: location.long });
+    actions.setShowMarker(true);
+    navigation.navigate('PinMap');
+  }
+
   render() {
     const {
-      title, brand, imageUrl, bikeData, navigation, refresh,
+      title, brand, imageUrl, bikeData, navigation, refresh,location, commentsLength,
     } = this.props;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
+    let locationButton = null;
+    if (location.lat && location.long) {
+      locationButton = (
+        <TouchableOpacity
+          style={styles.locationTag}
+          onPress={() => this.handleLocation()}
+        >
+          <Image style={styles.locationTag} source={locationIcon} />
+        </TouchableOpacity>
+      );
+    }
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={imgSource} />
@@ -83,15 +108,12 @@ export default class Item extends React.PureComponent {
               navigation.navigate('BikeInformation', { bikeData, refresh });
             }}
           >
-            <Image style={styles.commentsTag} source={commentIcon} />
-
+            <Image style={styles.commentsTag} source={emptyCommentIcon} />
+            <Text style={styles.commentsNumber}>
+              {commentsLength}
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.locationTag}
-            onPress={() => { Alert.alert('Position me blokitch'); }}
-          >
-            <Image style={styles.locationTag} source={locationIcon} />
-          </TouchableOpacity>
+          {locationButton}
         </View>
       </View>
     );
@@ -105,5 +127,14 @@ Item.propTypes = {
   bikeData: PropTypes.shape({
     showComments: PropTypes.bool.isRequired,
   }).isRequired,
+  commentsLength: PropTypes.number.isRequired,
   refresh: PropTypes.func.isRequired,
+  location: PropTypes.shape({
+    lat: PropTypes.number.isRequired,
+    long: PropTypes.number.isRequired,
+  }).isRequired,
+  actions: PropTypes.shape({
+    setShowMarker: PropTypes.func.isRequired,
+    setMarker: PropTypes.func.isRequired,
+  }).isRequired,
 };

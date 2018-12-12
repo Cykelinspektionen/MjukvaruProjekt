@@ -4,9 +4,9 @@ import {
   LOAD_PROFILE_BEGIN,
   LOAD_PROFILE_SUCCESS,
   LOAD_PROFILE_FAILURE,
-  UPLOAD_IMG_BEGIN,
-  UPLOAD_IMG_SUCCESS,
-  UPLOAD_IMG_FAILURE,
+  UPLOAD_PROFILE_IMG_BEGIN,
+  UPLOAD_PROFILE_IMG_SUCCESS,
+  UPLOAD_PROFILE_IMG_FAILURE,
   UNLOAD_PROFILE,
 } from '../actions/types';
 
@@ -71,11 +71,11 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
       };
     case UNLOAD_PROFILE:
       return { ...PROFILE_INITIAL_STATE };
-    case UPLOAD_IMG_BEGIN:
+    case UPLOAD_PROFILE_IMG_BEGIN:
       return { ...state, uploadingImg: true };
-    case UPLOAD_IMG_SUCCESS:
+    case UPLOAD_PROFILE_IMG_SUCCESS:
       return { ...state, avatarUri: action.payload.avatar_url };
-    case UPLOAD_IMG_FAILURE:
+    case UPLOAD_PROFILE_IMG_FAILURE:
       return { ...state, imgUploaded: false };
     default:
       return state;

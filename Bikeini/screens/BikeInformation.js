@@ -1,7 +1,8 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert, TouchableHighlight, KeyboardAvoidingView,
+  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TextInput, Alert, TouchableHighlight,
 } from 'react-native';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -27,7 +28,6 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignSelf: 'center',
-    marginTop: 30,
     width: '100%',
     flex: 0.5,
   },
@@ -37,44 +37,53 @@ const styles = StyleSheet.create({
     height: null,
   },
   descriptionContainer: {
+    flex: 0.5,
     marginLeft: 10,
     flexDirection: 'row',
-    marginBottom: 5,
     width: '100%',
-    height: 125,
+    alignItems: 'flex-end',
   },
   colFlex: {
     flexDirection: 'column',
   },
+  rowFlex: {
+    flexDirection: 'row',
+  },
   headContainer: {
-    marginTop: 10,
-    marginBottom: 10,
+    alignItems: 'flex-start',
+    marginTop: 1,
+    marginBottom: 1,
   },
   head: {
     fontSize: 24,
-    fontWeight: '500',
+    fontWeight: '200',
   },
   body: {
-    fontSize: 16,
-    fontWeight: '200',
+    fontSize: 18,
+    fontWeight: '100',
+  },
+  infoBox: {
+    flex: 1,
   },
   listContainer: {
     flex: 1,
     marginTop: 10,
     width: '95%',
-    marginBottom: 30,
+  },
+  commentContainer: {
+    flex: 1.2,
+    width: '95%',
   },
   breakLine: {
     width: '100%',
-    height: 5,
-    marginTop: 5,
     borderWidth: 0,
     borderBottomWidth: 1,
+    borderTopWidth: 1,
   },
   commentInputContainer: {
     backgroundColor: 'white',
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignSelf: 'center',
     height: 40,
     width: '90%',
     borderWidth: 1,
@@ -125,7 +134,8 @@ const styles = StyleSheet.create({
   matchAndComText: {
     fontSize: 18,
     fontWeight: 'bold',
-    alignSelf: 'center',
+    textAlign: 'center',
+    width: '100%',
   },
   locationTag: {
     width: 25,
@@ -155,7 +165,9 @@ class BikeInformation extends React.Component {
       text: '',
       bikeData,
       refresh,
+      isFetching: false,
       isDialogVisible: false,
+      // keyBoardVisible: false,
     };
 
     this.editCommentId = 0;
@@ -204,6 +216,7 @@ class BikeInformation extends React.Component {
           responseJson.reverse();
           this.setState({ comments: responseJson });
         }
+        this.setState({ isFetching: false });
       }).catch(error => console.log(error));
   }
 
@@ -273,6 +286,7 @@ class BikeInformation extends React.Component {
             jwt={jwt}
             navigation={navigation}
             refresh={refresh}
+            refreshComments={this.onRefresh}
             ownersComment={ownersComment}
           />
         </TouchableOpacity>
@@ -290,10 +304,13 @@ class BikeInformation extends React.Component {
         }}
       >
         <Item
+          actions={{ setShowMarker, setMarker }}
+          location={item.location || { lat: 0, long: 0 }}
           title={item.title || ''}
           brand={item.brand || ''}
           imageUrl={item.image_url.thumbnail || ''}
           bikeData={bikeData}
+          commentsLength={bikeData.comments.length}
           navigation={navigation}
           refresh={refresh}
         />
@@ -301,22 +318,30 @@ class BikeInformation extends React.Component {
     );
   }
 
+  onRefresh = () => {
+    this.setState({ isFetching: true }, () => {
+      this.fetchComments();
+    });
+  }
+
   renderList = () => {
     const {
-      comments, bikeData,
+      comments, bikeData, isFetching, matchingBikes,
     } = this.state;
-    const { matchingBikes } = this.state;
     const matchingBikesFiltered = matchingBikes.filter(x => x.active === true);
 
 
     if (bikeData.showComments) {
       return (
-        <View>
-          <Text style={styles.matchAndComText}> COMMENTS </Text>
-          <View style={styles.breakLine} />
+        <View style={styles.listContainer}>
+          <View style={styles.breakLine}>
+            <Text style={styles.matchAndComText}> COMMENTS </Text>
+          </View>
           <FlatList
             data={comments}
             extraData={this.state}
+            onRefresh={this.onRefresh}
+            refreshing={isFetching}
             keyExtractor={this.keyExtractor}
             renderItem={this.renderItem}
           />
@@ -326,9 +351,10 @@ class BikeInformation extends React.Component {
 
 
     return (
-      <View>
-        <Text style={styles.matchAndComText}> MATCHING BIKES </Text>
-        <View style={styles.breakLine} />
+      <View style={styles.listContainer}>
+        <View style={styles.breakLine}>
+          <Text style={styles.matchAndComText}> MATCHING BIKES </Text>
+        </View>
         <FlatList
           data={matchingBikesFiltered}
           extraData={this.state}
@@ -472,6 +498,15 @@ class BikeInformation extends React.Component {
       .catch(error => console.log(error));
   }
 
+
+  handleLocation = () => {
+    const { bikeData } = this.state;
+    const { setMarker, setShowMarker, navigation } = this.props;
+    setMarker({ latitude: bikeData.location.lat, longitude: bikeData.location.long });
+    setShowMarker(true);
+    navigation.navigate('PinMap');
+  }
+
   changeCommentText = (text) => {
     const { bikeData } = this.state;
     const { authState } = this.props;
@@ -521,8 +556,25 @@ class BikeInformation extends React.Component {
     const foundButton = this.renderFoundButton();
     const imgSource = bikeData.image_url ? { uri: bikeData.image_url.img } : stockBicycle;
 
+    let positionButton = null;
+    if (location.lat && location.long) {
+      positionButton = (
+        <TouchableOpacity
+          style={styles.locationTag}
+          onPress={() => this.handleLocation()}
+        >
+          <Image
+            style={styles.image}
+            resizeMode="contain"
+            resizeMethod="scale"
+            source={locationIcon}
+          />
+        </TouchableOpacity>
+      );
+    }
+
     return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+      <View style={styles.container}>
         <DialogInput
           isDialogVisible={isDialogVisible}
           title="Edit comment"
@@ -535,23 +587,29 @@ class BikeInformation extends React.Component {
         </View>
         <View style={styles.descriptionContainer}>
           <View style={styles.colFlex}>
-            <View style={styles.headContainer}>
-              <Text style={styles.head}>{title}</Text>
+            <View style={[styles.headContainer, styles.rowFlex]}>
+              <Text style={styles.head} adjustsFontSizeToFit>{title}</Text>
+              {positionButton}
             </View>
-            <Text style={styles.body}>
+            <Text style={styles.body} adjustsFontSizeToFit>
               {city}
               {', '}
               {neighborhood}
             </Text>
-            <Text style={styles.body}>{description}</Text>
-            <Text style={styles.body}>
+            <Text
+              style={styles.body}
+              adjustsFontSizeToFit
+            >
+              {description}
+            </Text>
+            <Text style={styles.body} adjustsFontSizeToFit>
               {brand}
               {' '}
               {model}
               {', '}
               {color}
             </Text>
-            <Text style={styles.body}>
+            <Text style={styles.body} adjustsFontSizeToFit>
               Frame number:
               {' '}
               {frameNumber}
@@ -559,12 +617,12 @@ class BikeInformation extends React.Component {
           </View>
           {foundButton}
         </View>
-        <View style={styles.breakLine} />
-        <View style={styles.listContainer}>
+        <View style={styles.commentContainer}>
           {list}
         </View>
         {commentField}
-      </KeyboardAvoidingView>
+        <KeyboardSpacer /* onToggle={this.handleKeyboard} *//>
+      </View>
     );
   }
 }

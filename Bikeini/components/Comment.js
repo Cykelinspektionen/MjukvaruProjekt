@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flexDirection: 'row',
     width: '100%',
-    height: 100,
+    height: 75,
     borderWidth: 0,
     borderBottomWidth: 1,
   },
@@ -35,6 +35,11 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: '5%',
     marginLeft: '5%',
+  },
+  userText: {
+    fontSize: 16,
+    fontWeight: '400',
+    marginBottom: 1,
   },
   description: {
     fontSize: 14,
@@ -68,6 +73,22 @@ const styles = StyleSheet.create({
     height: 27,
     bottom: 6,
   },
+  totalThumbs: {
+    flexDirection: 'row-reverse',
+    alignSelf: 'flex-end',
+    justifyContent: 'flex-end',
+    height: 27,
+    bottom: 12,
+    fontSize: 20,
+    fontWeight: 'bold',
+    paddingLeft: 5,
+    paddingRight: 5,
+    marginLeft: 2,
+    marginRight: 2,
+    borderRadius: 5,
+    borderColor: 'black',
+    borderWidth: 1,
+  },
   answer: {
     position: 'absolute',
     alignSelf: 'flex-end',
@@ -82,6 +103,9 @@ const styles = StyleSheet.create({
   },
   setRed: {
     backgroundColor: 'red',
+  },
+  ownCommentThumbs: {
+    opacity: 0.2,
   },
 });
 
@@ -141,12 +165,14 @@ export default class Comment extends React.Component {
   }
 
   sendThumbRating = (value) => {
-    const { commentId, jwt } = this.props;
+    const { commentId, jwt, refreshComments } = this.props;
     const formBody = {
       commentId,
       value,
     };
+    
     serverApi.post('bikes/ratecomment/', JSON.stringify(formBody), 'application/json', jwt[0])
+      .then(refreshComments())
       .catch(error => console.log(error));
   }
 
@@ -180,8 +206,8 @@ export default class Comment extends React.Component {
     }
   }
 
-  handleLocation = (location) => {
-    const { actions, navigation } = this.props;
+  handleLocation = () => {
+    const { actions, navigation, location } = this.props;
     actions.setMarker({ latitude: location.lat, longitude: location.long });
     actions.setShowMarker(true);
     navigation.navigate('PinMap');
@@ -202,7 +228,7 @@ export default class Comment extends React.Component {
       positionButton = (
         <TouchableOpacity
           style={styles.locationTag}
-          onPress={() => this.handleLocation(location)}
+          onPress={() => this.handleLocation()}
         >
           <Image
             style={styles.locationTag}
@@ -226,32 +252,40 @@ export default class Comment extends React.Component {
           </TouchableOpacity>
         );
       }
-      if (username !== '1') {
-        thumbUpButton = (
-          <TouchableOpacity
-            style={styles.thumbDownTag}
-            onPress={() => this.handleThumbs('DW')}
-          >
-            <Image
-              style={[styles.thumbDownTag, thumbDown ? styles.setRed : []]}
-              source={thumbDownIcon}
-            />
-          </TouchableOpacity>
-        );
-      }
-      if (username !== '1') {
-        thumbDwButton = (
-          <TouchableOpacity
-            style={styles.thumbUpTag}
-            onPress={() => this.handleThumbs('UP')}
-          >
-            <Image
-              style={[styles.thumbUpTag, thumbUp ? styles.setGreen : []]}
-              source={thumbUpIcon}
-            />
-          </TouchableOpacity>
-        );
-      }
+    }
+    if (username !== '1') {
+      thumbUpButton = (
+        <TouchableOpacity
+          disabled={ownersComment}
+          style={styles.thumbDownTag}
+          onPress={() => this.handleThumbs('DW')}
+        >
+          <Image
+            style={[
+              styles.thumbDownTag,
+              thumbDown ? styles.setRed : [],
+              ownersComment ? styles.ownCommentThumbs : [],
+            ]}
+            source={thumbDownIcon}
+          />
+        </TouchableOpacity>
+      );
+      thumbDwButton = (
+        <TouchableOpacity
+          disabled={ownersComment}
+          style={styles.thumbUpTag}
+          onPress={() => this.handleThumbs('UP')}
+        >
+          <Image
+            style={[
+              styles.thumbUpTag,
+              thumbUp ? styles.setGreen : [],
+              ownersComment ? styles.ownCommentThumbs : [],
+            ]}
+            source={thumbUpIcon}
+          />
+        </TouchableOpacity>
+      );
     }
     return {
       resolveButton,
@@ -259,6 +293,18 @@ export default class Comment extends React.Component {
       thumbUpButton,
       thumbDwButton,
     };
+  }
+
+  getThumbTotal = () => {
+    const { rating } = this.props;
+    const upPoints = rating.up.length;
+    const downPoints = rating.down.length;
+    const total = upPoints - downPoints;
+    return (
+      <Text style={styles.totalThumbs}>
+        {total}
+      </Text>
+    );
   }
 
   render() {
@@ -273,16 +319,16 @@ export default class Comment extends React.Component {
       resolveButton, positionButton, thumbUpButton, thumbDwButton,
     } = this.renderButtonSet();
 
+    const thumbTotal = this.getThumbTotal();
+
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={avatarUri.length ? { uri: avatarUri } : userPlaceholder} />
         <View style={styles.textView}>
-          <Text>
+          <Text style={styles.userText}>
             {username}
-            {', '}
             {dateClean}
           </Text>
-          <Text>{' '}</Text>
           <Text style={styles.description}>{body}</Text>
         </View>
         <View style={styles.answer}>
@@ -290,6 +336,7 @@ export default class Comment extends React.Component {
         </View>
         {positionButton}
         {thumbDwButton}
+        {thumbTotal}
         {thumbUpButton}
         {resolveButton}
       </View>
@@ -332,4 +379,5 @@ Comment.propTypes = {
     setShowMarker: PropTypes.func.isRequired,
     setMarker: PropTypes.func.isRequired,
   }).isRequired,
+  refreshComments: PropTypes.func.isRequired,
 };

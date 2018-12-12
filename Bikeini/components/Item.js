@@ -3,9 +3,8 @@ import {
   StyleSheet, Text, View, Image, TouchableOpacity, Alert,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import serverApi from '../utilities/serverApi';
 
-const commentIcon = require('../assets/images/comment.png');
+const emptyCommentIcon = require('../assets/images/emptyComment.png');
 const locationIcon = require('../assets/images/location.png');
 const stockBicycle = require('../assets/images/stockBicycle.png');
 
@@ -42,8 +41,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   commentsTag: {
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 35,
     marginBottom: 5,
   },
   locationTag: {
@@ -58,39 +57,20 @@ const styles = StyleSheet.create({
     alignContent: 'flex-end',
   },
   commentsNumber: {
-    zIndex: 2,
+    position: 'absolute',
+    top: 5,
+    left: 7,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
 export default class Item extends React.PureComponent {
-  constructor() {
-    super();
-
-    this.state = {
-      comments: 0,
-    };
-  }
-
- /* getNbrOfComments = () => {
-    const { comments } = this.state;
-
-    const formBody = this.jsonToFormData(bikeInformation);
-
-    serverApi.get('bikes/getcomments', jwt[0])
-      .then((responseJson) => {
-        if (responseJson.length > 0) {
-          responseJson.reverse();
-          this.setState({ comments });
-        }
-      }).catch(error => console.log(error));
-  } */
-
   render() {
     const {
-      title, brand, imageUrl, bikeData, navigation, refresh,
+      title, brand, imageUrl, bikeData, navigation, refresh, commentsLength,
     } = this.props;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
-   // const nbrOfComments = this.getNbrOfComments();
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={imgSource} />
@@ -110,12 +90,10 @@ export default class Item extends React.PureComponent {
               navigation.navigate('BikeInformation', { bikeData, refresh });
             }}
           >
-            <Image style={styles.commentsTag} source={commentIcon} />
+            <Image style={styles.commentsTag} source={emptyCommentIcon} />
             <Text style={styles.commentsNumber}>
-              {/* {nbrOfComments} */}
-              5
+              {commentsLength}
             </Text>
-
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.locationTag}
@@ -136,5 +114,6 @@ Item.propTypes = {
   bikeData: PropTypes.shape({
     showComments: PropTypes.bool.isRequired,
   }).isRequired,
+  commentsLength: PropTypes.number.isRequired,
   refresh: PropTypes.func.isRequired,
 };

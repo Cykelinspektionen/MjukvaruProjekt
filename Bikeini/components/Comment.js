@@ -172,6 +172,7 @@ export default class Comment extends React.Component {
     };
     
     serverApi.post('bikes/ratecomment/', JSON.stringify(formBody), 'application/json', jwt[0])
+      .then(refreshComments())
       .catch(error => console.log(error));
   }
 

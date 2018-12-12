@@ -83,6 +83,9 @@ const styles = StyleSheet.create({
   setRed: {
     backgroundColor: 'red',
   },
+  ownCommentThumbs: {
+    opacity: 0.2,
+  },
 });
 
 export default class Comment extends React.Component {
@@ -226,32 +229,40 @@ export default class Comment extends React.Component {
           </TouchableOpacity>
         );
       }
-      if (username !== '1') {
-        thumbUpButton = (
-          <TouchableOpacity
-            style={styles.thumbDownTag}
-            onPress={() => this.handleThumbs('DW')}
-          >
-            <Image
-              style={[styles.thumbDownTag, thumbDown ? styles.setRed : []]}
-              source={thumbDownIcon}
-            />
-          </TouchableOpacity>
-        );
-      }
-      if (username !== '1') {
-        thumbDwButton = (
-          <TouchableOpacity
-            style={styles.thumbUpTag}
-            onPress={() => this.handleThumbs('UP')}
-          >
-            <Image
-              style={[styles.thumbUpTag, thumbUp ? styles.setGreen : []]}
-              source={thumbUpIcon}
-            />
-          </TouchableOpacity>
-        );
-      }
+    }
+    if (username !== '1') {
+      thumbUpButton = (
+        <TouchableOpacity
+          disabled={ownersComment}
+          style={styles.thumbDownTag}
+          onPress={() => this.handleThumbs('DW')}
+        >
+          <Image
+            style={[
+              styles.thumbDownTag,
+              thumbDown ? styles.setRed : [],
+              ownersComment ? styles.ownCommentThumbs : [],
+            ]}
+            source={thumbDownIcon}
+          />
+        </TouchableOpacity>
+      );
+      thumbDwButton = (
+        <TouchableOpacity
+          disabled={ownersComment}
+          style={styles.thumbUpTag}
+          onPress={() => this.handleThumbs('UP')}
+        >
+          <Image
+            style={[
+              styles.thumbUpTag,
+              thumbUp ? styles.setGreen : [],
+              ownersComment ? styles.ownCommentThumbs : [],
+            ]}
+            source={thumbUpIcon}
+          />
+        </TouchableOpacity>
+      );
     }
     return {
       resolveButton,

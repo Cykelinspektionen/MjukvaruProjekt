@@ -5,7 +5,6 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import RadioGroup from 'react-native-radio-buttons-group';
 import { ButtonGroup } from 'react-native-elements';
 import { Dropdown } from 'react-native-material-dropdown';
 import { ImagePicker, ImageManipulator, Location } from 'expo';
@@ -188,39 +187,26 @@ class AddBike extends React.Component {
     }
   }
 
-  setServerResponse(response, radioCallback, colorCallback) {
+  setServerResponse(response) {
     // console.log(response); // <- Used for checking the structure of the ML-response, please leave it until it's been testsed on live! :)
-    const { radios } = this.state;
-
+    const { bikeData } = this.state;
     // For this to work the response from the server CAN'T have any nestled attrbiutes!
     Object.keys(response).forEach((key) => {
       if (key === 'lamp') {
         // Has to be left in until back-end changes the key "lamp" to "light"!
-        key = 'light';
+        bikeData.keywords.light = response[key] ? 1 : 0;
       }
-      let data = radios[key];
       if (key === 'frame') {
-        let frameKey = response[key];
+        const frameKey = response[key];
         switch (frameKey) {
           case 'sport':
-            data = radios[frameKey];
-            data[0].selected = true;
-            data[1].selected = false;
-            radioCallback(data, frameKey, true, true);
+            bikeData.keywords.sport = 1;
             break;
           case 'male':
-            frameKey = 'frame_type';
-            data = radios[frameKey];
-            data[0].selected = true;
-            data[1].selected = false;
-            radioCallback(data, frameKey, true, 'MALE');
+            bikeData.keywords.frame_type = 'MALE';
             break;
           case 'female':
-            frameKey = 'frame_type';
-            data = radios[frameKey];
-            data[0].selected = false;
-            data[1].selected = true;
-            radioCallback(data, frameKey, true, 'FEMALE');
+            bikeData.keywords.frame_type = 'FEMALE';
             break;
           default:
             console.log(`Unknown key: ${frameKey}`);
@@ -230,18 +216,13 @@ class AddBike extends React.Component {
         if (!response[key]) {
           console.log('There was NOT a bike in the picture!');
         }
-      } else if (!response[key]) {
-        data[0].selected = false;
-        data[1].selected = true;
-        radioCallback(data, key, true, false);
-      } else if (response[key] && key !== 'color') {
-        data[0].selected = true;
-        data[1].selected = false;
-        radioCallback(data, key, true, true);
       } else if (key === 'color') {
-        colorCallback('color', response[key]);
+        bikeData.color = response[key];
+      } else {
+        bikeData.keywords[key] = response[key] ? 1 : 0;
       }
     });
+    this.setState({ bikeData });
   }
 
   startCameraRoll = () => {
@@ -306,20 +287,6 @@ class AddBike extends React.Component {
       bikeData[attr] = value;
     }
     this.setState({ bikeData });
-  }
-
-  radioUpdater = (change, name, head, response) => {
-    console.log(change, name, head, response);
-    /*
-    const { radios } = this.state;
-    const selectedButton = radios[name].find(e => e.selected === true);
-    if (response != null) {
-      this.setBikeData(name, response, head);
-    } else {
-      this.setBikeData(name, selectedButton.value, head);
-    }
-    radios[name] = change;
-    this.setState({ radios }); */
   }
 
   compressUri = async (imgUri) => {
@@ -425,7 +392,7 @@ class AddBike extends React.Component {
               onPress={() => {
                 this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
                   imgUploadInit(compressedUri.uri, bikeData.type, authState.jwt[0])
-                    .then(response => this.setServerResponse(response, this.radioUpdater, this.setBikeData));
+                    .then(response => this.setServerResponse(response));
                 });
               }
             }

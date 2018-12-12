@@ -104,7 +104,7 @@ const serverApi = {
       .then(handleErrors)
       .then(response => response.json())
       .catch((error) => {
-        console.log('POST:', error);
+        console.log('GET:', error);
       });
   },
 };

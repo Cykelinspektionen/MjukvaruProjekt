@@ -92,9 +92,6 @@ const styles = StyleSheet.create({
   },
   addPic: {
     justifyContent: 'flex-end',
-    alignSelf: 'flex-end',
-    bottom: -70,
-    right: 20,
   },
 });
 
@@ -211,16 +208,16 @@ class Profile extends React.Component {
       const { email } = profileState;
       return (
         <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
+        <View style={[styles.container, styles.background]}>
+          <View style={styles.rowContainer}>
 
-          <View style={[styles.container, styles.background]}>
-            <View style={styles.rowContainer}>
-              <Image source={profileState.avatarUri.length ? { uri: profileState.avatarUri } : profilePic} style={styles.profile} resizeMode="contain" />
-              <TouchableHighlight
-                style={styles.showTypeRight}
-                onPress={this.startCameraRoll}
-              >
-                <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" style={styles.addPic} />
-              </TouchableHighlight>
+            <Image source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} style={styles.profile} resizeMode="contain" />
+            <TouchableOpacity
+              style={styles.addPic}
+              onPress={this.startCameraRoll}
+            >
+              <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
+            </TouchableOpacity>
 
               <View style={styles.columnContainer}>
                 <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
@@ -301,7 +298,10 @@ Profile.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    avatarUri: PropTypes.string.isRequired,
+    avatarUri: PropTypes.shape({
+      img: PropTypes.string.isRequired,
+      thumbnail: PropTypes.string.isRequired,
+    }).isRequired,
     game_score: PropTypes.shape({
       bike_score: PropTypes.number.isRequired,
       bikes_lost: PropTypes.number.isRequired,

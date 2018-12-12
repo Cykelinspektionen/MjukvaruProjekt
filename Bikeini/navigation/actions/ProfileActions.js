@@ -1,8 +1,8 @@
 import {
   PROFILE_IMG_URI,
-  UPLOAD_IMG_BEGIN,
-  UPLOAD_IMG_FAILURE,
-  UPLOAD_IMG_SUCCESS,
+  UPLOAD_PROFILE_IMG_BEGIN,
+  UPLOAD_PROFILE_IMG_FAILURE,
+  UPLOAD_PROFILE_IMG_SUCCESS,
   SET_LOCATION,
   SET_PROFILE_STATE,
   LOAD_PROFILE_BEGIN,
@@ -22,20 +22,20 @@ export const saveImageToState = uri => (
 
 export const imgUploadBegin = () => (
   {
-    type: UPLOAD_IMG_BEGIN,
+    type: UPLOAD_PROFILE_IMG_BEGIN,
   }
 );
 
 export const imgUploadFailure = error => (
   {
-    type: UPLOAD_IMG_FAILURE,
+    type: UPLOAD_PROFILE_IMG_FAILURE,
     payload: error,
   }
 );
 
 export const imgUploadSuccess = avatarUri => (
   {
-    type: UPLOAD_IMG_SUCCESS,
+    type: UPLOAD_PROFILE_IMG_SUCCESS,
     payload: avatarUri,
   }
 );

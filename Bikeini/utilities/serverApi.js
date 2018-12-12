@@ -6,7 +6,7 @@ import { Alert } from 'react-native';
 
 // Handle HTTP errors since fetch won't.
 function handleErrors(response) {
-  // console.log(response);
+  console.log(response);
   if (!response.ok) {
     throw Error(response.status);
   }
@@ -104,7 +104,7 @@ const serverApi = {
       .then(handleErrors)
       .then(response => response.json())
       .catch((error) => {
-        console.log('POST:', error);
+        console.log('GET:', error);
       });
   },
 };

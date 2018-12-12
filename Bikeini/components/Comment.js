@@ -83,6 +83,9 @@ const styles = StyleSheet.create({
   setRed: {
     backgroundColor: 'red',
   },
+  ownCommentThumbs: {
+    opacity: 0.2,
+  },
 });
 
 export default class Comment extends React.Component {
@@ -252,6 +255,20 @@ export default class Comment extends React.Component {
           </TouchableOpacity>
         );
       }
+    }
+    if (ownersComment) {
+      thumbUpButton = (
+        <Image
+          style={[styles.thumbDownTag, styles.ownCommentThumbs]}
+          source={thumbDownIcon}
+        />
+      );
+      thumbDwButton = (
+        <Image
+          style={[styles.thumbUpTag, styles.ownCommentThumbs]}
+          source={thumbUpIcon}
+        />
+      );
     }
     return {
       resolveButton,

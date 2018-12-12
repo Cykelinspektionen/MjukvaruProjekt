@@ -3,6 +3,7 @@ import {
   StyleSheet, Text, View, Image, TouchableOpacity, Alert,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import serverApi from '../utilities/serverApi';
 
 const commentIcon = require('../assets/images/comment.png');
 const locationIcon = require('../assets/images/location.png');
@@ -56,14 +57,40 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     alignContent: 'flex-end',
   },
+  commentsNumber: {
+    zIndex: 2,
+  },
 });
 
 export default class Item extends React.PureComponent {
+  constructor() {
+    super();
+
+    this.state = {
+      comments: 0,
+    };
+  }
+
+ /* getNbrOfComments = () => {
+    const { comments } = this.state;
+
+    const formBody = this.jsonToFormData(bikeInformation);
+
+    serverApi.get('bikes/getcomments', jwt[0])
+      .then((responseJson) => {
+        if (responseJson.length > 0) {
+          responseJson.reverse();
+          this.setState({ comments });
+        }
+      }).catch(error => console.log(error));
+  } */
+
   render() {
     const {
       title, brand, imageUrl, bikeData, navigation, refresh,
     } = this.props;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
+   // const nbrOfComments = this.getNbrOfComments();
     return (
       <View style={styles.item}>
         <Image style={styles.image} source={imgSource} />
@@ -84,6 +111,10 @@ export default class Item extends React.PureComponent {
             }}
           >
             <Image style={styles.commentsTag} source={commentIcon} />
+            <Text style={styles.commentsNumber}>
+              {/* {nbrOfComments} */}
+              5
+            </Text>
 
           </TouchableOpacity>
           <TouchableOpacity

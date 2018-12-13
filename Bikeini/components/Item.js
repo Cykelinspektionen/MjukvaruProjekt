@@ -75,7 +75,7 @@ export default class Item extends React.PureComponent {
 
   render() {
     const {
-      title, brand, imageUrl, bikeData, navigation, refresh,location, commentsLength,
+      title, brand, imageUrl, bikeData, navigation, refresh, location, commentsLength,
     } = this.props;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
     let locationButton = null;

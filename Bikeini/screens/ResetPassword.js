@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, TextInput, TouchableHighlight, Image,
+  StyleSheet, Text, View, TextInput, TouchableHighlight, Image, KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -107,7 +107,7 @@ class ResetPassword extends React.Component {
       );
     }
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
         <Image style={styles.logo} source={logo} />
         <View style={styles.logoTextCont}>
           <Text style={styles.logoText}> Cykelinspektionen </Text>
@@ -130,7 +130,8 @@ class ResetPassword extends React.Component {
         >
           <Text style={styles.loginText}>Request new password</Text>
         </TouchableHighlight>
-      </View>
+      </KeyboardAvoidingView>
+
     );
   }
 }

@@ -239,6 +239,8 @@ class BikeInformation extends React.Component {
       const {
         author,
       } = item;
+      const avatarUri = author.avatar_url ? author.avatar_url.thumbnail : null;
+      console.log(item);
       const { _id } = item;
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
@@ -278,7 +280,7 @@ class BikeInformation extends React.Component {
             bikeType={bikeData.type}
             showResolveBike={bikeData.showResolveBike}
             bikeId={bikeId}
-            avatarUri={author.avatar_url || ''}
+            avatarUri={avatarUri || ''}
             myId={profileState.id}
             username={author.username}
             jwt={jwt}
@@ -308,6 +310,7 @@ class BikeInformation extends React.Component {
           brand={item.brand || ''}
           imageUrl={item.image_url.thumbnail || ''}
           bikeData={bikeData}
+          commentsLength={bikeData.comments.length}
           navigation={navigation}
           refresh={refresh}
         />

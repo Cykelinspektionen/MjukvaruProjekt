@@ -133,7 +133,9 @@ class Profile extends React.Component {
 
     renderItem = ({ item }) => {
       if (!item.active) return null;
-      const { navigation, profileState,setMarker, setShowMarker, } = this.props;
+      const {
+        navigation, profileState, setMarker, setShowMarker,
+      } = this.props;
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
       bikeData.showResolveBike = profileState.username === bikeData.submitter.username;
@@ -147,8 +149,8 @@ class Profile extends React.Component {
           }}
         >
           <Item
-                    actions={{ setShowMarker, setMarker }}
-                    location={item.location || { lat: 0, long: 0 }}
+            actions={{ setShowMarker, setMarker }}
+            location={item.location || { lat: 0, long: 0 }}
             title={item.title || ''}
             brand={item.brand || ''}
             imageUrl={item.image_url.thumbnail || ''}
@@ -208,16 +210,16 @@ class Profile extends React.Component {
       const { email } = profileState;
       return (
         <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
-        <View style={[styles.container, styles.background]}>
-          <View style={styles.rowContainer}>
+          <View style={[styles.container, styles.background]}>
+            <View style={styles.rowContainer}>
 
-            <Image source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} style={styles.profile} resizeMode="contain" />
-            <TouchableOpacity
-              style={styles.addPic}
-              onPress={this.startCameraRoll}
-            >
-              <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
-            </TouchableOpacity>
+              <Image source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} style={styles.profile} resizeMode="contain" />
+              <TouchableOpacity
+                style={styles.addPic}
+                onPress={this.startCameraRoll}
+              >
+                <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
+              </TouchableOpacity>
 
               <View style={styles.columnContainer}>
                 <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>

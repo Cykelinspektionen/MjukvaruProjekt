@@ -19,6 +19,7 @@ const AppNavigator = createStackNavigator({
     screen: Location,
     navigationOptions: {
       headerLeft: null,
+      gesturesEnabled: false,
     },
   },
   BikeInformation: { screen: BikeInformation },

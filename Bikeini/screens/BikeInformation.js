@@ -90,6 +90,15 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     paddingRight: 1,
   },
+  replyInputContainer: {
+    alignSelf: 'flex-end',
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    height: 40,
+    width: '95%',
+    borderWidth: 1,
+    paddingRight: 2,
+  },
   send: {
     alignSelf: 'center',
   },
@@ -116,6 +125,15 @@ const styles = StyleSheet.create({
     marginRight: '5%',
   },
   buttonCorner: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 1,
+    height: '100%',
+    borderWidth: 0.5,
+    paddingLeft: 5,
+    paddingRight: 5,
+  },
+  buttonStart: {
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 1,
@@ -240,7 +258,6 @@ class BikeInformation extends React.Component {
         author,
       } = item;
       const avatarUri = author.avatar_url ? author.avatar_url.thumbnail : null;
-      console.log(item);
       const { _id } = item;
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
@@ -288,6 +305,7 @@ class BikeInformation extends React.Component {
             refresh={refresh}
             refreshComments={this.onRefresh}
             ownersComment={ownersComment}
+            renderCommentField={this.renderCommentField}
           />
         </TouchableOpacity>
       );
@@ -370,7 +388,7 @@ class BikeInformation extends React.Component {
     return formBody;
   }
 
-  sendComment = () => {
+  sendComment = (reply, comment) => {
     const { text, bikeData } = this.state;
     const { _id } = bikeData;
     const {
@@ -382,30 +400,48 @@ class BikeInformation extends React.Component {
     const commentInformation = {
       username,
       bikeId: _id,
-      body: text,
+      body: reply ? comment.state.replyText : text,
       lat: mapState.userMarker.userMarkerSet ? mapState.userMarker.latitude : null,
       long: mapState.userMarker.userMarkerSet ? mapState.userMarker.longitude : null,
     };
-    if (text === '') {
+    if (reply) commentInformation.replyCommentId = comment.props.commentId;
+    if ((!reply && text === '') || (reply && comment.state.replyText === '')) {
       Alert.alert('You must add some text :0 !');
       return;
     }
     const formBody = this.jsonToFormData(commentInformation);
     serverApi.post('bikes/addcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then(() => {
-        this.setState({ text: '' }, () => {
-          cleanMapState();
-          this.fetchComments();
-        });
+        if (reply) {
+          comment.setState({ replyText: '', answer: false }, () => {
+            cleanMapState();
+            this.fetchComments();
+          });
+        } else {
+          this.setState({ text: '' }, () => {
+            cleanMapState();
+            this.fetchComments();
+          });
+        }
       }).catch(error => console.log(error));
   }
 
-  renderCommentField = () => {
+  renderCommentField = (reply, comment) => {
     const { text, bikeData } = this.state;
     const { navigation } = this.props;
     if (bikeData.showComments) {
+      const cancelButton = reply ? (
+        <View style={[styles.send, styles.buttonStart, styles.greenButton]}>
+          <TouchableOpacity
+            onPress={() => comment.setState({ answer: false })}
+          >
+            <Text style={styles.sendText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null;
       return (
-        <View style={styles.commentInputContainer}>
+        <View style={reply ? styles.replyInputContainer : styles.commentInputContainer}>
+          {cancelButton}
           <TouchableOpacity
             style={[styles.locationTag, styles.send]}
             onPress={() => navigation.navigate('PinMap')}
@@ -417,14 +453,20 @@ class BikeInformation extends React.Component {
           </TouchableOpacity>
           <TextInput
             style={styles.commentInput}
-            onChangeText={newText => this.setState({ text: newText })}
-            value={text}
+            onChangeText={(newText) => {
+              if (reply) {
+                comment.setState({ replyText: newText });
+              } else {
+                this.setState({ text: newText });
+              }
+            }}
+            value={reply ? comment.state.replyText : text}
             placeholder="Add comment..."
           />
           <View style={[styles.send, styles.buttonCorner, styles.greenButton]}>
             <TouchableOpacity
               onPress={() => {
-                this.sendComment();
+                this.sendComment(reply, comment);
               }}
             >
               <Text style={styles.sendText}>Send</Text>
@@ -552,7 +594,7 @@ class BikeInformation extends React.Component {
     const neighborhood = location ? location.neighborhood : '';
 
     const list = this.renderList();
-    const commentField = this.renderCommentField();
+    const commentField = this.renderCommentField(false);
     const foundButton = this.renderFoundButton();
     const imgSource = bikeData.image_url ? { uri: bikeData.image_url.img } : stockBicycle;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, TextInput, TouchableHighlight, Image,
+  StyleSheet, Text, View, TextInput, TouchableHighlight, Image, KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -130,7 +130,7 @@ class Login extends React.Component {
     }
 
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
         <Image style={styles.logo} source={logo} />
         <View style={styles.logoTextCont}>
           <Text style={styles.logoText}> Cykelinspektionen </Text>
@@ -170,7 +170,7 @@ class Login extends React.Component {
         <TouchableHighlight style={[styles.buttonContainer, styles.greenButton]} onPress={() => navigation.navigate('ResetPassword')}>
           <Text style={styles.greenButtonText}>Reset password</Text>
         </TouchableHighlight>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }

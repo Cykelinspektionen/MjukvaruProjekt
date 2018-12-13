@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, TouchableHighlight, TextInput, Alert, ScrollView, TouchableOpacity,
+  StyleSheet, Text, View, Image, TouchableHighlight, TextInput, Alert, ScrollView, TouchableOpacity, KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -349,235 +349,237 @@ class AddBike extends React.Component {
     }
     return (
       <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
-        <ScrollView style={styles.background}>
-          <View style={styles.container}>
-            <Text style={styles.headerText}>
+        <KeyboardAvoidingView behavior="position" enabled>
+          <ScrollView style={styles.background}>
+            <View style={styles.container}>
+              <Text style={styles.headerText}>
           Add a picture of your bike
-            </Text>
-            <View style={styles.rowContainer}>
-              <View>
-                {!addBikeState.uriSet && <Image source={defaultBike} /> }
-                {addBikeState.uriSet && <Image source={{ uri: addBikeState.imgToUploadUri }} style={styles.thumbnail} />}
-              </View>
-              <View>
-                <View style={styles.rowContainer}>
-                  <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCameraRoll}>
-                    <Text style={styles.greenButtonText}>ADD FROM ALBUM</Text>
-                  </TouchableHighlight>
-                  <Image
-                    style={styles.icons}
-                    source={cameraImg}
-                  />
+              </Text>
+              <View style={styles.rowContainer}>
+                <View>
+                  {!addBikeState.uriSet && <Image source={defaultBike} /> }
+                  {addBikeState.uriSet && <Image source={{ uri: addBikeState.imgToUploadUri }} style={styles.thumbnail} />}
                 </View>
-                <View style={styles.rowContainer}>
-                  <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCamera}>
-                    <Text style={styles.greenButtonText}>TAKE A PHOTO</Text>
-                  </TouchableHighlight>
-                  <Image
-                    style={styles.icons}
-                    source={albumImg}
-                  />
+                <View>
+                  <View style={styles.rowContainer}>
+                    <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCameraRoll}>
+                      <Text style={styles.greenButtonText}>ADD FROM ALBUM</Text>
+                    </TouchableHighlight>
+                    <Image
+                      style={styles.icons}
+                      source={cameraImg}
+                    />
+                  </View>
+                  <View style={styles.rowContainer}>
+                    <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCamera}>
+                      <Text style={styles.greenButtonText}>TAKE A PHOTO</Text>
+                    </TouchableHighlight>
+                    <Image
+                      style={styles.icons}
+                      source={albumImg}
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
-            <TouchableHighlight
-              style={[
-                styles.smallButtonContainer,
-                styles.actionButton,
-                styles.greenButton,
-                styles.uploadPhotoButton,
-                !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
-              ]}
-              disabled={addBikeState.uploadDisabled}
-              onPress={() => {
-                this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
-                  imgUploadInit(compressedUri.uri, bikeData.type, authState.jwt[0])
-                    .then(response => this.setServerResponse(response));
-                });
-              }
-            }
-            >
-              <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
-            </TouchableHighlight>
-            <Text style={styles.headerText}>
-              Last known loaction of your lost bike:
-            </Text>
-            <View style={styles.locationFrame}>
-              <View style={styles.adressFrame}>
-                <Text>
-                City:
-                  {' '}
-                  {mapState.city}
-                  {' '}
-                </Text>
-                <Text>
-                Street:
-                  {' '}
-                  {mapState.name}
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={styles.locationIconTouch}
-                onPress={() => navigation.navigate('PinMap')}
-              >
-                <Image
-                  style={styles.locationTag}
-                  source={locationIcon}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.radio}>
-              <ButtonGroup
-                selectedButtonStyle={{ backgroundColor: '#44ccad' }}
-                onPress={(data) => { this.setBikeData('type', data ? 'FOUND' : 'STOLEN'); }}
-                selectedIndex={bikeData.type === 'STOLEN' ? 0 : 1}
-                buttons={['Stolen', 'Found']}
-                containerStyle={{ height: 30 }}
-              />
-
-              <ButtonGroup
-                selectedButtonStyle={{ backgroundColor: '#44ccad' }}
-                onPress={(data) => { this.setBikeData('frame_type', data ? 'FEMALE' : 'MALE', true); }}
-                selectedIndex={bikeData.keywords.frame_type === 'MALE' ? 0 : 1}
-                buttons={['Male', 'Female']}
-                containerStyle={{ height: 30 }}
-              />
-              <ButtonGroup
-                selectedButtonStyle={{ backgroundColor: '#44ccad' }}
-                onPress={(data) => { this.setBikeData('child', data, true); }}
-                selectedIndex={bikeData.keywords.child}
-                buttons={['Adult', 'Child']}
-                containerStyle={{ height: 30 }}
-              />
-              <ButtonGroup
-                selectedButtonStyle={{ backgroundColor: '#44ccad' }}
-                onPress={(data) => { this.setBikeData('sport', data, true); }}
-                selectedIndex={bikeData.keywords.sport}
-                buttons={['Casual', 'Sport']}
-                containerStyle={{ height: 30 }}
-              />
-              <ButtonGroup
-                selectedButtonStyle={{ backgroundColor: '#44ccad' }}
-                onPress={(data) => { this.setBikeData('tandem', data, true); }}
-                selectedIndex={bikeData.keywords.tandem}
-                buttons={['Single', 'Tandem']}
-                containerStyle={{ height: 30 }}
-              />
-              <ButtonGroup
-                selectedButtonStyle={{ backgroundColor: '#44ccad' }}
-                onPress={(data) => { this.setBikeData('rack', data, true); }}
-                selectedIndex={bikeData.keywords.rack}
-                buttons={['No Rack', 'Rack']}
-                containerStyle={{ height: 30 }}
-              />
-              <ButtonGroup
-                selectedButtonStyle={{ backgroundColor: '#44ccad' }}
-                onPress={(data) => { this.setBikeData('basket', data, true); }}
-                selectedIndex={bikeData.keywords.basket}
-                buttons={['No Basket', 'Basket']}
-                containerStyle={{ height: 30 }}
-              />
-              <ButtonGroup
-                selectedButtonStyle={{ backgroundColor: '#44ccad' }}
-                onPress={(data) => { this.setBikeData('mudguard', data, true); }}
-                selectedIndex={bikeData.keywords.mudguard}
-                buttons={['No Mudguard', 'Mudguard']}
-                containerStyle={{ height: 30 }}
-              />
-              <ButtonGroup
-                selectedButtonStyle={{ backgroundColor: '#44ccad' }}
-                onPress={(data) => { this.setBikeData('chain_protection', data, true); }}
-                selectedIndex={bikeData.keywords.chain_protection}
-                buttons={['No Chain Protector', 'Chain Protector']}
-                containerStyle={{ height: 30 }}
-              />
-              <ButtonGroup
-                selectedButtonStyle={{ backgroundColor: '#44ccad' }}
-                onPress={(data) => { this.setBikeData('net', data, true); }}
-                selectedIndex={bikeData.keywords.net}
-                buttons={['No Net', 'Net']}
-                containerStyle={{ height: 30 }}
-              />
-              <ButtonGroup
-                selectedButtonStyle={{ backgroundColor: '#44ccad' }}
-                onPress={(data) => { this.setBikeData('winter_tires', data, true); }}
-                selectedIndex={bikeData.keywords.winter_tires}
-                buttons={['Summer Tires', 'Winter Tires']}
-                containerStyle={{ height: 30 }}
-              />
-              <ButtonGroup
-                selectedButtonStyle={{ backgroundColor: '#44ccad' }}
-                onPress={(data) => { this.setBikeData('light', data, true); }}
-                selectedIndex={bikeData.keywords.light}
-                buttons={['No Light', 'Light']}
-                containerStyle={{ height: 30 }}
-              />
-            </View>
-            <View style={styles.dropdowns}>
-              <Dropdown
-                value={color}
-                label="Color"
-                data={Color}
-                onChangeText={value => this.setBikeData('color', value)}
-              />
-            </View>
-            <TextInput
-              style={styles.inputs}
-              placeholder="Frame number"
-              underlineColorAndroid="transparent"
-              value={bikeData.frameNumber}
-              onChangeText={text => this.setBikeData('frameNumber', text)}
-            />
-            <TextInput
-              style={styles.inputs}
-              placeholder="Anti Theft Code"
-              underlineColorAndroid="transparent"
-              value={bikeData.antiTheftCode}
-              onChangeText={text => this.setBikeData('antiTheftCode', text)}
-            />
-            <TextInput
-              style={styles.inputs}
-              placeholder="Brand"
-              underlineColorAndroid="transparent"
-              value={bikeData.brand}
-              onChangeText={text => this.setBikeData('brand', text)}
-            />
-            <TextInput
-              style={styles.inputs}
-              placeholder="Model"
-              underlineColorAndroid="transparent"
-              value={bikeData.model}
-              onChangeText={text => this.setBikeData('model', text)}
-            />
-            <TextInput
-              style={styles.inputs}
-              placeholder="Title"
-              underlineColorAndroid="transparent"
-              value={bikeData.title}
-              onChangeText={text => this.setBikeData('title', text)}
-            />
-            <TextInput
-              style={styles.inputs}
-              placeholder="Description"
-              underlineColorAndroid="transparent"
-              value={bikeData.description}
-              onChangeText={text => this.setBikeData('description', text)}
-            />
-            <TouchableHighlight
-              style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.submitButton]}
-              onPress={() => {
-                if (!addBikeState.uriSet) {
-                  Alert.alert('Picture is mandatory!');
-                  return;
+              <TouchableHighlight
+                style={[
+                  styles.smallButtonContainer,
+                  styles.actionButton,
+                  styles.greenButton,
+                  styles.uploadPhotoButton,
+                  !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
+                ]}
+                disabled={addBikeState.uploadDisabled}
+                onPress={() => {
+                  this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
+                    imgUploadInit(compressedUri.uri, bikeData.type, authState.jwt[0])
+                      .then(response => this.setServerResponse(response));
+                  });
                 }
-                this.handleSubmitt();
-              }
             }
-            >
-              <Text style={styles.greenButtonText}>SUBMIT</Text>
-            </TouchableHighlight>
-          </View>
-        </ScrollView>
+              >
+                <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
+              </TouchableHighlight>
+              <Text style={styles.headerText}>
+              Last known loaction of your lost bike:
+              </Text>
+              <View style={styles.locationFrame}>
+                <View style={styles.adressFrame}>
+                  <Text>
+                City:
+                    {' '}
+                    {mapState.city}
+                    {' '}
+                  </Text>
+                  <Text>
+                Street:
+                    {' '}
+                    {mapState.name}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.locationIconTouch}
+                  onPress={() => navigation.navigate('PinMap')}
+                >
+                  <Image
+                    style={styles.locationTag}
+                    source={locationIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.radio}>
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('type', data ? 'FOUND' : 'STOLEN'); }}
+                  selectedIndex={bikeData.type === 'STOLEN' ? 0 : 1}
+                  buttons={['Stolen', 'Found']}
+                  containerStyle={{ height: 30 }}
+                />
+
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('frame_type', data ? 'FEMALE' : 'MALE', true); }}
+                  selectedIndex={bikeData.keywords.frame_type === 'MALE' ? 0 : 1}
+                  buttons={['Male', 'Female']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('child', data, true); }}
+                  selectedIndex={bikeData.keywords.child}
+                  buttons={['Adult', 'Child']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('sport', data, true); }}
+                  selectedIndex={bikeData.keywords.sport}
+                  buttons={['Casual', 'Sport']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('tandem', data, true); }}
+                  selectedIndex={bikeData.keywords.tandem}
+                  buttons={['Single', 'Tandem']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('rack', data, true); }}
+                  selectedIndex={bikeData.keywords.rack}
+                  buttons={['No Rack', 'Rack']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('basket', data, true); }}
+                  selectedIndex={bikeData.keywords.basket}
+                  buttons={['No Basket', 'Basket']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('mudguard', data, true); }}
+                  selectedIndex={bikeData.keywords.mudguard}
+                  buttons={['No Mudguard', 'Mudguard']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('chain_protection', data, true); }}
+                  selectedIndex={bikeData.keywords.chain_protection}
+                  buttons={['No Chain Protector', 'Chain Protector']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('net', data, true); }}
+                  selectedIndex={bikeData.keywords.net}
+                  buttons={['No Net', 'Net']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('winter_tires', data, true); }}
+                  selectedIndex={bikeData.keywords.winter_tires}
+                  buttons={['Summer Tires', 'Winter Tires']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('light', data, true); }}
+                  selectedIndex={bikeData.keywords.light}
+                  buttons={['No Light', 'Light']}
+                  containerStyle={{ height: 30 }}
+                />
+              </View>
+              <View style={styles.dropdowns}>
+                <Dropdown
+                  value={color}
+                  label="Color"
+                  data={Color}
+                  onChangeText={value => this.setBikeData('color', value)}
+                />
+              </View>
+              <TextInput
+                style={styles.inputs}
+                placeholder="Frame number"
+                underlineColorAndroid="transparent"
+                value={bikeData.frameNumber}
+                onChangeText={text => this.setBikeData('frameNumber', text)}
+              />
+              <TextInput
+                style={styles.inputs}
+                placeholder="Anti Theft Code"
+                underlineColorAndroid="transparent"
+                value={bikeData.antiTheftCode}
+                onChangeText={text => this.setBikeData('antiTheftCode', text)}
+              />
+              <TextInput
+                style={styles.inputs}
+                placeholder="Brand"
+                underlineColorAndroid="transparent"
+                value={bikeData.brand}
+                onChangeText={text => this.setBikeData('brand', text)}
+              />
+              <TextInput
+                style={styles.inputs}
+                placeholder="Model"
+                underlineColorAndroid="transparent"
+                value={bikeData.model}
+                onChangeText={text => this.setBikeData('model', text)}
+              />
+              <TextInput
+                style={styles.inputs}
+                placeholder="Title"
+                underlineColorAndroid="transparent"
+                value={bikeData.title}
+                onChangeText={text => this.setBikeData('title', text)}
+              />
+              <TextInput
+                style={styles.inputs}
+                placeholder="Description"
+                underlineColorAndroid="transparent"
+                value={bikeData.description}
+                onChangeText={text => this.setBikeData('description', text)}
+              />
+              <TouchableHighlight
+                style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.submitButton]}
+                onPress={() => {
+                  if (!addBikeState.uriSet) {
+                    Alert.alert('Picture is mandatory!');
+                    return;
+                  }
+                  this.handleSubmitt();
+                }
+            }
+              >
+                <Text style={styles.greenButtonText}>SUBMIT</Text>
+              </TouchableHighlight>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </AndroidBackHandler>
     );
   }

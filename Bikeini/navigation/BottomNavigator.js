@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../assets/TabBarIcon';
@@ -9,6 +9,8 @@ import Profile from '../screens/Profile';
 import Gamification from '../screens/Gamification';
 
 const BrowserStack = createStackNavigator({ Browser });
+
+//https://github.com/react-navigation/react-navigation/issues/766
 
 BrowserStack.navigationOptions = {
   tabBarLabel: 'Ads',
@@ -61,10 +63,13 @@ ProfileStack.navigationOptions = {
     activeTintColor: '#44ccad',
   },
   tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
-    />
+    <View>
+      <TabBarIcon
+        focused={focused}
+        name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
+      />
+      <View style={{position: 'absolute', right: 1, top: 1, backgroundColor: 'red', width: 7, height: 7, borderRadius: 9}}></View>
+    </View>
   ),
 };
 

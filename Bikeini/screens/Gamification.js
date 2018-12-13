@@ -229,12 +229,12 @@ p
                   refreshing={isFetching}
                 />
           )}
-          >
-            <View style={styles.container} />
-            <View style={styles.rowContainer}>
-              <Image style={styles.profile} source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} />
-              <View style={styles.columnContainer}>
-                <Text style={styles.UserInfo}>
+            >
+              <View style={styles.container} />
+              <View style={styles.rowContainer}>
+                <Image style={styles.profile} source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} />
+                <View style={styles.columnContainer}>
+                  <Text style={styles.UserInfo}>
                 Found Bikes:
                     {' '}
                     {game_score.bike_score}

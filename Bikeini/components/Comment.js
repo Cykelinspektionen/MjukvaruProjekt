@@ -103,10 +103,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   answer: {
+    flexDirection: 'row',
     position: 'absolute',
     alignSelf: 'flex-end',
     left: '25%',
     bottom: 4,
+  },
+  answerWithReplyField: {
+    alignSelf: 'flex-start',
+    left: '25%',
   },
   answerText: {
     fontWeight: '700',
@@ -120,6 +125,9 @@ const styles = StyleSheet.create({
   ownCommentThumbs: {
     opacity: 0.2,
   },
+  separate: {
+    marginRight: 2,
+  },
 });
 
 export default class Comment extends React.Component {
@@ -130,6 +138,7 @@ export default class Comment extends React.Component {
       thumbUp: false,
       answer: false,
       replyText: '', // not unsused...just not used here => bikeinformation
+      showReplys: false,
     };
   }
 
@@ -322,21 +331,27 @@ export default class Comment extends React.Component {
     );
   }
 
-  renderAnswerField = () => {
-    const { answer } = this.state;
-    const { renderCommentField } = this.props;
-    if (answer) {
-      return (renderCommentField(true, this));
-    }
+  renderAnsShowReply = () => {
+    const { answer, showReplys } = this.state;
+    const { replyList } = this.props;
     return (
       <View style={styles.answer}>
-        <TouchableOpacity
-          onPress={() => this.setState({ answer: true })}
-        >
-          <Text style={styles.answerText}>Answer</Text>
-        </TouchableOpacity>
-      </View>
-    );
+        {!answer ? (
+          <TouchableOpacity
+            style={styles.separate}
+            onPress={() => this.setState({ answer: true })}
+          >
+            <Text style={styles.answerText}>Answer</Text>
+          </TouchableOpacity>) : null}
+        {replyList.length ? (
+          <TouchableOpacity
+            style={styles.separate}
+            onPress={() => this.setState({ showReplys: !showReplys })}
+          >
+            <Text style={styles.answerText}>Show replys</Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>);
   }
 
   keyExtractor = (item) => {
@@ -370,10 +385,9 @@ export default class Comment extends React.Component {
 
   render() {
     const {
-      body, username, date, avatarUri, isReplyToCommentId,
+      body, username, date, avatarUri, isReplyToCommentId, renderCommentField,
     } = this.props;
-    console.log(isReplyToCommentId);
-    const { answer } = this.state;
+    const { answer, showReplys } = this.state;
     const dateRaw = date.split('-');
     let day = `${dateRaw[2]}`;
     day = day.split('T');
@@ -383,7 +397,7 @@ export default class Comment extends React.Component {
     } = this.renderButtonSet();
 
     const thumbTotal = this.getThumbTotal();
-    const answerField = this.renderAnswerField();
+    const answerField = this.renderAnsShowReply();
     const replys = this.renderReplys();
     return (
       <View style={isReplyToCommentId ? styles.commentWrapReply : styles.commentWrap}>
@@ -396,15 +410,15 @@ export default class Comment extends React.Component {
             </Text>
             <Text style={styles.description}>{body}</Text>
           </View>
-          {answer || isReplyToCommentId ? null : answerField}
+          {isReplyToCommentId ? null : answerField}
           {positionButton}
           {thumbDwButton}
           {thumbTotal}
           {thumbUpButton}
           {resolveButton}
         </View>
-        {answer ? answerField : null}
-        {replys}
+        {answer ? renderCommentField(true, this) : null}
+        {showReplys ? replys : null}
       </View>
     );
   }

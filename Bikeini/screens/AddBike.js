@@ -16,7 +16,7 @@ import * as addBikeActions from '../navigation/actions/AddBikeActions';
 
 const locationIcon = require('../assets/images/location.png');
 const defaultBike = require('../assets/images/robot-dev.png');
-const cameraImg = require('../assets/images/albumImage.png');
+const cameraImg = require('../assets/images/album.png');
 const albumImg = require('../assets/images/camera.png');
 
 const styles = StyleSheet.create({

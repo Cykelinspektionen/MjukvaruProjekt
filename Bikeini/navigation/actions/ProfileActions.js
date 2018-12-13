@@ -9,6 +9,7 @@ import {
   LOAD_PROFILE_SUCCESS,
   LOAD_PROFILE_FAILURE,
   UNLOAD_PROFILE,
+  RESET_PROFILE_NOTIFICATION,
 } from './types';
 import serverApi from '../../utilities/serverApi';
 import { deleteJWTInit } from './JwtActions';
@@ -79,6 +80,12 @@ export const unloadProfile = () => (
     type: UNLOAD_PROFILE,
   }
 );
+
+export const resetNotifiction = () => (
+  {
+    type: RESET_PROFILE_NOTIFICATION,
+  }
+)
 
 export function uploadProfilePicToServer(imgUri, username, jwt) {
   const file = {

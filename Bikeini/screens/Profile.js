@@ -114,6 +114,14 @@ class Profile extends React.Component {
       this.getItemFromServer();
     }
 
+    componentDidUpdate() {
+      const { profileState, resetNotifiction } = this.props;
+      const { profileNotification } = profileState;
+      if(profileNotification) {
+        resetNotifiction();
+      }
+    }
+
     getItemFromServer = () => {
       const { authState } = this.props;
       const { jwt } = authState;
@@ -208,6 +216,7 @@ class Profile extends React.Component {
       const { username } = profileState;
       const { location } = profileState;
       const { email } = profileState;
+
       return (
         <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
           <View style={[styles.container, styles.background]}>

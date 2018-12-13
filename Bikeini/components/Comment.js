@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, TouchableOpacity, Alert,
+  StyleSheet, Text, View, Image, TouchableOpacity, Alert, FlatList,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import serverApi from '../utilities/serverApi';
@@ -18,6 +18,13 @@ const styles = StyleSheet.create({
     flex: 1,
     borderBottomWidth: 1,
     paddingBottom: 2,
+  },
+  commentWrapReply: {
+    flexDirection: 'column',
+    flex: 1,
+    paddingBottom: 2,
+    width: '90%',
+    alignSelf: 'flex-end',
   },
   item: {
     flex: 1,
@@ -122,7 +129,7 @@ export default class Comment extends React.Component {
       thumbDown: false,
       thumbUp: false,
       answer: false,
-      replyText:'',
+      replyText: '', // not unsused...just not used here => bikeinformation
     };
   }
 
@@ -332,10 +339,40 @@ export default class Comment extends React.Component {
     );
   }
 
+  keyExtractor = (item) => {
+    const { _id } = item;
+    return _id;
+  };
+
+  renderReplys = () => {
+    const { replyList, renderComment } = this.props;
+    return (
+      <FlatList
+        data={replyList}
+        extraData={this.state}
+        keyExtractor={this.keyExtractor}
+        renderItem={renderComment}
+        ItemSeparatorComponent={this.renderSeparator}
+      />
+    );
+  }
+
+  renderSeparator = () => (
+    <View
+      style={{
+        height: 1,
+        width: '90%',
+        backgroundColor: '#CED0CE',
+        alignSelf: 'flex-end',
+      }}
+    />
+  );
+
   render() {
     const {
-      body, username, date, avatarUri,
+      body, username, date, avatarUri, isReplyToCommentId,
     } = this.props;
+    console.log(isReplyToCommentId);
     const { answer } = this.state;
     const dateRaw = date.split('-');
     let day = `${dateRaw[2]}`;
@@ -347,8 +384,9 @@ export default class Comment extends React.Component {
 
     const thumbTotal = this.getThumbTotal();
     const answerField = this.renderAnswerField();
+    const replys = this.renderReplys();
     return (
-      <View style={styles.commentWrap}>
+      <View style={isReplyToCommentId ? styles.commentWrapReply : styles.commentWrap}>
         <View style={styles.item}>
           <Image style={styles.image} source={avatarUri.length ? { uri: avatarUri } : userPlaceholder} />
           <View style={styles.textView}>
@@ -358,7 +396,7 @@ export default class Comment extends React.Component {
             </Text>
             <Text style={styles.description}>{body}</Text>
           </View>
-          {answer ? null : answerField}
+          {answer || isReplyToCommentId ? null : answerField}
           {positionButton}
           {thumbDwButton}
           {thumbTotal}
@@ -366,6 +404,7 @@ export default class Comment extends React.Component {
           {resolveButton}
         </View>
         {answer ? answerField : null}
+        {replys}
       </View>
     );
   }
@@ -408,4 +447,7 @@ Comment.propTypes = {
   }).isRequired,
   refreshComments: PropTypes.func.isRequired,
   renderCommentField: PropTypes.func.isRequired,
+  replyList: PropTypes.arrayOf(PropTypes.object).isRequired,
+  renderComment: PropTypes.func.isRequired,
+  isReplyToCommentId: PropTypes.bool.isRequired,
 };

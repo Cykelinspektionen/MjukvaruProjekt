@@ -179,6 +179,7 @@ class BikeInformation extends React.Component {
       comments: [{
         body: 'No comments yet! Be the first to make a comment! :)', author: { username: '1', avatar_url: '' }, date: '1', _id: '1', rating: { down: [], up: [] },
       }],
+      replys: [],
       matchingBikes: [],
       text: '',
       bikeData,
@@ -232,7 +233,16 @@ class BikeInformation extends React.Component {
       .then((responseJson) => {
         if (responseJson.length > 0) {
           responseJson.reverse();
-          this.setState({ comments: responseJson });
+          const comments = [];
+          const replys = [];
+          Object.keys(responseJson).forEach((key) => {
+            if (responseJson[key].isReplyToCommentId) {
+              replys.push(responseJson[key]);
+            } else {
+              comments.push(responseJson[key]);
+            }
+          });
+          this.setState({ comments, replys });
         }
         this.setState({ isFetching: false });
       }).catch(error => console.log(error));
@@ -248,7 +258,7 @@ class BikeInformation extends React.Component {
       bikeData,
     } = this.state;
     const bikeId = bikeData._id;
-    const { refresh } = this.state;
+    const { refresh, replys } = this.state;
     const {
       authState, navigation, profileState, setMarker, setShowMarker,
     } = this.props;
@@ -262,6 +272,12 @@ class BikeInformation extends React.Component {
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
       bikeData.showResolveBike = bikeData.submitter.username !== item.author.username && bikeData.type === 'FOUND';
+
+      const replyList = [];
+      Object.keys(replys).forEach((key) => {
+        if (replys[key].isReplyToCommentId === _id) replyList.push(replys[key]);
+      });
+
       return (
         <TouchableOpacity
           onLongPress={() => {
@@ -306,6 +322,9 @@ class BikeInformation extends React.Component {
             refreshComments={this.onRefresh}
             ownersComment={ownersComment}
             renderCommentField={this.renderCommentField}
+            replyList={replyList}
+            renderComment={this.renderItem}
+            isReplyToCommentId={!!item.isReplyToCommentId || false}
           />
         </TouchableOpacity>
       );

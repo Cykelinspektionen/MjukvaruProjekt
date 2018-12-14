@@ -12,7 +12,6 @@ import { headerStyle } from './header';
 import serverApi from '../utilities/serverApi';
 import permissions from '../utilities/permissions';
 import Item from '../components/Item';
-import EditProfileModal from '../components/EditProfileModal';
 import * as jwtActions from '../navigation/actions/JwtActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as mapActions from '../navigation/actions/MapActions';
@@ -205,6 +204,11 @@ class Profile extends React.Component {
       });
     }
 
+    editProfilePress = () => {
+      const { navigation } = this.props;
+      navigation.navigate('EditProfile');
+    }
+
     onBackButtonPressAndroid = () => true;
 
     render() {
@@ -216,7 +220,6 @@ class Profile extends React.Component {
       return (
         <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
           <View style={[styles.container, styles.background]}>
-            <EditProfileModal />
             <View style={styles.rowContainer}>
 
               <Image source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} style={styles.profile} resizeMode="contain" />

@@ -70,7 +70,6 @@ export function imgUploadInit(imgUri, addType, jwt) {
   };
   const formBody = new FormData();
   formBody.append('image', file);
-  // TODO: change response handling to update bikeformData.... how that will be achieved...
   return serverApi.postDispatch(
     'bikes/preaddbike/',
     formBody,

@@ -92,9 +92,6 @@ const styles = StyleSheet.create({
   },
   addPic: {
     justifyContent: 'flex-end',
-    alignSelf: 'flex-end',
-    bottom: -70,
-    right: 20,
   },
 });
 
@@ -117,6 +114,14 @@ class Profile extends React.Component {
       this.getItemFromServer();
     }
 
+    componentDidUpdate() {
+      const { profileState, resetNotifiction } = this.props;
+      const { profileNotification } = profileState;
+      if(profileNotification) {
+        resetNotifiction();
+      }
+    }
+
     getItemFromServer = () => {
       const { authState } = this.props;
       const { jwt } = authState;
@@ -136,7 +141,9 @@ class Profile extends React.Component {
 
     renderItem = ({ item }) => {
       if (!item.active) return null;
-      const { navigation, profileState,setMarker, setShowMarker, } = this.props;
+      const {
+        navigation, profileState, setMarker, setShowMarker,
+      } = this.props;
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
       bikeData.showResolveBike = profileState.username === bikeData.submitter.username;
@@ -150,12 +157,13 @@ class Profile extends React.Component {
           }}
         >
           <Item
-                    actions={{ setShowMarker, setMarker }}
-                    location={item.location || { lat: 0, long: 0 }}
+            actions={{ setShowMarker, setMarker }}
+            location={item.location || { lat: 0, long: 0 }}
             title={item.title || ''}
             brand={item.brand || ''}
             imageUrl={item.image_url.thumbnail || ''}
             bikeData={bikeData}
+            commentsLength={bikeData.comments.length}
             navigation={navigation}
             refresh={this.onRefresh}
           />
@@ -208,18 +216,19 @@ class Profile extends React.Component {
       const { username } = profileState;
       const { location } = profileState;
       const { email } = profileState;
+
       return (
         <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
-
           <View style={[styles.container, styles.background]}>
             <View style={styles.rowContainer}>
-              <Image source={profileState.avatarUri.length ? { uri: profileState.avatarUri } : profilePic} style={styles.profile} resizeMode="contain" />
-              <TouchableHighlight
-                style={styles.showTypeRight}
+
+              <Image source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} style={styles.profile} resizeMode="contain" />
+              <TouchableOpacity
+                style={styles.addPic}
                 onPress={this.startCameraRoll}
               >
-                <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" style={styles.addPic} />
-              </TouchableHighlight>
+                <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
+              </TouchableOpacity>
 
               <View style={styles.columnContainer}>
                 <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
@@ -300,7 +309,10 @@ Profile.propTypes = {
     email: PropTypes.string.isRequired,
     phone_number: PropTypes.number.isRequired,
     create_time: PropTypes.string.isRequired,
-    avatarUri: PropTypes.string.isRequired,
+    avatarUri: PropTypes.shape({
+      img: PropTypes.string.isRequired,
+      thumbnail: PropTypes.string.isRequired,
+    }).isRequired,
     game_score: PropTypes.shape({
       bike_score: PropTypes.number.isRequired,
       bikes_lost: PropTypes.number.isRequired,

@@ -2,6 +2,8 @@ import React from 'react';
 import { Platform, View } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
+import FooterIcon from '../components/FooterIcon';
+
 import TabBarIcon from '../assets/TabBarIcon';
 import Browser from '../screens/Browser';
 import AddBike from '../screens/AddBike';
@@ -68,11 +70,10 @@ ProfileStack.navigationOptions = {
         focused={focused}
         name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
       />
-      <View style={{position: 'absolute', right: 1, top: 1, backgroundColor: 'red', width: 7, height: 7, borderRadius: 9}}></View>
+      <FooterIcon />
     </View>
   ),
 };
-
 
 export default createBottomTabNavigator({
   BrowserStack,

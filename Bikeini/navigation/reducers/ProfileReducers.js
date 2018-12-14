@@ -4,10 +4,11 @@ import {
   LOAD_PROFILE_BEGIN,
   LOAD_PROFILE_SUCCESS,
   LOAD_PROFILE_FAILURE,
-  UPLOAD_IMG_BEGIN,
-  UPLOAD_IMG_SUCCESS,
-  UPLOAD_IMG_FAILURE,
+  UPLOAD_PROFILE_IMG_BEGIN,
+  UPLOAD_PROFILE_IMG_SUCCESS,
+  UPLOAD_PROFILE_IMG_FAILURE,
   UNLOAD_PROFILE,
+  RESET_PROFILE_NOTIFICATION,
 } from '../actions/types';
 
 const PROFILE_INITIAL_STATE = {
@@ -30,6 +31,7 @@ const PROFILE_INITIAL_STATE = {
   loadingProfile: false,
   profileLoaded: false,
   error: '',
+  profileNotification: false,
   avatarUri: '',
 };
 
@@ -67,16 +69,19 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         id: action.payload._id,
         loadingProfile: false,
         profileLoaded: true,
-        avatarUri: action.payload.avatar_url || '',
+        profileNotification: true,
+        avatarUri: action.payload.avatar_url || { img: '', thumbnail: '' },
       };
     case UNLOAD_PROFILE:
       return { ...PROFILE_INITIAL_STATE };
-    case UPLOAD_IMG_BEGIN:
+    case UPLOAD_PROFILE_IMG_BEGIN:
       return { ...state, uploadingImg: true };
-    case UPLOAD_IMG_SUCCESS:
-      return { ...state, avatarUri: action.payload.message.avatar_url };
-    case UPLOAD_IMG_FAILURE:
+    case UPLOAD_PROFILE_IMG_SUCCESS:
+      return { ...state, avatarUri: action.payload.avatar_url };
+    case UPLOAD_PROFILE_IMG_FAILURE:
       return { ...state, imgUploaded: false };
+    case RESET_PROFILE_NOTIFICATION:
+      return { ...state, profileNotification: false};
     default:
       return state;
   }

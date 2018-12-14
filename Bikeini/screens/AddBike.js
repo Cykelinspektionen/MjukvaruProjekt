@@ -1,11 +1,11 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, TouchableHighlight, TextInput, Alert, ScrollView, TouchableOpacity,
+  StyleSheet, Text, View, Image, TouchableHighlight, TextInput, Alert, ScrollView, TouchableOpacity, KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import RadioGroup from 'react-native-radio-buttons-group';
+import { ButtonGroup } from 'react-native-elements';
 import { Dropdown } from 'react-native-material-dropdown';
 import { ImagePicker, ImageManipulator, Location } from 'expo';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
@@ -97,8 +97,7 @@ const styles = StyleSheet.create({
   },
   radio: {
     flex: 0.2,
-    alignItems: 'flex-start',
-    marginLeft: '15%',
+    alignItems: 'center',
   },
   locationFrame: {
     flex: 1,
@@ -146,141 +145,17 @@ class AddBike extends React.Component {
         long: 0,
         keywords: {
           frame_type: 'MALE',
-          child: false,
-          sport: true,
-          tandem: false,
-          basket: true,
-          rack: true,
-          mudguard: true,
-          chain_protection: true,
-          net: true,
-          winter_tires: true,
-          light: true,
+          child: 0,
+          sport: 0,
+          tandem: 0,
+          basket: 0,
+          rack: 0,
+          mudguard: 0,
+          chain_protection: 0,
+          net: 0,
+          winter_tires: 0,
+          light: 0,
         },
-      },
-      radios: {
-        type: [
-          {
-            label: 'Stolen',
-            value: 'STOLEN',
-          },
-          {
-            label: 'Found',
-            value: 'FOUND',
-          },
-        ],
-        frame_type: [
-          {
-            label: 'Male',
-            value: 'MALE',
-          },
-          {
-            label: 'Female',
-            value: 'FEMALE',
-          },
-        ],
-
-        child: [
-          {
-            label: 'Adult',
-            value: 2,
-          },
-          {
-            label: 'Child',
-            value: 1,
-          },
-        ],
-
-        sport: [
-          {
-            label: 'Sport',
-            value: 1,
-          },
-          {
-            label: 'Casual',
-            value: 2,
-          },
-        ],
-        tandem: [
-          {
-            label: 'Single',
-            value: 2,
-          },
-          {
-            label: 'Tandem',
-            value: 1,
-          },
-        ],
-        rack: [
-          {
-            label: 'Rack',
-            value: 1,
-          },
-          {
-            label: 'No Rack',
-            value: 2,
-          },
-        ],
-        basket: [
-          {
-            label: 'Basket',
-            value: 1,
-          },
-          {
-            label: 'No Basket',
-            value: 2,
-          },
-        ],
-        mudguard: [
-          {
-            label: 'Mudguard',
-            value: 1,
-          },
-          {
-            label: 'No Mudguard',
-            value: 2,
-          },
-        ],
-        chainProtection: [
-          {
-            label: 'Chain protector',
-            value: 1,
-          },
-          {
-            label: 'No chain protector',
-            value: 2,
-          },
-        ],
-        net: [
-          {
-            label: 'Net',
-            value: 1,
-          },
-          {
-            label: 'No Net',
-            value: 2,
-          },
-        ],
-        winterTires: [
-          {
-            label: 'Winter Tires',
-            value: 1,
-          },
-          {
-            label: 'Summer Tires',
-            value: 2,
-          },
-        ],
-        light: [
-          {
-            label: 'Light',
-            value: 1,
-          },
-          {
-            label: 'No Light',
-            value: 2,
-          },
-        ],
       },
       Color: [
         {
@@ -312,39 +187,26 @@ class AddBike extends React.Component {
     }
   }
 
-  setServerResponse(response, radioCallback, colorCallback) {
+  setServerResponse(response) {
     // console.log(response); // <- Used for checking the structure of the ML-response, please leave it until it's been testsed on live! :)
-    const { radios } = this.state;
-
+    const { bikeData } = this.state;
     // For this to work the response from the server CAN'T have any nestled attrbiutes!
     Object.keys(response).forEach((key) => {
       if (key === 'lamp') {
         // Has to be left in until back-end changes the key "lamp" to "light"!
-        key = 'light';
+        bikeData.keywords.light = response[key] ? 1 : 0;
       }
-      let data = radios[key];
       if (key === 'frame') {
-        let frameKey = response[key];
+        const frameKey = response[key];
         switch (frameKey) {
           case 'sport':
-            data = radios[frameKey];
-            data[0].selected = true;
-            data[1].selected = false;
-            radioCallback(data, frameKey, true, true);
+            bikeData.keywords.sport = 1;
             break;
           case 'male':
-            frameKey = 'frame_type';
-            data = radios[frameKey];
-            data[0].selected = true;
-            data[1].selected = false;
-            radioCallback(data, frameKey, true, 'MALE');
+            bikeData.keywords.frame_type = 'MALE';
             break;
           case 'female':
-            frameKey = 'frame_type';
-            data = radios[frameKey];
-            data[0].selected = false;
-            data[1].selected = true;
-            radioCallback(data, frameKey, true, 'FEMALE');
+            bikeData.keywords.frame_type = 'FEMALE';
             break;
           default:
             console.log(`Unknown key: ${frameKey}`);
@@ -354,18 +216,13 @@ class AddBike extends React.Component {
         if (!response[key]) {
           console.log('There was NOT a bike in the picture!');
         }
-      } else if (!response[key]) {
-        data[0].selected = false;
-        data[1].selected = true;
-        radioCallback(data, key, true, false);
-      } else if (response[key] && key !== 'color') {
-        data[0].selected = true;
-        data[1].selected = false;
-        radioCallback(data, key, true, true);
       } else if (key === 'color') {
-        colorCallback('color', response[key]);
+        bikeData.color = response[key];
+      } else {
+        bikeData.keywords[key] = response[key] ? 1 : 0;
       }
     });
+    this.setState({ bikeData });
   }
 
   startCameraRoll = () => {
@@ -425,27 +282,11 @@ class AddBike extends React.Component {
     const { bikeData } = this.state;
     if (setKeyword) {
       const { keywords } = bikeData;
-      if (value === 1 || value === 2) {
-        keywords[attr] = Boolean(value);
-      } else {
-        keywords[attr] = value;
-      }
+      keywords[attr] = value;
     } else {
       bikeData[attr] = value;
     }
     this.setState({ bikeData });
-  }
-
-  radioUpdater = (change, name, head, response) => {
-    const { radios } = this.state;
-    const selectedButton = radios[name].find(e => e.selected === true);
-    if (response != null) {
-      this.setBikeData(name, response, head);
-    } else {
-      this.setBikeData(name, selectedButton.value, head);
-    }
-    radios[name] = change;
-    this.setState({ radios });
   }
 
   compressUri = async (imgUri) => {
@@ -491,7 +332,7 @@ class AddBike extends React.Component {
       authState, addBikeState, navigation, imgUploadInit, mapState,
     } = this.props;
     const {
-      bikeData, radios, Color,
+      Color, bikeData,
     } = this.state;
     const {
       color,
@@ -508,212 +349,237 @@ class AddBike extends React.Component {
     }
     return (
       <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
-        <ScrollView style={styles.background}>
-          <View style={styles.container}>
-            <Text style={styles.headerText}>
+        <KeyboardAvoidingView behavior="position" enabled>
+          <ScrollView style={styles.background}>
+            <View style={styles.container}>
+              <Text style={styles.headerText}>
           Add a picture of your bike
-            </Text>
-            <View style={styles.rowContainer}>
-              <View>
-                {!addBikeState.uriSet && <Image source={defaultBike} /> }
-                {addBikeState.uriSet && <Image source={{ uri: addBikeState.imgToUploadUri }} style={styles.thumbnail} />}
-              </View>
-              <View>
-                <View style={styles.rowContainer}>
-                  <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCameraRoll}>
-                    <Text style={styles.greenButtonText}>ADD FROM ALBUM</Text>
-                  </TouchableHighlight>
-                  <Image
-                    style={styles.icons}
-                    source={cameraImg}
-                  />
+              </Text>
+              <View style={styles.rowContainer}>
+                <View>
+                  {!addBikeState.uriSet && <Image source={defaultBike} /> }
+                  {addBikeState.uriSet && <Image source={{ uri: addBikeState.imgToUploadUri }} style={styles.thumbnail} />}
                 </View>
-                <View style={styles.rowContainer}>
-                  <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCamera}>
-                    <Text style={styles.greenButtonText}>TAKE A PHOTO</Text>
-                  </TouchableHighlight>
-                  <Image
-                    style={styles.icons}
-                    source={albumImg}
-                  />
+                <View>
+                  <View style={styles.rowContainer}>
+                    <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCameraRoll}>
+                      <Text style={styles.greenButtonText}>ADD FROM ALBUM</Text>
+                    </TouchableHighlight>
+                    <Image
+                      style={styles.icons}
+                      source={cameraImg}
+                    />
+                  </View>
+                  <View style={styles.rowContainer}>
+                    <TouchableHighlight style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.addPhotoButtons]} onPress={this.startCamera}>
+                      <Text style={styles.greenButtonText}>TAKE A PHOTO</Text>
+                    </TouchableHighlight>
+                    <Image
+                      style={styles.icons}
+                      source={albumImg}
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
-            <TouchableHighlight
-              style={[
-                styles.smallButtonContainer,
-                styles.actionButton,
-                styles.greenButton,
-                styles.uploadPhotoButton,
-                !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
-              ]}
-              disabled={addBikeState.uploadDisabled}
-              onPress={() => {
-                this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
-                  imgUploadInit(compressedUri.uri, bikeData.type, authState.jwt[0])
-                    .then(response => this.setServerResponse(response, this.radioUpdater, this.setBikeData));
-                });
-              }
-            }
-            >
-              <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
-            </TouchableHighlight>
-            <Text style={styles.headerText}>
-              Last known loaction of your lost bike:
-            </Text>
-            <View style={styles.locationFrame}>
-              <View style={styles.adressFrame}>
-                <Text>
-                City:
-                  {' '}
-                  {mapState.city}
-                  {' '}
-                </Text>
-                <Text>
-                Street:
-                  {' '}
-                  {mapState.name}
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={styles.locationIconTouch}
-                onPress={() => navigation.navigate('PinMap')}
-              >
-                <Image
-                  style={styles.locationTag}
-                  source={locationIcon}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.radio}>
-              <RadioGroup
-                horizontal="true"
-                radioButtons={radios.type}
-                onPress={(data) => { this.radioUpdater(data, 'type'); }}
-                flexDirection="row"
-              />
-              <RadioGroup
-                horizontal="true"
-                radioButtons={radios.frame_type}
-                onPress={(data) => { this.radioUpdater(data, 'frame_type', true); }}
-                flexDirection="row"
-              />
-              <RadioGroup
-                radioButtons={radios.child}
-                onPress={(data) => { this.radioUpdater(data, 'child', true); }}
-                flexDirection="row"
-              />
-              <RadioGroup
-                radioButtons={radios.sport}
-                onPress={(data) => { this.radioUpdater(data, 'sport', true); }}
-                flexDirection="row"
-              />
-              <RadioGroup
-                radioButtons={radios.tandem}
-                onPress={(data) => { this.radioUpdater(data, 'tandem', true); }}
-                flexDirection="row"
-              />
-              <RadioGroup
-                radioButtons={radios.basket}
-                onPress={(data) => { this.radioUpdater(data, 'basket', true); }}
-                flexDirection="row"
-              />
-              <RadioGroup
-                radioButtons={radios.rack}
-                onPress={(data) => { this.radioUpdater(data, 'rack', true); }}
-                flexDirection="row"
-              />
-              <RadioGroup
-                radioButtons={radios.mudguard}
-                onPress={(data) => { this.radioUpdater(data, 'mudguard', true); }}
-                flexDirection="row"
-              />
-              <RadioGroup
-                radioButtons={radios.chainProtection}
-                onPress={(data) => { this.radioUpdater(data, 'chainProtection', true); }}
-                flexDirection="row"
-              />
-              <RadioGroup
-                radioButtons={radios.net}
-                onPress={(data) => { this.radioUpdater(data, 'net', true); }}
-                flexDirection="row"
-              />
-              <RadioGroup
-                radioButtons={radios.winterTires}
-                onPress={(data) => { this.radioUpdater(data, 'winterTires', true); }}
-                flexDirection="row"
-              />
-              <RadioGroup
-                radioButtons={radios.light}
-                onPress={(data) => { this.radioUpdater(data, 'light', true); }}
-                flexDirection="row"
-              />
-            </View>
-            <View style={styles.dropdowns}>
-              <Dropdown
-                value={color}
-                label="Color"
-                data={Color}
-                onChangeText={value => this.setBikeData('color', value)}
-              />
-            </View>
-            <TextInput
-              style={styles.inputs}
-              placeholder="Frame number"
-              underlineColorAndroid="transparent"
-              value={bikeData.frameNumber}
-              onChangeText={text => this.setBikeData('frameNumber', text)}
-            />
-            <TextInput
-              style={styles.inputs}
-              placeholder="Anti Theft Code"
-              underlineColorAndroid="transparent"
-              value={bikeData.antiTheftCode}
-              onChangeText={text => this.setBikeData('antiTheftCode', text)}
-            />
-            <TextInput
-              style={styles.inputs}
-              placeholder="Brand"
-              underlineColorAndroid="transparent"
-              value={bikeData.brand}
-              onChangeText={text => this.setBikeData('brand', text)}
-            />
-            <TextInput
-              style={styles.inputs}
-              placeholder="Model"
-              underlineColorAndroid="transparent"
-              value={bikeData.model}
-              onChangeText={text => this.setBikeData('model', text)}
-            />
-            <TextInput
-              style={styles.inputs}
-              placeholder="Title"
-              underlineColorAndroid="transparent"
-              value={bikeData.title}
-              onChangeText={text => this.setBikeData('title', text)}
-            />
-            <TextInput
-              style={styles.inputs}
-              placeholder="Description"
-              underlineColorAndroid="transparent"
-              value={bikeData.description}
-              onChangeText={text => this.setBikeData('description', text)}
-            />
-            <TouchableHighlight
-              style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.submitButton]}
-              onPress={() => {
-                if (!addBikeState.uriSet) {
-                  Alert.alert('Picture is mandatory!');
-                  return;
+              <TouchableHighlight
+                style={[
+                  styles.smallButtonContainer,
+                  styles.actionButton,
+                  styles.greenButton,
+                  styles.uploadPhotoButton,
+                  !addBikeState.uploadDisabled ? [] : [styles.buttonDisabled],
+                ]}
+                disabled={addBikeState.uploadDisabled}
+                onPress={() => {
+                  this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
+                    imgUploadInit(compressedUri.uri, bikeData.type, authState.jwt[0])
+                      .then(response => this.setServerResponse(response));
+                  });
                 }
-                this.handleSubmitt();
-              }
             }
-            >
-              <Text style={styles.greenButtonText}>SUBMIT</Text>
-            </TouchableHighlight>
-          </View>
-        </ScrollView>
+              >
+                <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
+              </TouchableHighlight>
+              <Text style={styles.headerText}>
+              Last known loaction of your lost bike:
+              </Text>
+              <View style={styles.locationFrame}>
+                <View style={styles.adressFrame}>
+                  <Text>
+                City:
+                    {' '}
+                    {mapState.city}
+                    {' '}
+                  </Text>
+                  <Text>
+                Street:
+                    {' '}
+                    {mapState.name}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.locationIconTouch}
+                  onPress={() => navigation.navigate('PinMap')}
+                >
+                  <Image
+                    style={styles.locationTag}
+                    source={locationIcon}
+                  />
+                </TouchableOpacity>
+              </View>
+              <View style={styles.radio}>
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('type', data ? 'FOUND' : 'STOLEN'); }}
+                  selectedIndex={bikeData.type === 'STOLEN' ? 0 : 1}
+                  buttons={['Stolen', 'Found']}
+                  containerStyle={{ height: 30 }}
+                />
+
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('frame_type', data ? 'FEMALE' : 'MALE', true); }}
+                  selectedIndex={bikeData.keywords.frame_type === 'MALE' ? 0 : 1}
+                  buttons={['Male', 'Female']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('child', data, true); }}
+                  selectedIndex={bikeData.keywords.child}
+                  buttons={['Adult', 'Child']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('sport', data, true); }}
+                  selectedIndex={bikeData.keywords.sport}
+                  buttons={['Casual', 'Sport']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('tandem', data, true); }}
+                  selectedIndex={bikeData.keywords.tandem}
+                  buttons={['Single', 'Tandem']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('rack', data, true); }}
+                  selectedIndex={bikeData.keywords.rack}
+                  buttons={['No Rack', 'Rack']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('basket', data, true); }}
+                  selectedIndex={bikeData.keywords.basket}
+                  buttons={['No Basket', 'Basket']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('mudguard', data, true); }}
+                  selectedIndex={bikeData.keywords.mudguard}
+                  buttons={['No Mudguard', 'Mudguard']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('chain_protection', data, true); }}
+                  selectedIndex={bikeData.keywords.chain_protection}
+                  buttons={['No Chain Protector', 'Chain Protector']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('net', data, true); }}
+                  selectedIndex={bikeData.keywords.net}
+                  buttons={['No Net', 'Net']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('winter_tires', data, true); }}
+                  selectedIndex={bikeData.keywords.winter_tires}
+                  buttons={['Summer Tires', 'Winter Tires']}
+                  containerStyle={{ height: 30 }}
+                />
+                <ButtonGroup
+                  selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  onPress={(data) => { this.setBikeData('light', data, true); }}
+                  selectedIndex={bikeData.keywords.light}
+                  buttons={['No Light', 'Light']}
+                  containerStyle={{ height: 30 }}
+                />
+              </View>
+              <View style={styles.dropdowns}>
+                <Dropdown
+                  value={color}
+                  label="Color"
+                  data={Color}
+                  onChangeText={value => this.setBikeData('color', value)}
+                />
+              </View>
+              <TextInput
+                style={styles.inputs}
+                placeholder="Frame number"
+                underlineColorAndroid="transparent"
+                value={bikeData.frameNumber}
+                onChangeText={text => this.setBikeData('frameNumber', text)}
+              />
+              <TextInput
+                style={styles.inputs}
+                placeholder="Anti Theft Code"
+                underlineColorAndroid="transparent"
+                value={bikeData.antiTheftCode}
+                onChangeText={text => this.setBikeData('antiTheftCode', text)}
+              />
+              <TextInput
+                style={styles.inputs}
+                placeholder="Brand"
+                underlineColorAndroid="transparent"
+                value={bikeData.brand}
+                onChangeText={text => this.setBikeData('brand', text)}
+              />
+              <TextInput
+                style={styles.inputs}
+                placeholder="Model"
+                underlineColorAndroid="transparent"
+                value={bikeData.model}
+                onChangeText={text => this.setBikeData('model', text)}
+              />
+              <TextInput
+                style={styles.inputs}
+                placeholder="Title"
+                underlineColorAndroid="transparent"
+                value={bikeData.title}
+                onChangeText={text => this.setBikeData('title', text)}
+              />
+              <TextInput
+                style={styles.inputs}
+                placeholder="Description"
+                underlineColorAndroid="transparent"
+                value={bikeData.description}
+                onChangeText={text => this.setBikeData('description', text)}
+              />
+              <TouchableHighlight
+                style={[styles.smallButtonContainer, styles.actionButton, styles.greenButton, styles.submitButton]}
+                onPress={() => {
+                  if (!addBikeState.uriSet) {
+                    Alert.alert('Picture is mandatory!');
+                    return;
+                  }
+                  this.handleSubmitt();
+                }
+            }
+              >
+                <Text style={styles.greenButtonText}>SUBMIT</Text>
+              </TouchableHighlight>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </AndroidBackHandler>
     );
   }

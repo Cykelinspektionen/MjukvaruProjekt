@@ -5,6 +5,7 @@ import {
 
 export const headerStyle = {
   title: 'Bikeini',
+  headerLeft: null,
   headerTitleStyle: {
     fontFamily: 'CustomFont',
     fontSize: 26,

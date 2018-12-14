@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   inputContainer: {
-    borderBottomColor: '#F5FCFF',
+    top: -55,
+    borderBottomColor: '#d8d8d8',
     backgroundColor: '#FFFFFF',
     borderRadius: 30,
     borderBottomWidth: 1,
@@ -36,26 +37,31 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonContainer: {
+    top: -45,
     height: 45,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    width: '90%',
+    borderRadius: 30,
+    width: 250,
   },
   requestButton: {
     marginTop: 35,
-    backgroundColor: '#74C3AE',
+    backgroundColor: '#44ccad',
   },
   loginText: {
     color: 'white',
   },
   logo: {
-    height: 100,
-    width: 100,
+    top: -65,
+    height: 130,
+    width: 130,
   },
   logoTextCont: {
+    top: -65,
     marginTop: 5,
+    marginBottom: 25,
   },
   logoText: {
     fontStyle: 'italic',

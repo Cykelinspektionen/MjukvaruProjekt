@@ -35,8 +35,9 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   rowContainer: {
-    flex: 0.20,
+    flex: 0.25,
     flexDirection: 'row',
+    alignContent: 'center',
     width: '100%',
     marginTop: 5,
   },
@@ -44,9 +45,8 @@ const styles = StyleSheet.create({
     flex: 0.3,
     height: undefined,
     width: undefined,
+    marginLeft: 20,
     borderRadius: 10,
-    borderColor: 'black',
-    borderWidth: 1,
   },
   columnContainer: {
     flex: 0.6,
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#fff',
     alignContent: 'flex-end',
-    left: 25,
+    left: 7,
     borderRadius: 10,
     borderColor: 'black',
     borderWidth: 1,
@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 5,
     margin: 2,
     // ios
     shadowOpacity: 0.6,
@@ -133,6 +132,15 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     borderWidth: 1,
     margin: 5,
+    // ios
+    shadowOpacity: 0.6,
+    shadowRadius: 3,
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    },
+    // android
+    elevation: 5,
   },
 });
 

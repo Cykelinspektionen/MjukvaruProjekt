@@ -14,6 +14,7 @@ import Item from '../components/Item';
 import * as jwtActions from '../navigation/actions/JwtActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as mapActions from '../navigation/actions/MapActions';
+import { setHoldNotification } from '../navigation/actions/RouteActions';
 
 const profilePic = require('../assets/images/userPlaceholder.jpg');
 
@@ -110,11 +111,15 @@ class Profile extends React.Component {
   }
 
   componentDidUpdate() {
-    const { profileState, resetNotifiction, routeState } = this.props;
+    const {
+      profileState, resetNotifiction, routeState, setHoldNotification,
+    } = this.props;
     const { profileNotification } = profileState;
+    const { activeRoute } = routeState;
 
-    if (profileNotification && routeState.activeRoute === 'Profile') {
+    if (profileNotification && activeRoute === 'Profile') {
       resetNotifiction();
+      setHoldNotification();
     }
   }
 
@@ -328,6 +333,7 @@ Profile.propTypes = {
   setMarker: PropTypes.func.isRequired,
   setShowMarker: PropTypes.func.isRequired,
   resetNotifiction: PropTypes.func.isRequired,
+  setHoldNotification: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
@@ -336,7 +342,9 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...jwtActions, ...profileActions, ...mapActions },
+  {
+    setHoldNotification, ...jwtActions, ...profileActions, ...mapActions,
+  },
   dispatch,
 );
 

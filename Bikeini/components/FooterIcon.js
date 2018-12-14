@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 import TabBarIcon from '../assets/TabBarIcon';
 
 import * as profileActions from '../navigation/actions/ProfileActions';
+import { setHoldNotification } from '../navigation/actions/RouteActions';
 
 class FooterIcon extends React.Component {
   constructor() {
@@ -20,7 +21,7 @@ class FooterIcon extends React.Component {
   }
 
   componentDidMount() {
-    const { profileState, setNotifiction } = this.props;
+    const { profileState } = this.props;
     const { profileNotification } = profileState;
     const { timer } = this.state;
 
@@ -34,7 +35,10 @@ class FooterIcon extends React.Component {
     clearInterval(timer);
     this.setState({
       notification: profileNotification,
-      timer: setInterval(() => { setNotifiction(); }, 10000),
+      timer: setInterval(() => {
+        // Only check with server if the user is NOT in the Profile-screen.
+        this.checkIfNotification();
+      }, 10000),
     });
   }
 
@@ -48,6 +52,14 @@ class FooterIcon extends React.Component {
       } else {
         this.setState({ notification: true });
       }
+    }
+  }
+
+  checkIfNotification = () => {
+    const { setNotifiction, routeState } = this.props;
+    const { holdNotification } = routeState;
+    if (!holdNotification) {
+      setNotifiction();
     }
   }
 
@@ -90,17 +102,20 @@ FooterIcon.propTypes = {
     profileNotification: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
+  routeState: PropTypes.shape({
+    activeRoute: PropTypes.string.isRequired,
+  }).isRequired,
   setNotifiction: PropTypes.func.isRequired,
   focused: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { profileState } = state;
-  return { profileState };
+  const { profileState, routeState } = state;
+  return { profileState, routeState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...profileActions },
+  { setHoldNotification, ...profileActions },
   dispatch,
 );
 

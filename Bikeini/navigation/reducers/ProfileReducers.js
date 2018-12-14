@@ -85,7 +85,10 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
     case RESET_PROFILE_NOTIFICATION:
       return { ...state, profileNotification: false };
     case SET_PROFILE_NOTIFICATION:
-      return { ...state, profileNotification: true };
+      if (!state.profileNotification) {
+        return { ...state, profileNotification: true };
+      }
+      return state;
     default:
       return state;
   }

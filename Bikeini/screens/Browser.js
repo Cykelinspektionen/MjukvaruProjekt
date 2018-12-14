@@ -22,8 +22,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
   },
-  header: {
-  },
   headerText: {
     marginTop: '5%',
     fontSize: 26,
@@ -57,7 +55,6 @@ const styles = StyleSheet.create({
   breakLine: {
     width: '100%',
     height: '1%',
-    marginTop: '1%',
     borderWidth: 0,
     borderBottomWidth: 1,
   },
@@ -153,7 +150,7 @@ class Browser extends React.Component {
 
     if (showMissing) {
       return (
-        <View style={styles.header}>
+        <View>
           <Text style={styles.headerText}>
             Missing bikes in
             {' '}

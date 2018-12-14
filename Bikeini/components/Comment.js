@@ -327,6 +327,7 @@ export default class Comment extends React.Component {
         <View style={styles.textView}>
           <Text style={styles.userText}>
             {username}
+            {''}
             {dateClean}
           </Text>
           <Text style={styles.description}>{body}</Text>

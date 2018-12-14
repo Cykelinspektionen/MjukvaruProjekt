@@ -7,6 +7,7 @@ import thunk from 'redux-thunk';
 import reducers from './navigation/reducers/index';
 import AppNavigator from './navigation/AppNavigator';
 
+import { setActiveRoute } from './navigation/actions/RouteActions';
 
 const store = createStore(reducers, applyMiddleware(thunk));
 const headerFont = require('./assets/fonts/Noteworthy-Bold.ttf');
@@ -26,6 +27,14 @@ export default class App extends React.Component {
     this.setState({ isReady: true });
   }
 
+  getCurrentRouteName(navState) {
+    if (navState.index) {
+      this.getCurrentRouteName(navState.routes[navState.index]);
+    } else {
+      store.dispatch(setActiveRoute(navState.routeName));
+    }
+  }
+
   render() {
     const { isReady } = this.state;
     if (!isReady) {
@@ -33,7 +42,11 @@ export default class App extends React.Component {
     }
     return (
       <Provider store={store}>
-        <AppNavigator />
+        <AppNavigator
+          onNavigationStateChange={(prevState, newState) => {
+            this.getCurrentRouteName(newState);
+          }}
+        />
       </Provider>
     );
   }

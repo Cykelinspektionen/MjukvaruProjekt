@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, View } from 'react-native';
+import { Platform } from 'react-native';
 import { createBottomTabNavigator } from 'react-navigation';
 
 import FooterIcon from '../components/FooterIcon';
@@ -9,6 +9,8 @@ import Browser from '../screens/Browser';
 import AddBike from '../screens/AddBike';
 import Profile from '../screens/Profile';
 import Gamification from '../screens/Gamification';
+
+console.log('bottomnavigator');
 
 export default createBottomTabNavigator({
   Browser: {
@@ -72,13 +74,7 @@ export default createBottomTabNavigator({
         activeTintColor: '#44ccad',
       },
       tabBarIcon: ({ focused }) => (
-        <View>
-          <TabBarIcon
-            focused={focused}
-            name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
-          />
-          <FooterIcon />
-        </View>
+        <FooterIcon focused={focused} />
       ),
     },
   },

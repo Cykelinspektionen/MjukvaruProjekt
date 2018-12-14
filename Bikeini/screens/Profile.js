@@ -109,13 +109,14 @@ class Profile extends React.Component {
     this.getItemFromServer();
   }
 
-    componentDidUpdate() {
-      const { profileState, resetNotifiction } = this.props;
-      const { profileNotification } = profileState;
-      if(profileNotification) {
-        resetNotifiction();
-      }
+  componentDidUpdate() {
+    const { profileState, resetNotifiction, routeState } = this.props;
+    const { profileNotification } = profileState;
+
+    if (profileNotification && routeState.activeRoute === 'Profile') {
+      resetNotifiction();
     }
+  }
 
     getItemFromServer = () => {
       const { authState } = this.props;
@@ -318,16 +319,20 @@ Profile.propTypes = {
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
+  routeState: PropTypes.shape({
+    activeRoute: PropTypes.string.isRequired,
+  }).isRequired,
   uploadProfilePicToServer: PropTypes.func.isRequired,
   deleteJWTInit: PropTypes.func.isRequired,
   unloadProfile: PropTypes.func.isRequired,
   setMarker: PropTypes.func.isRequired,
   setShowMarker: PropTypes.func.isRequired,
+  resetNotifiction: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { authState, profileState } = state;
-  return { authState, profileState };
+  const { authState, profileState, routeState } = state;
+  return { authState, profileState, routeState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(

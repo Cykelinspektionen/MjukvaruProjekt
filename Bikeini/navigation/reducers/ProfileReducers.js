@@ -9,6 +9,7 @@ import {
   UPLOAD_PROFILE_IMG_FAILURE,
   UNLOAD_PROFILE,
   RESET_PROFILE_NOTIFICATION,
+  SET_PROFILE_NOTIFICATION,
 } from '../actions/types';
 
 const PROFILE_INITIAL_STATE = {
@@ -32,6 +33,7 @@ const PROFILE_INITIAL_STATE = {
   profileLoaded: false,
   error: '',
   profileNotification: false,
+  notificationInterval: false,
   avatarUri: '',
 };
 
@@ -81,7 +83,9 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
     case UPLOAD_PROFILE_IMG_FAILURE:
       return { ...state, imgUploaded: false };
     case RESET_PROFILE_NOTIFICATION:
-      return { ...state, profileNotification: false};
+      return { ...state, profileNotification: false };
+    case SET_PROFILE_NOTIFICATION:
+      return { ...state, profileNotification: true };
     default:
       return state;
   }

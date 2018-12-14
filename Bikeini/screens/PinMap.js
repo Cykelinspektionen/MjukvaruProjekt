@@ -108,6 +108,9 @@ class PinMap extends React.Component {
   onRegionChangeComplete = async (region) => {
     const { setMapLocation } = this.props;
     const geocode = await Location.reverseGeocodeAsync({ latitude: region.latitude, longitude: region.longitude });
+    console.log(geocode);
+    geocode[0].street = geocode[0].street || '';
+    geocode[0].postalCode = geocode[0].postalCode || '';
     setMapLocation({ ...region, ...geocode[0] });
   }
 

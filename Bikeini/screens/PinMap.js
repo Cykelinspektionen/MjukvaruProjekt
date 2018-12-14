@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '50%',
     marginLeft: -20,
-    marginTop: -25,
+    marginTop: -10,
   },
   header: {
     flex: 0.1,
@@ -152,6 +152,7 @@ class PinMap extends React.Component {
     }
 
     if (mapState.loadedCurrPos) {
+      const { OS } = Platform;
       return (
         <View style={styles.main}>
           <View style={styles.header}>
@@ -163,9 +164,8 @@ class PinMap extends React.Component {
             style={styles.map}
             initialRegion={mapState}
             onRegionChangeComplete={this.onRegionChangeComplete}
-          >
-            <Image style={[styles.markerFixed, styles.marker]} source={bikeIcon} />
-          </MapView>
+          />
+          <Image style={[styles.markerFixed, styles.marker]} source={bikeIcon} />
           <View style={styles.buttonView}>
             <TouchableHighlight
               style={[styles.buttonContainer, styles.greenButton]}
@@ -192,7 +192,7 @@ class PinMap extends React.Component {
 }
 
 /*
-Marker implementation (real).
+Marker implementation (real). Use this to calibrate the "fake marker"
 <MapView.Marker
   // draggable
   coordinate={{ latitude: mapState.latitude, longitude: mapState.longitude }}

@@ -9,6 +9,8 @@ import Location from '../screens/Location';
 import BikeInformation from '../screens/BikeInformation';
 import PinMap from '../screens/PinMap';
 
+import { headerStyle } from '../screens/header';
+
 const AppNavigator = createStackNavigator({
   Login: { screen: Login },
   TempPage: { screen: TempPage },
@@ -27,7 +29,7 @@ const AppNavigator = createStackNavigator({
   TabNavigator: {
     screen: TabNavigator,
     navigationOptions: {
-      header: null,
+      ...headerStyle,
       gesturesEnabled: false,
     },
   },

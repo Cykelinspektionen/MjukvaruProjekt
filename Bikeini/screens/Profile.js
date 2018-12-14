@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { ImagePicker } from 'expo';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { headerStyle } from './header';
 import serverApi from '../utilities/serverApi';
 import permissions from '../utilities/permissions';
 import Item from '../components/Item';
@@ -96,23 +95,19 @@ const styles = StyleSheet.create({
 });
 
 class Profile extends React.Component {
-    static navigationOptions = {
-      ...headerStyle,
+  constructor() {
+    super();
+    this.state = {
+      yourBicycles: [],
+      isFetching: false,
+      yourTips: [],
     };
+    this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
+  }
 
-    constructor() {
-      super();
-      this.state = {
-        yourBicycles: [],
-        isFetching: false,
-        yourTips: [],
-      };
-      this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
-    }
-
-    componentDidMount() {
-      this.getItemFromServer();
-    }
+  componentDidMount() {
+    this.getItemFromServer();
+  }
 
     getItemFromServer = () => {
       const { authState } = this.props;

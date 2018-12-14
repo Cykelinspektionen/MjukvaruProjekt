@@ -6,12 +6,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as mapActions from '../navigation/actions/MapActions';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
+import * as mapActions from '../navigation/actions/MapActions';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
-import { headerStyle } from './header';
 
 const background = require('../assets/images/background.jpeg');
 
@@ -68,10 +67,6 @@ const styles = StyleSheet.create({
 });
 
 class Browser extends React.Component {
-  static navigationOptions = {
-    ...headerStyle,
-  };
-
   constructor() {
     super();
 

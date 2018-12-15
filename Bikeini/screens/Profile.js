@@ -223,7 +223,7 @@ class Profile extends React.Component {
           <View style={[styles.container, styles.background]}>
             <View style={styles.rowContainer}>
 
-              <Image source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} style={styles.profile} resizeMode="contain" />
+              <Image key={profileState.avatarUri.thumbnail} source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} style={styles.profile} resizeMode="contain" />
               <TouchableOpacity
                 style={styles.addPic}
                 onPress={this.startCameraRoll}

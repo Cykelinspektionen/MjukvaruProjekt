@@ -4,13 +4,13 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { NavigationActions } from 'react-navigation';
 import PropTypes from 'prop-types';
 import { ButtonGroup } from 'react-native-elements';
 import { Dropdown } from 'react-native-material-dropdown';
 import { ImagePicker, ImageManipulator, Location } from 'expo';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
 import permissions from '../utilities/permissions';
-import { headerStyle } from './header';
 import * as mapActions from '../navigation/actions/MapActions';
 import * as addBikeActions from '../navigation/actions/AddBikeActions';
 
@@ -142,10 +142,6 @@ const styles = StyleSheet.create({
 });
 
 class AddBike extends React.Component {
-  static navigationOptions = {
-    ...headerStyle,
-  };
-
   constructor() {
     super();
     this.state = {
@@ -331,7 +327,7 @@ class AddBike extends React.Component {
     } = this.props;
     const { userMarker } = mapState;
     const { bikeData } = this.state;
-    if (bikeData.lat) {
+    if (!bikeData.lat) {
       Alert.alert('Please set a location');
       return;
     }

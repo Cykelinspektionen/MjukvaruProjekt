@@ -10,8 +10,6 @@ import AddBike from '../screens/AddBike';
 import Profile from '../screens/Profile';
 import Gamification from '../screens/Gamification';
 
-console.log('bottomnavigator');
-
 export default createBottomTabNavigator({
   Browser: {
     screen: Browser,

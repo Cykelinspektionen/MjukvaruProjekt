@@ -31,7 +31,7 @@ export default class App extends React.Component {
     if (navState.index) {
       this.getCurrentRouteName(navState.routes[navState.index]);
     } else {
-      store.dispatch(setActiveRoute(navState.routeName));
+      store.dispatch(setActiveRoute(navState.routeName ? navState.routeName : ''));
     }
   }
 

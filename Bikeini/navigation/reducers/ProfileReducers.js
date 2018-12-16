@@ -13,7 +13,7 @@ import {
 } from '../actions/types';
 
 const PROFILE_INITIAL_STATE = {
-  id: null,
+  id: '',
   location: '',
   username: '',
   email: '',
@@ -34,7 +34,7 @@ const PROFILE_INITIAL_STATE = {
   error: '',
   profileNotification: false,
   notificationInterval: false,
-  avatarUri: '',
+  avatarUri: { img: '', thumbnail: '' },
 };
 
 const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {

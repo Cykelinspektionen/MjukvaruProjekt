@@ -71,7 +71,7 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         id: action.payload._id,
         loadingProfile: false,
         profileLoaded: true,
-        profileNotification: true,
+        profileNotification: action.payload.has_notification,
         avatarUri: action.payload.avatar_url || { img: '', thumbnail: '' },
       };
     case UNLOAD_PROFILE:

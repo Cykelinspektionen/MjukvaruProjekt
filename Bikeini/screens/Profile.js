@@ -112,14 +112,17 @@ class Profile extends React.Component {
 
   componentDidUpdate() {
     const {
-      profileState, resetNotifiction, routeState, setHoldNotification,
+      profileState, resetNotifiction, routeState, setHoldNotification, authState,
     } = this.props;
     const { profileNotification } = profileState;
     const { activeRoute } = routeState;
+    const { jwt } = authState;
 
     if (profileNotification && activeRoute === 'Profile') {
       resetNotifiction();
       setHoldNotification();
+      serverApi.post('users/updateuser/', 'has_notification=false', 'application/x-www-form-urlencoded', jwt[0])
+        .catch(error => console.log(error));
     }
   }
 
@@ -223,7 +226,7 @@ class Profile extends React.Component {
           <View style={[styles.container, styles.background]}>
             <View style={styles.rowContainer}>
 
-              <Image key={profileState.avatarUri.thumbnail} source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} style={styles.profile} resizeMode="contain" />
+              <Image source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} style={styles.profile} resizeMode="contain" />
               <TouchableOpacity
                 style={styles.addPic}
                 onPress={this.startCameraRoll}

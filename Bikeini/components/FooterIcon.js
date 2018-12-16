@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import serverApi from '../utilities/serverApi';
+
 import TabBarIcon from '../assets/TabBarIcon';
 
 import * as profileActions from '../navigation/actions/ProfileActions';
@@ -25,13 +27,6 @@ class FooterIcon extends React.Component {
     const { profileNotification } = profileState;
     const { timer } = this.state;
 
-    /*
-      https://github.com/erikras/react-redux-universal-hot-example/issues/429,
-      ^^^                                                                 ^^^
-              setInterval is called twice but running without devmode
-              should fix this bug! Functionality is still working
-              as it should but it send x2 as many requests :/
-    */
     clearInterval(timer);
     this.setState({
       notification: profileNotification,
@@ -56,10 +51,20 @@ class FooterIcon extends React.Component {
   }
 
   checkIfNotification = () => {
-    const { setNotifiction, routeState } = this.props;
+    const {
+      setNotifiction, routeState, authState, profileState,
+    } = this.props;
     const { holdNotification } = routeState;
-    if (!holdNotification) {
-      setNotifiction();
+    const { jwt } = authState;
+    const { profileNotification } = profileState;
+    if (!holdNotification && !profileNotification) {
+      serverApi.get('users/userhasnotifications/', jwt[0])
+        .then((responseJson) => {
+          const { message } = responseJson;
+          if (message) {
+            setNotifiction();
+          }
+        }).catch(error => console.log(error));
     }
   }
 
@@ -67,7 +72,7 @@ class FooterIcon extends React.Component {
     const { notification } = this.state;
     const { focused } = this.props;
     return (
-      <View>
+      <View key="FooterIcon">
         <TabBarIcon
           focused={focused}
           name={Platform.OS === 'ios' ? 'ios-contact' : 'md-contact'}
@@ -105,13 +110,19 @@ FooterIcon.propTypes = {
   routeState: PropTypes.shape({
     activeRoute: PropTypes.string.isRequired,
   }).isRequired,
+  authState: PropTypes.shape({
+    isLoggedIn: PropTypes.bool.isRequired,
+    username: PropTypes.string.isRequired,
+    password: PropTypes.string.isRequired,
+    jwt: PropTypes.array.isRequired,
+  }).isRequired,
   setNotifiction: PropTypes.func.isRequired,
   focused: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { profileState, routeState } = state;
-  return { profileState, routeState };
+  const { profileState, routeState, authState } = state;
+  return { profileState, routeState, authState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(

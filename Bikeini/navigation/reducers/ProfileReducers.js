@@ -33,7 +33,6 @@ const PROFILE_INITIAL_STATE = {
   profileLoaded: false,
   error: '',
   profileNotification: false,
-  notificationInterval: false,
   avatarUri: { img: '', thumbnail: '' },
 };
 

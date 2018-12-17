@@ -3,7 +3,7 @@ import {
   Platform, View, Text, StyleSheet, Image, TouchableHighlight,
 } from 'react-native';
 import {
-  Constants, Location, Permissions, MapView,
+  Constants, Location, Permissions, MapView, IntentLauncherAndroid,
 } from 'expo';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -100,7 +100,7 @@ class PinMap extends React.Component {
         errorMessage: 'Permission to access location was denied',
       });
     }
-    const location = await Location.getCurrentPositionAsync({});
+    const location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
     const geocode = await Location.reverseGeocodeAsync(location.coords);
     setMapLocation({ ...location.coords, ...geocode[0] });
   };

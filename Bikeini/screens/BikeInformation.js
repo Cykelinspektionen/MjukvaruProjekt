@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
     flex: 0.5,
+    marginTop: 5,
   },
   image: {
     flex: 1,
@@ -114,9 +115,9 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    marginRight: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
   },
   buttonSmall: {
     justifyContent: 'center',
@@ -611,6 +612,8 @@ class BikeInformation extends React.Component {
     } = bikeData;
     const city = location ? location.city : '';
     const neighborhood = location ? location.neighborhood : '';
+    const comma = (brand || model) ? ', ' : '';
+    const newLine = (brand || model) ? ' ' : '';
 
     const list = this.renderList();
     const commentField = this.renderCommentField(false);
@@ -665,9 +668,9 @@ class BikeInformation extends React.Component {
             </Text>
             <Text style={styles.body} adjustsFontSizeToFit>
               {brand}
-              {' '}
+              {newLine}
               {model}
-              {', '}
+              {comma}
               {color}
             </Text>
             <Text style={styles.body} adjustsFontSizeToFit>
@@ -675,8 +678,8 @@ class BikeInformation extends React.Component {
               {' '}
               {frameNumber}
             </Text>
+            {foundButton}
           </View>
-          {foundButton}
         </View>
         <View style={styles.commentContainer}>
           {list}

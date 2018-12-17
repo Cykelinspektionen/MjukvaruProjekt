@@ -188,6 +188,24 @@ class AddBike extends React.Component {
         {
           value: 'Black',
         },
+        {
+          value: 'Gray',
+        },
+        {
+          value: 'Orange',
+        },
+        {
+          value: 'Pink',
+        },
+        {
+          value: 'Purple',
+        },
+        {
+          value: 'Silver',
+        },
+        {
+          value: 'Yellow',
+        },
       ],
     };
     this.cameraRollPermission = permissions.cameraRollPermission.bind(this);
@@ -545,6 +563,7 @@ class AddBike extends React.Component {
               <View style={styles.dropdowns}>
                 <Dropdown
                   value={color}
+                  itemCount={5}
                   label="Color"
                   data={Color}
                   onChangeText={value => this.setBikeData('color', value)}

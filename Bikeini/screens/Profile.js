@@ -278,13 +278,13 @@ class Profile extends React.Component {
             <View style={[styles.container, styles.background]}>
               <View style={styles.rowContainer}>
 
-              <Image source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} style={styles.profile} resizeMode="contain" />
-              <TouchableOpacity
-                style={styles.addPic}
-                onPress={this.startCameraRoll}
-              >
-                <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
-              </TouchableOpacity>
+                <Image source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} style={styles.profile} resizeMode="contain" />
+                <TouchableOpacity
+                  style={styles.addPic}
+                  onPress={this.startCameraRoll}
+                >
+                  <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
+                </TouchableOpacity>
 
                 <View style={styles.columnContainer}>
                   <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>

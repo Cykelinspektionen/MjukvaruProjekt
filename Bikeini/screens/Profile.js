@@ -46,6 +46,8 @@ const styles = StyleSheet.create({
     width: undefined,
     marginLeft: 20,
     borderRadius: 10,
+    borderColor: 'black',
+    borderWidth: 1,
   },
   columnContainer: {
     flex: 0.6,
@@ -258,7 +260,7 @@ class Profile extends React.Component {
             <View style={[styles.container, styles.background]}>
               <View style={styles.rowContainer}>
 
-                <Image source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} style={styles.profile} resizeMode="contain" />
+                <Image source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} style={styles.profile} />
                 <TouchableOpacity
                   style={styles.addPic}
                   onPress={this.startCameraRoll}

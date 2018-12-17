@@ -59,13 +59,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonContainer: {
-    backgroundColor: 'white',
     height: 45,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
     width: '90%',
+    borderRadius: 15,
   },
   requestButton: {
     marginTop: 35,
@@ -82,6 +82,10 @@ const styles = StyleSheet.create({
   },
 });
 
+const passLowCase = 'abcdefghijklmnopqrstuvwxyz';
+const passUpCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const passNumbs = '1234567890';
+const passChars = ' !"#$%&()*+,-./:;<=>?@[\]^_`{|}~';
 
 class EditProfile extends React.Component {
   static navigationOptions = {
@@ -93,98 +97,177 @@ class EditProfile extends React.Component {
     this.state = {
       newPassword: '',
       newPassword2: '',
+      credStatus: {},
     };
   }
 
-  componentDidUpdate() {
-    /*
-    const { resetState, navigation, requestNewPasswordReset } = this.props;
-    if (!resetState.loadingReset && resetState.passwordResetDone && resetState.error === '') {
-      navigation.navigate('Login');
-      requestNewPasswordReset();
-    }
-    */
+  componentDidMount() {
+    const { updateReset } = this.props;
+    updateReset();
   }
-  /*
-  getErrorMessage(error) {
-    return error;
-  }
-  */
 
- changePassword = () => {
-   console.log('lol');
- }
+  checkPasswordStrength = () => {
+    const { newPassword } = this.state;
+
+    if (newPassword.length < 8) {
+      return '`Password´ has to be ATLEAST 8 characters!';
+    }
+
+    const conditions = {
+      specialChar: false, number: false, lowerCase: false, upperCase: false,
+    };
+    for (let i = 0; i < newPassword.length; i += 1) {
+      const currChar = newPassword.charAt(i);
+
+      if (passChars.indexOf(currChar) > -1) {
+        conditions.specialChar = true;
+      } else if (passNumbs.indexOf(currChar) > -1) {
+        conditions.number = true;
+      } else if (passLowCase.indexOf(currChar) > -1) {
+        conditions.lowerCase = true;
+      } else if (passUpCase.indexOf(currChar) > -1) {
+        conditions.upperCase = true;
+      }
+
+      if (conditions.specialChar && conditions.number
+          && conditions.lowerCase && conditions.upperCase) {
+        return '';
+      }
+    }
+
+    let errorMsg = 'Missing';
+    if (!conditions.specialChar) {
+      errorMsg += ', `SPECIAL CHARACTER´';
+    }
+    if (!conditions.number) {
+      errorMsg += ', `NUMBER´';
+    }
+    if (!conditions.lowerCase) {
+      errorMsg += ', `LOWERCASE LETTER´';
+    }
+    if (!conditions.upperCase) {
+      errorMsg += ', `UPPERCASE LETTER´';
+    }
+    return errorMsg;
+  }
+
+
+  changePassword = () => {
+    const {
+      newPassword, newPassword2,
+    } = this.state;
+    let numErr = 0;
+    const credStatus = {
+      newPassword: '', newPassword2: '',
+    };
+
+    credStatus.newPassword = this.checkPasswordStrength();
+    if (credStatus.newPassword !== '') {
+      numErr += 1;
+    }
+
+    if (newPassword !== newPassword2) {
+      credStatus.newPassword2 = '`Password´ has to be matching';
+      numErr += 1;
+    }
+
+    if (newPassword.trim() === '') {
+      credStatus.newPassword = '`Password´ has to be specified';
+      numErr += 1;
+    }
+    this.setState({ credStatus });
+    if (numErr === 0) {
+      this.updateProfile();
+    } else {
+      const { updateReset } = this.props;
+      updateReset();
+    }
+  }
 
   updateProfile = () => {
-    // const { emailOrUserName } = this.state;
-    // const { requestNewPasswordInit } = this.props;
-    // requestNewPasswordInit(emailOrUserName);
+    const { newPassword } = this.state;
+    const { updateUserInit, authState } = this.props;
+
+    const newUser = {
+      password: newPassword,
+    };
+    updateUserInit(newUser, authState.jwt[0]);
+  }
+
+  changeLocation = () => {
+    const { navigation } = this.props;
+    navigation.navigate('Location');
   }
 
   render() {
     const { profileState } = this.props;
-    const { location, email, username } = profileState;
-    const { newPassword, newPassword2 } = this.state;
+    const { newPassword, newPassword2, credStatus } = this.state;
+    const { location } = profileState;
 
-    /*
-    if (resetState.loadingReset) {
+    const { updateProfile } = profileState;
+    let success = '';
+    if (!updateProfile.loadingUpdate && updateProfile.updateDone && updateProfile.error === '') {
+      success = 'Password succesfully changed';
+    }
+
+    if (profileState.loadingUpdate) {
       return (
         <View style={styles.container}>
           <Text>Loading...</Text>
         </View>
       );
-
     }
-    */
+
     return (
       <ImageBackground style={styles.backImg} source={background}>
-         <KeyboardAvoidingView behavior="padding" enabled style={styles.container}>
+        <KeyboardAvoidingView behavior="padding" enabled style={styles.container}>
           {/* <View style={styles.background}> */}
-            {/* <View style={styles.container}> */}
-              <Text style={styles.locationText}>
-                {'Current Location: '}
-                { location }
-                {' '}
-              </Text>
-              <TouchableHighlight
-                style={[styles.buttonContainer, styles.requestButton]}
-                onPress={() => this.requestNewPassword()}
-              >
-                <Text style={styles.loginText}>Change Location</Text>
-              </TouchableHighlight>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.inputs}
-                  placeholder="New password"
-                  underlineColorAndroid="transparent"
-                  secureTextEntry
-                  value={newPassword}
-                  onChangeText={text => this.setState({ newPassword: text })}
-                />
-              </View>
-              <Text style={{ color: 'red' }}>
-                { profileState.error ? profileState.error : ''}
-              </Text>
-              <View style={styles.inputContainer}>
-                <TextInput
-                  style={styles.inputs}
-                  placeholder="Repeat new password"
-                  underlineColorAndroid="transparent"
-                  secureTextEntry
-                  value={newPassword2}
-                  onChangeText={text => this.setState({ newPassword2: text })}
-                />
-              </View>
-              <Text style={{ color: 'red' }}>
-                { profileState.error ? profileState.error : ''}
-              </Text>
-              <TouchableHighlight
-                style={[styles.buttonContainer, styles.requestButton]}
-                onPress={() => this.changePassword()}
-              >
-                <Text style={styles.loginText}>Change password</Text>
-              </TouchableHighlight>
-            {/* </View> */}
+          {/* <View style={styles.container}> */}
+          <Text style={styles.locationText}>
+            {'Current Location: '}
+            { location }
+            {' '}
+          </Text>
+          <TouchableHighlight
+            style={[styles.buttonContainer, styles.requestButton]}
+            onPress={() => this.changeLocation()}
+          >
+            <Text style={styles.loginText}>Change Location</Text>
+          </TouchableHighlight>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.inputs}
+              placeholder="New password"
+              underlineColorAndroid="transparent"
+              secureTextEntry
+              value={newPassword}
+              onChangeText={text => this.setState({ newPassword: text })}
+            />
+          </View>
+          <Text style={{ color: 'red' }}>
+            { profileState.error ? profileState.error : ''}
+          </Text>
+          <Text style={{ color: 'red' }}>{credStatus.newPassword}</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.inputs}
+              placeholder="Repeat new password"
+              underlineColorAndroid="transparent"
+              secureTextEntry
+              value={newPassword2}
+              onChangeText={text => this.setState({ newPassword2: text })}
+            />
+          </View>
+          <Text style={{ color: 'red' }}>{credStatus.newPassword2}</Text>
+          <TouchableHighlight
+            style={[styles.buttonContainer, styles.requestButton]}
+            onPress={() => this.changePassword()}
+          >
+            <Text style={styles.loginText}>Change password</Text>
+          </TouchableHighlight>
+          <Text style={{ color: 'blue' }}>{success}</Text>
+
+          {/* </View> */}
           {/* </View> */}
         </KeyboardAvoidingView>
       </ImageBackground>
@@ -223,6 +306,8 @@ EditProfile.propTypes = {
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
+  updateUserInit: PropTypes.func.isRequired,
+  updateReset: PropTypes.func.isRequired,
 };
 
 

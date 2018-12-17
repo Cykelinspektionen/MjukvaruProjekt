@@ -8,6 +8,10 @@ import {
   UPLOAD_PROFILE_IMG_SUCCESS,
   UPLOAD_PROFILE_IMG_FAILURE,
   UNLOAD_PROFILE,
+  UPDATE_USER_BEGIN,
+  UPDATE_USER_FAILURE,
+  UPDATE_USER_SUCCESS,
+  UPDATE_RESET,
 } from '../actions/types';
 
 const PROFILE_INITIAL_STATE = {
@@ -31,6 +35,11 @@ const PROFILE_INITIAL_STATE = {
   profileLoaded: false,
   error: '',
   avatarUri: '',
+  updateProfile: {
+    loadingUpdate: false,
+    updateDone: false,
+    error: '',
+  },
 };
 
 const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
@@ -77,6 +86,50 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
       return { ...state, avatarUri: action.payload.avatar_url };
     case UPLOAD_PROFILE_IMG_FAILURE:
       return { ...state, imgUploaded: false };
+    case UPDATE_USER_BEGIN:
+      return { ...state, updateProfile: { ...state.updateProfile, loadingUpdate: true, updateDone: false } };
+    case UPDATE_USER_FAILURE:
+      return {
+        ...state,
+        updateProfile:
+        {
+          ...state.updateProfile,
+          error: action.payload,
+          loadingUpdate: false,
+          updateDone: false,
+        },
+      };
+    case UPDATE_USER_SUCCESS:
+      return {
+        ...state,
+        location: action.payload.location,
+        username: action.payload.username,
+        email: action.payload.email,
+        phone_number: action.payload.phone_number,
+        create_time: action.payload.create_time,
+        game_score: action.payload.game_score,
+        id: action.payload._id,
+        loadingProfile: false,
+        profileLoaded: true,
+        avatarUri: action.payload.avatar_url || { img: '', thumbnail: '' },
+        updateProfile: {
+          ...state.updateProfile,
+          error: '',
+          loadingUpdate: false,
+          updateDone: true,
+        },
+      };
+    case UPDATE_RESET:
+      return {
+        ...state,
+        updateProfile:
+        {
+          ...state.updateProfile,
+          loadingUpdate: false,
+          updateDone: false,
+          error: '',
+        },
+      };
     default:
       return state;
   }

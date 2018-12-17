@@ -297,6 +297,7 @@ class Profile extends React.Component {
                     color="black"
                     style={{
                       right: 1,
+                      opacity: 0.7,
                     }}
                   />
                 </View>

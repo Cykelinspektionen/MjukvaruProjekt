@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   inputContainer: {
-    borderBottomColor: '#F5FCFF',
+    borderBottomColor: '#d8d8d8',
     backgroundColor: '#FFFFFF',
     borderRadius: 30,
     borderBottomWidth: 1,
@@ -46,18 +46,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    width: '90%',
+    width: 250,
+    borderRadius: 30,
   },
   loginButton: {
     marginTop: 35,
-    backgroundColor: '#74C3AE',
+    backgroundColor: '#44ccad',
   },
   loginText: {
     color: 'white',
   },
   logo: {
-    height: 100,
-    width: 100,
+    height: 130,
+    width: 130,
   },
   logoTextCont: {
     marginTop: 5,

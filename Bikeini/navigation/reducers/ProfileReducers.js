@@ -8,10 +8,12 @@ import {
   UPLOAD_PROFILE_IMG_SUCCESS,
   UPLOAD_PROFILE_IMG_FAILURE,
   UNLOAD_PROFILE,
+  RESET_PROFILE_NOTIFICATION,
+  SET_PROFILE_NOTIFICATION,
 } from '../actions/types';
 
 const PROFILE_INITIAL_STATE = {
-  id: null,
+  id: '',
   location: '',
   username: '',
   email: '',
@@ -30,7 +32,8 @@ const PROFILE_INITIAL_STATE = {
   loadingProfile: false,
   profileLoaded: false,
   error: '',
-  avatarUri: '',
+  profileNotification: false,
+  avatarUri: { img: '', thumbnail: '' },
 };
 
 const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
@@ -67,6 +70,7 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         id: action.payload._id,
         loadingProfile: false,
         profileLoaded: true,
+        profileNotification: action.payload.has_notification,
         avatarUri: action.payload.avatar_url || { img: '', thumbnail: '' },
       };
     case UNLOAD_PROFILE:
@@ -77,6 +81,13 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
       return { ...state, avatarUri: action.payload.avatar_url };
     case UPLOAD_PROFILE_IMG_FAILURE:
       return { ...state, imgUploaded: false };
+    case RESET_PROFILE_NOTIFICATION:
+      return { ...state, profileNotification: false };
+    case SET_PROFILE_NOTIFICATION:
+      if (!state.profileNotification) {
+        return { ...state, profileNotification: true };
+      }
+      return state;
     default:
       return state;
   }

@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   inputContainer: {
-    borderBottomColor: '#F5FCFF',
+    borderBottomColor: '#d8d8d8',
     backgroundColor: '#FFFFFF',
     borderRadius: 30,
     borderBottomWidth: 1,
@@ -52,8 +52,8 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   logo: {
-    height: 100,
-    width: 100,
+    height: 130,
+    width: 130,
   },
   logoTextCont: {
     marginTop: 5,

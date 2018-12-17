@@ -9,6 +9,9 @@ import {
   LOAD_PROFILE_SUCCESS,
   LOAD_PROFILE_FAILURE,
   UNLOAD_PROFILE,
+  RESET_PROFILE_NOTIFICATION,
+  SET_PROFILE_NOTIFICATION,
+  SET_PROFILE_NOTIFICATION_INTERVAL,
 } from './types';
 import serverApi from '../../utilities/serverApi';
 import { deleteJWTInit } from './JwtActions';
@@ -77,6 +80,24 @@ export const loadProfileFailure = error => (
 export const unloadProfile = () => (
   {
     type: UNLOAD_PROFILE,
+  }
+);
+
+export const resetNotifiction = () => (
+  {
+    type: RESET_PROFILE_NOTIFICATION,
+  }
+);
+
+export const setNotifiction = () => (
+  {
+    type: SET_PROFILE_NOTIFICATION,
+  }
+);
+
+export const setNotifictionInterval = () => (
+  {
+    type: SET_PROFILE_NOTIFICATION_INTERVAL,
   }
 );
 

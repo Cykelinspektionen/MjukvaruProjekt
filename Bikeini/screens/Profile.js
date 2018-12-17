@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TouchableHighlight, RefreshControl, Alert, Platform,
+  StyleSheet, Text, View, Image, FlatList, TouchableOpacity, TouchableHighlight, RefreshControl, Alert, Platform, ImageBackground,
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -14,40 +14,55 @@ import Item from '../components/Item';
 import * as jwtActions from '../navigation/actions/JwtActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as mapActions from '../navigation/actions/MapActions';
+import { setHoldNotification } from '../navigation/actions/RouteActions';
 
+const background = require('../assets/images/background.jpeg');
 const profilePic = require('../assets/images/userPlaceholder.jpg');
 
 const styles = StyleSheet.create({
   background: {
+    backgroundColor: 'transparent',
     flex: 1,
-    backgroundColor: '#fff',
   },
   container: {
     flex: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
+    backgroundColor: 'transparent',
+  },
+  backImg: {
+    flex: 1,
+    alignSelf: 'stretch',
   },
   rowContainer: {
-    flex: 0.20,
+    flex: 0.25,
     flexDirection: 'row',
+    alignContent: 'center',
     width: '100%',
-    backgroundColor: '#fff',
     marginTop: 5,
   },
   profile: {
-    flex: 0.5,
+    flex: 0.3,
     height: undefined,
     width: undefined,
+    marginLeft: 20,
+    borderRadius: 10,
+    borderColor: 'black',
+    borderWidth: 1,
   },
   columnContainer: {
-    flex: 0.5,
+    flex: 0.6,
     flexDirection: 'column',
+    justifyContent: 'center',
     backgroundColor: '#fff',
-    alignContent: 'flex-start',
-    marginLeft: 2,
+    alignContent: 'flex-end',
+    left: 7,
+    borderRadius: 10,
+    borderColor: 'black',
+    borderWidth: 1,
   },
   categories: {
-    flex: 0.05,
+    flex: 0.15,
     fontWeight: 'bold',
     marginLeft: 10,
     marginTop: 5,
@@ -58,9 +73,15 @@ const styles = StyleSheet.create({
   },
   UserInfo: {
     fontSize: 17,
+    paddingLeft: 5,
+    borderRadius: 15,
+    alignSelf: 'stretch',
   },
   greenButton: {
     backgroundColor: '#44ccad',
+    borderRadius: 10,
+    borderColor: 'black',
+    borderWidth: 1,
   },
   greenButtonText: {
     color: 'white',
@@ -71,6 +92,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     flex: 0.075,
     borderRadius: 5,
+    margin: 3,
     flexDirection: 'row',
   },
   editButtonContainer: {
@@ -78,19 +100,49 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 5,
     margin: 2,
+    // ios
+    shadowOpacity: 0.6,
+    shadowRadius: 3,
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    },
+    // android
+    elevation: 5,
   },
   actionButton: {
     backgroundColor: '#00b5ec',
   },
   browserList: {
-    flex: 0.4,
-    width: '100%',
+    flex: 1,
+    width: '95%',
     alignSelf: 'center',
   },
   addPic: {
     justifyContent: 'flex-end',
+    right: 30,
+  },
+  missing: {
+    flex: 0.5,
+    flexDirection: 'column',
+    backgroundColor: 'white',
+    width: '95%',
+    alignSelf: 'center',
+    paddingBottom: 15,
+    borderRadius: 15,
+    borderColor: 'black',
+    borderWidth: 1,
+    margin: 5,
+    // ios
+    shadowOpacity: 0.6,
+    shadowRadius: 3,
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    },
+    // android
+    elevation: 5,
   },
 });
 
@@ -107,6 +159,22 @@ class Profile extends React.Component {
 
   componentDidMount() {
     this.getItemFromServer();
+  }
+
+  componentDidUpdate() {
+    const {
+      profileState, resetNotifiction, routeState, setHoldNotification, authState,
+    } = this.props;
+    const { profileNotification } = profileState;
+    const { activeRoute } = routeState;
+    const { jwt } = authState;
+
+    if (profileNotification && activeRoute === 'Profile') {
+      resetNotifiction();
+      setHoldNotification();
+      serverApi.post('users/updateuser/', 'has_notification=false', 'application/x-www-form-urlencoded', jwt[0])
+        .catch(error => console.log(error));
+    }
   }
 
     getItemFromServer = () => {
@@ -203,12 +271,14 @@ class Profile extends React.Component {
       const { username } = profileState;
       const { location } = profileState;
       const { email } = profileState;
+
       return (
         <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
-          <View style={[styles.container, styles.background]}>
-            <View style={styles.rowContainer}>
+          <ImageBackground style={styles.backImg} source={background}>
+            <View style={[styles.container, styles.background]}>
+              <View style={styles.rowContainer}>
 
-              <Image source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} style={styles.profile} resizeMode="contain" />
+              <Image source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} style={styles.profile} resizeMode="contain" />
               <TouchableOpacity
                 style={styles.addPic}
                 onPress={this.startCameraRoll}
@@ -216,62 +286,67 @@ class Profile extends React.Component {
                 <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
               </TouchableOpacity>
 
-              <View style={styles.columnContainer}>
-                <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
-                  {''}
-                  {username}
-                </Text>
-                <Text style={styles.UserInfo}>
-                  {''}
-                  {location}
-                </Text>
-                <Text style={styles.UserInfo}>
-                  {''}
-                  {email}
-                </Text>
+                <View style={styles.columnContainer}>
+                  <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
+                    {''}
+                    {username}
+                  </Text>
+                  <Text style={styles.UserInfo}>
+                    {''}
+                    {location}
+                  </Text>
+                  <Text style={styles.UserInfo}>
+                    {''}
+                    {email}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.editAndLogoutButtonContainer}>
+                <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
+                  <Text style={styles.greenButtonText}>EDIT USER</Text>
+                </TouchableHighlight>
+                <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => this.onLogoutPress()}>
+                  <Text style={styles.greenButtonText}>LOG OUT</Text>
+                </TouchableHighlight>
+              </View>
+              <View style={styles.missing}>
+                <Text style={styles.categories} adjustsFontSizeToFit>Your missing bikes:</Text>
+                <View
+                  style={styles.browserList}
+                >
+                  <FlatList
+                    data={yourBicycles}
+                    keyExtractor={this.keyExtractor}
+                    extraData={this.state}
+                    renderItem={this.renderItem}
+                    refreshControl={(
+                      <RefreshControl
+                        onRefresh={this.onRefresh}
+                        refreshing={isFetching}
+                      />
+            )}
+                  />
+                </View>
+              </View>
+              <View style={styles.missing}>
+                <Text style={styles.categories} adjustsFontSizeToFit>Bikes you have submitted tips about:</Text>
+                <View style={styles.browserList}>
+                  <FlatList
+                    data={yourTips}
+                    keyExtractor={this.keyExtractor}
+                    extraData={this.state}
+                    renderItem={this.renderItem}
+                    refreshControl={(
+                      <RefreshControl
+                        onRefresh={this.onRefresh}
+                        refreshing={isFetching}
+                      />
+          )}
+                  />
+                </View>
               </View>
             </View>
-            <View style={styles.editAndLogoutButtonContainer}>
-              <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
-                <Text style={styles.greenButtonText}>EDIT USER</Text>
-              </TouchableHighlight>
-              <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => this.onLogoutPress()}>
-                <Text style={styles.greenButtonText}>LOG OUT</Text>
-              </TouchableHighlight>
-            </View>
-            <Text style={styles.categories} adjustsFontSizeToFit>Your missing bikes:</Text>
-            <View
-              style={styles.browserList}
-            >
-              <FlatList
-                data={yourBicycles}
-                keyExtractor={this.keyExtractor}
-                extraData={this.state}
-                renderItem={this.renderItem}
-                refreshControl={(
-                  <RefreshControl
-                    onRefresh={this.onRefresh}
-                    refreshing={isFetching}
-                  />
-            )}
-              />
-            </View>
-            <Text style={[styles.categories, styles.tipsBikes]}>Bikes you have submitted tips about:</Text>
-            <View style={styles.browserList}>
-              <FlatList
-                data={yourTips}
-                keyExtractor={this.keyExtractor}
-                extraData={this.state}
-                renderItem={this.renderItem}
-                refreshControl={(
-                  <RefreshControl
-                    onRefresh={this.onRefresh}
-                    refreshing={isFetching}
-                  />
-          )}
-              />
-            </View>
-          </View>
+          </ImageBackground>
         </AndroidBackHandler>
 
       );
@@ -309,20 +384,27 @@ Profile.propTypes = {
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
+  routeState: PropTypes.shape({
+    activeRoute: PropTypes.string.isRequired,
+  }).isRequired,
   uploadProfilePicToServer: PropTypes.func.isRequired,
   deleteJWTInit: PropTypes.func.isRequired,
   unloadProfile: PropTypes.func.isRequired,
   setMarker: PropTypes.func.isRequired,
   setShowMarker: PropTypes.func.isRequired,
+  resetNotifiction: PropTypes.func.isRequired,
+  setHoldNotification: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  const { authState, profileState } = state;
-  return { authState, profileState };
+  const { authState, profileState, routeState } = state;
+  return { authState, profileState, routeState };
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...jwtActions, ...profileActions, ...mapActions },
+  {
+    setHoldNotification, ...jwtActions, ...profileActions, ...mapActions,
+  },
   dispatch,
 );
 

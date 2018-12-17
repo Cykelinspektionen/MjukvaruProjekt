@@ -277,7 +277,6 @@ class AddBike extends React.Component {
     }
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: [4, 3],
       exif: true,
     });
 

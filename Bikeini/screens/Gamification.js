@@ -6,7 +6,6 @@ import {
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
-import { headerStyle } from './header';
 import serverApi from '../utilities/serverApi';
 import * as profileActions from '../navigation/actions/ProfileActions';
 
@@ -100,22 +99,18 @@ const styles = StyleSheet.create({
 });
 
 class Gamification extends React.Component {
-    static navigationOptions = {
-      ...headerStyle,
+  constructor(props) {
+    super(props);
+    this.state = {
+      topPlayersSwe: '',
+      topPlayersLocal: '',
+      isFetching: false,
     };
+  }
 
-    constructor(props) {
-      super(props);
-      this.state = {
-        topPlayersSwe: '',
-        topPlayersLocal: '',
-        isFetching: false,
-      };
-    }
-
-    componentDidMount() {
-      this.handleServerTopPlayers();
-    }
+  componentDidMount() {
+    this.handleServerTopPlayers();
+  }
 
       handleServerTopPlayers = () => {
         const { authState, profileState, loadProfileInit } = this.props;

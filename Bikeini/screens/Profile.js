@@ -14,7 +14,7 @@ import Item from '../components/Item';
 import * as jwtActions from '../navigation/actions/JwtActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as mapActions from '../navigation/actions/MapActions';
-import { setHoldNotification } from '../navigation/actions/RouteActions';
+import * as routeActions from '../navigation/actions/RouteActions';
 
 const background = require('../assets/images/background.jpeg');
 const profilePic = require('../assets/images/userPlaceholder.jpg');
@@ -278,13 +278,13 @@ class Profile extends React.Component {
             <View style={[styles.container, styles.background]}>
               <View style={styles.rowContainer}>
 
-              <Image source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} style={styles.profile} resizeMode="contain" />
-              <TouchableOpacity
-                style={styles.addPic}
-                onPress={this.startCameraRoll}
-              >
-                <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
-              </TouchableOpacity>
+                <Image source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} style={styles.profile} resizeMode="contain" />
+                <TouchableOpacity
+                  style={styles.addPic}
+                  onPress={this.startCameraRoll}
+                >
+                  <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
+                </TouchableOpacity>
 
                 <View style={styles.columnContainer}>
                   <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
@@ -403,7 +403,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => bindActionCreators(
   {
-    setHoldNotification, ...jwtActions, ...profileActions, ...mapActions,
+    ...routeActions, ...jwtActions, ...profileActions, ...mapActions,
   },
   dispatch,
 );

@@ -227,7 +227,7 @@ p
             >
               <View style={styles.container} />
               <View style={styles.rowContainer}>
-                <Image style={styles.profile} source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} />
+                <Image style={styles.profile} source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} />
                 <View style={styles.columnContainer}>
                   <Text style={styles.UserInfo} adjustsFontSizeToFit>
                 Found Bikes:

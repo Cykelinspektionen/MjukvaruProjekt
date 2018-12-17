@@ -127,7 +127,7 @@ class ResetPassword extends React.Component {
             onChangeText={text => this.setState({ emailOrUserName: text })}
           />
         </View>
-        <Text style={{ color: 'red' }}>
+        <Text style={{ color: 'red', top: -45 }}>
           { resetState.error ? resetState.error : ''}
         </Text>
         <TouchableHighlight

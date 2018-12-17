@@ -75,10 +75,10 @@ const styles = StyleSheet.create({
     width: '20%',
     height: '60%',
     marginLeft: '2%',
-    left: '75%',
+    left: '65%',
   },
   addPhotoButtons: {
-    left: '20%',
+    left: '15%',
   },
   greenButton: {
     backgroundColor: '#44ccad',

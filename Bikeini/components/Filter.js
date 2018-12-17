@@ -16,10 +16,9 @@ const styles = StyleSheet.create({
     marginTop: '2%',
   },
   container: {
-    alignSelf: 'flex-start',
-    alignItems: 'flex-start',
+    alignSelf: 'center',
+    alignItems: 'center',
     width: '90%',
-    marginLeft: '10%',
   },
   searchBar: {
     flexDirection: 'row',
@@ -28,36 +27,32 @@ const styles = StyleSheet.create({
     marginBottom: '5%',
     borderWidth: 1,
   },
-  searchButton: {
+  filterButtons: {
     alignSelf: 'flex-end',
     alignItems: 'center',
     justifyContent: 'center',
     width: 120,
-    height: 60,
+    height: 35,
+    borderWidth: 1,
+    borderColor: 'black',
     borderRadius: 10,
     backgroundColor: '#44ccad',
+    // ios
+    shadowOpacity: 0.6,
+    shadowRadius: 3,
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    },
+    // android
+    elevation: 5,
   },
-  resetButton: {
-    alignSelf: 'flex-end',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 120,
-    height: 60,
-    borderRadius: 10,
-    backgroundColor: '#44ccad',
-  },
-  searchButtonText: {
+  filterButtonsText: {
     textAlignVertical: 'center',
-    fontSize: 24,
-    fontWeight: '100',
+    fontSize: 18,
     color: 'white',
   },
-  resetButtonText: {
-    textAlignVertical: 'center',
-    fontSize: 24,
-    fontWeight: '100',
-    color: 'white',
-  },
+
   inputs: {
     height: '7%',
     flex: 1,
@@ -269,20 +264,20 @@ class Filter extends React.Component {
               onChangeText={text => this.setSearchText('color', text)}
             />
             <View style={{
-              flexDirection: 'row', marginTop: '5%', width: '100%', justifyContent: 'space-between',
+              flexDirection: 'row', marginTop: '5%', justifyContent: 'space-between',
             }}
             >
               <TouchableOpacity
-                style={styles.resetButton}
+                style={styles.filterButtons}
                 onPress={this.reset}
               >
-                <Text style={styles.resetButtonText}>RESET</Text>
+                <Text style={styles.filterButtonsText}>RESET</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.searchButton}
+                style={styles.filterButtons}
                 onPress={this.search}
               >
-                <Text style={styles.searchButtonText}>SEARCH</Text>
+                <Text style={styles.filterButtonsText}>SEARCH</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -3,6 +3,7 @@ import {
   StyleSheet, Text, View, Image, TouchableOpacity,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import serverApi from '../utilities/serverApi';
 
 const emptyCommentIcon = require('../assets/images/emptyComment.png');
 const locationIcon = require('../assets/images/location.png');
@@ -40,6 +41,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
+  matchingNum: {
+    fontSize: 25,
+    fontWeight: '500',
+  },
   commentsTag: {
     width: 30,
     height: 35,
@@ -65,7 +70,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class Item extends React.PureComponent {
+export default class Item extends React.Component {
   handleLocation = () => {
     const { actions, location, navigation } = this.props;
     actions.setMarker({ latitude: location.lat, longitude: location.long });
@@ -73,12 +78,20 @@ export default class Item extends React.PureComponent {
     navigation.navigate('PinMap');
   }
 
+  getNumOfMatchingBikes =(bikeData) => {
+    const { authState } = this.props;
+    const { jwt } = authState;
+    serverApi.post('bikes/getmatchingbikes', JSON.stringify(bikeData), 'application/json', jwt[0])
+      .then(responseJson => responseJson.length).catch(error => console.log(error));
+  }
+
   render() {
     const {
-      title, brand, imageUrl, bikeData, navigation, refresh, location, commentsLength,
+      title, brand, imageUrl, bikeData, navigation, refresh, location, commentsLength, matchingBikesCount,
     } = this.props;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
     let locationButton = null;
+    let matchingNum = null;
     if (location.lat && location.long) {
       locationButton = (
         <TouchableOpacity
@@ -87,6 +100,14 @@ export default class Item extends React.PureComponent {
         >
           <Image style={styles.locationTag} source={locationIcon} />
         </TouchableOpacity>
+      );
+    }
+    if (matchingBikesCount) {
+      const matchingBikes = this.getNumOfMatchingBikes();
+      matchingNum = (
+        <Text style={styles.matchingNum}>
+          {matchingBikes}
+        </Text>
       );
     }
     return (
@@ -114,6 +135,7 @@ export default class Item extends React.PureComponent {
             </Text>
           </TouchableOpacity>
           {locationButton}
+          {matchingNum}
         </View>
       </View>
     );
@@ -137,4 +159,8 @@ Item.propTypes = {
     setShowMarker: PropTypes.func.isRequired,
     setMarker: PropTypes.func.isRequired,
   }).isRequired,
+  authState: PropTypes.shape({
+    jwt: PropTypes.array.isRequired,
+  }),
+  matchingBikesCount: PropTypes.bool.isRequired,
 };

@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
   locationTag: {
     flexDirection: 'row-reverse',
     alignSelf: 'flex-end',
+    right: 2,
     height: '100%',
     width: '100%',
   },

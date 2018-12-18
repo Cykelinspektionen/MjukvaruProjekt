@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     flex: 0.075,
-    borderRadius: 5,
     margin: 3,
     flexDirection: 'row',
   },

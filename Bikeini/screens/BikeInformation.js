@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     height: null,
   },
   descriptionContainer: {
-    flex: 0.5,
+    flex: 0.65,
     marginLeft: 10,
     flexDirection: 'row',
     width: '100%',
@@ -46,6 +46,8 @@ const styles = StyleSheet.create({
   },
   colFlex: {
     flexDirection: 'column',
+    flex: 1,
+    marginBottom: 5,
   },
   rowFlex: {
     flexDirection: 'row',
@@ -58,6 +60,7 @@ const styles = StyleSheet.create({
   head: {
     fontSize: 24,
     fontWeight: '200',
+    width: '85%',
   },
   body: {
     fontSize: 18,
@@ -118,6 +121,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 5,
+    height: 30,
+  },
+  found: {
+    height: 25,
+    marginBottom: 5,
+    // ios
+    shadowOpacity: 0.6,
+    shadowRadius: 3,
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    },
+    // android
+    elevation: 5,
   },
   buttonSmall: {
     justifyContent: 'center',
@@ -508,7 +525,7 @@ class BikeInformation extends React.Component {
     if (bikeSubmitter === profileState.username || bikeData.type === 'FOUND') {
       return (
         <View style={styles.closeButton}>
-          <TouchableHighlight style={[styles.buttonSmall, styles.greenButton]} onPress={() => this.handleFound()}>
+          <TouchableHighlight style={[styles.buttonSmall, styles.greenButton, styles.found]} onPress={() => this.handleFound()}>
             <Text style={styles.greenButtonText}>BIKE IS FOUND</Text>
           </TouchableHighlight>
         </View>

@@ -2,6 +2,8 @@ import React from 'react';
 import {
   ScrollView, ImageBackground, StyleSheet, Text, View, TextInput, TouchableHighlight, KeyboardAvoidingView,
 } from 'react-native';
+// import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -14,18 +16,31 @@ const background = require('../assets/images/background.jpeg');
 
 const styles = StyleSheet.create({
 
-  /*
+
   background: {
-    backgroundColor: 'transparent',
-   / flex: 1,
+    margin: 20,
+    padding: 30,
+    backgroundColor: 'white',
+    flex: 1,
+    alignItems: 'center',
+    borderRadius: 30,
+    borderColor: 'black',
+    borderWidth: 2,
+    justifyContent: 'center',
   },
-  */
+
+  outerContainer: {
+    flex: 1,
+    backgroundColor: 'transparent',
+  },
 
   backImg: {
     // width: '100%',
     // height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
     flex: 1,
-    alignSelf: 'stretch',
+    // alignSelf: 'stretch',
   },
   container: {
     // flex: 1,
@@ -34,9 +49,10 @@ const styles = StyleSheet.create({
     // backgroundColor: 'transparent',
     // alignItems: 'flex-start',
     flex: 1,
+
     backgroundColor: 'white',
     alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
     // backgroundColor: 'transparent',
     margin: 20,
     padding: 30,
@@ -63,18 +79,23 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     height: 45,
-    flexDirection: 'row',
+    width: 250,
+    // flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    width: '90%',
     borderRadius: 10,
   },
   requestButton: {
+    // width: '90%',
+    // justifyContent: 'center',
+    // alignItems: 'center',
     marginTop: 35,
     backgroundColor: '#74C3AE',
   },
   removeButton: {
+    alignItems: 'center',
+
     marginTop: 35,
     backgroundColor: '#e2715a',
   },
@@ -218,7 +239,6 @@ class EditProfile extends React.Component {
     const { profileState, deleteUserInit, authState } = this.props;
     deleteUserInit(profileState.email, null);
     deleteUserInit(profileState.email, authState.jwt[0]);
-    console.log('removing this user');
   }
 
   render() {
@@ -243,10 +263,13 @@ class EditProfile extends React.Component {
     }
 
     return (
+
       <ImageBackground style={styles.backImg} source={background}>
-        <KeyboardAvoidingView enabled style={styles.container}>
+            <KeyboardAvoidingView behavior="padding" style={styles.background} enabled> 
+
+
+        {/* <KeyboardAvoidingView keyboardVerticalOffset={500}  enabled style={styles.container}> */}
         {/* <ScrollView style={styles.container}> */}
-      {/* <KeyboardAwareScrollView style={styles.container} enabled>  */}
           {/* <View style={styles.background}> */}
           {/* <View style={styles.container}> */}
           <Text style={styles.locationText}>
@@ -302,8 +325,10 @@ class EditProfile extends React.Component {
           {/* </View> */}
           {/* </View> */}
           {/* </ScrollView> */}
-        </KeyboardAvoidingView>
+          </KeyboardAvoidingView>
+
       </ImageBackground>
+
 
     );
   }

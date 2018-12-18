@@ -78,6 +78,11 @@ export default class Item extends React.Component {
     };
   }
 
+  componentDidMount() {
+    const { bikeData, matchingBikesCount } = this.props;
+    if (matchingBikesCount) this.getNumOfMatchingBikes(bikeData);
+  }
+
   handleLocation = () => {
     const { actions, location, navigation } = this.props;
     actions.setMarker({ latitude: location.lat, longitude: location.long });
@@ -85,12 +90,15 @@ export default class Item extends React.Component {
     navigation.navigate('PinMap');
   }
 
-  getNumOfMatchingBikes =(bikeData) => {
+  getNumOfMatchingBikes = (bikeData) => {
     const { authState } = this.props;
     const { jwt } = authState;
     const formBody = this.jsonToFormData(bikeData);
     serverApi.post('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
-      .then(responseJson => this.setState({ matchingBikes: responseJson.length })).catch(error => console.log(error));
+      .then((responseJson) => {
+        const matchingBikesFiltered = responseJson.filter(x => x.active === true);
+        this.setState({ matchingBikes: matchingBikesFiltered.length });
+      }).catch(error => console.log(error));
   }
 
   jsonToFormData = (details) => {
@@ -117,7 +125,6 @@ export default class Item extends React.Component {
     }
     if (matchingBikesCount) {
       const { matchingBikes } = this.state;
-      this.getNumOfMatchingBikes(bikeData);
       matchingNum = (
         <Text style={styles.matchingNum}>
           {matchingBikes}

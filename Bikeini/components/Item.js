@@ -71,6 +71,13 @@ const styles = StyleSheet.create({
 });
 
 export default class Item extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      matchingBikes: 0,
+    };
+  }
+
   handleLocation = () => {
     const { actions, location, navigation } = this.props;
     actions.setMarker({ latitude: location.lat, longitude: location.long });
@@ -81,8 +88,14 @@ export default class Item extends React.Component {
   getNumOfMatchingBikes =(bikeData) => {
     const { authState } = this.props;
     const { jwt } = authState;
-    serverApi.post('bikes/getmatchingbikes', JSON.stringify(bikeData), 'application/json', jwt[0])
-      .then(responseJson => responseJson.length).catch(error => console.log(error));
+    const formBody = this.jsonToFormData(bikeData);
+    serverApi.post('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
+      .then(responseJson => this.setState({ matchingBikes: responseJson.length })).catch(error => console.log(error));
+  }
+
+  jsonToFormData = (details) => {
+    const formBody = Object.entries(details).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+    return formBody;
   }
 
   render() {
@@ -103,7 +116,8 @@ export default class Item extends React.Component {
       );
     }
     if (matchingBikesCount) {
-      const matchingBikes = this.getNumOfMatchingBikes();
+      const { matchingBikes } = this.state;
+      this.getNumOfMatchingBikes(bikeData);
       matchingNum = (
         <Text style={styles.matchingNum}>
           {matchingBikes}

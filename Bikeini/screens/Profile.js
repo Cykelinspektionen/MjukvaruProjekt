@@ -197,7 +197,7 @@ class Profile extends React.Component {
     renderItem = ({ item }) => {
       if (!item.active) return null;
       const {
-        navigation, profileState, setMarker, setShowMarker,
+        navigation, profileState, setMarker, setShowMarker, authState,
       } = this.props;
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
@@ -221,6 +221,8 @@ class Profile extends React.Component {
             commentsLength={bikeData.comments.length}
             navigation={navigation}
             refresh={this.onRefresh}
+            authState={authState}
+            matchingBikesCount
           />
         </TouchableOpacity>
       );

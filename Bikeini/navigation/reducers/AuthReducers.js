@@ -16,6 +16,9 @@ import {
   STORE_JWT_BEGIN,
   STORE_JWT_FAILURE,
   STORE_JWT_SUCCESS,
+  DELETE_USER_BEGIN,
+  DELETE_USER_FAILURE,
+  DELETE_USER_SUCCESS,
 } from '../actions/types';
 
 const AUTH_STATE = {
@@ -28,6 +31,11 @@ const AUTH_STATE = {
   authorizing: false,
   storingJwt: false,
   error: '',
+  deleteUser: {
+    deletingUser: false,
+    userdeleted: false,
+    error: '',
+  },
 };
 
 const authReducer = (state = AUTH_STATE, action) => {
@@ -75,6 +83,22 @@ const authReducer = (state = AUTH_STATE, action) => {
     case STORE_JWT_SUCCESS:
       return {
         ...state, storingJwt: false, error: '',
+      };
+    case DELETE_USER_BEGIN:
+      return { ...state, deleteUser: { ...state.deleteUser, deletingUser: true } };
+    case DELETE_USER_FAILURE:
+      return {
+        ...state,
+        deleteUser: {
+          ...state.deleteUser, deletingUser: false, error: action.payload, userdeleted: false,
+        },
+      };
+    case DELETE_USER_SUCCESS:
+      return {
+        ...state,
+        deleteUser: {
+          ...state.deleteUser, deletingUser: false, error: '', userdeleted: true,
+        },
       };
     default:
       return state;

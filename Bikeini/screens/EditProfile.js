@@ -1,12 +1,14 @@
 import React from 'react';
 import {
-  ImageBackground, StyleSheet, Text, View, TextInput, TouchableHighlight, KeyboardAvoidingView,
+  ScrollView, ImageBackground, StyleSheet, Text, View, TextInput, TouchableHighlight, KeyboardAvoidingView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { headerBackStyle } from './header';
 import * as profileActions from '../navigation/actions/ProfileActions';
+import * as authActions from '../navigation/actions/AuthActions';
+
 
 const background = require('../assets/images/background.jpeg');
 
@@ -20,20 +22,21 @@ const styles = StyleSheet.create({
   */
 
   backImg: {
-    width: '100%',
-    height: '100%',
+    // width: '100%',
+    // height: '100%',
     flex: 1,
-    // alignSelf: 'stretch',
+    alignSelf: 'stretch',
   },
   container: {
     // flex: 1,
     // alignItems: 'flex-start',
     // justifyContent: 'flex-start',
     // backgroundColor: 'transparent',
+    // alignItems: 'flex-start',
     flex: 1,
     backgroundColor: 'white',
     alignItems: 'center',
-    // justifyContent: 'center',
+    justifyContent: 'center',
     // backgroundColor: 'transparent',
     margin: 20,
     padding: 30,
@@ -65,11 +68,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     width: '90%',
-    borderRadius: 15,
+    borderRadius: 10,
   },
   requestButton: {
     marginTop: 35,
     backgroundColor: '#74C3AE',
+  },
+  removeButton: {
+    marginTop: 35,
+    backgroundColor: '#e2715a',
   },
   loginText: {
     color: 'white',
@@ -104,6 +111,14 @@ class EditProfile extends React.Component {
   componentDidMount() {
     const { updateReset } = this.props;
     updateReset();
+  }
+
+  componentDidUpdate() {
+    const { authState, navigation } = this.props;
+    const { deleteUser } = authState;
+    if (deleteUser.userdeleted) {
+      navigation.navigate('Login');
+    }
   }
 
   checkPasswordStrength = () => {
@@ -199,10 +214,19 @@ class EditProfile extends React.Component {
     navigation.navigate('Location');
   }
 
+  deleteUser = () => {
+    const { profileState, deleteUserInit, authState } = this.props;
+    deleteUserInit(profileState.email, null);
+    deleteUserInit(profileState.email, authState.jwt[0]);
+    console.log('removing this user');
+  }
+
   render() {
-    const { profileState } = this.props;
+    const { profileState, authState } = this.props;
     const { newPassword, newPassword2, credStatus } = this.state;
     const { location } = profileState;
+    const { deleteUser } = authState;
+
 
     const { updateProfile } = profileState;
     let success = '';
@@ -210,7 +234,7 @@ class EditProfile extends React.Component {
       success = 'Password succesfully changed';
     }
 
-    if (profileState.loadingUpdate) {
+    if (profileState.loadingUpdate || deleteUser.deletingUser) {
       return (
         <View style={styles.container}>
           <Text>Loading...</Text>
@@ -220,7 +244,9 @@ class EditProfile extends React.Component {
 
     return (
       <ImageBackground style={styles.backImg} source={background}>
-        <KeyboardAvoidingView behavior="padding" enabled style={styles.container}>
+        <KeyboardAvoidingView enabled style={styles.container}>
+        {/* <ScrollView style={styles.container}> */}
+      {/* <KeyboardAwareScrollView style={styles.container} enabled>  */}
           {/* <View style={styles.background}> */}
           {/* <View style={styles.container}> */}
           <Text style={styles.locationText}>
@@ -266,11 +292,19 @@ class EditProfile extends React.Component {
             <Text style={styles.loginText}>Change password</Text>
           </TouchableHighlight>
           <Text style={{ color: 'blue' }}>{success}</Text>
+          <TouchableHighlight
+            style={[styles.buttonContainer, styles.removeButton]}
+            onPress={() => this.deleteUser()}
+          >
+            <Text style={styles.loginText}>Remove Account</Text>
+          </TouchableHighlight>
 
           {/* </View> */}
           {/* </View> */}
+          {/* </ScrollView> */}
         </KeyboardAvoidingView>
       </ImageBackground>
+
     );
   }
 }
@@ -308,6 +342,7 @@ EditProfile.propTypes = {
   }).isRequired,
   updateUserInit: PropTypes.func.isRequired,
   updateReset: PropTypes.func.isRequired,
+  deleteUserInit: PropTypes.func.isRequired,
 };
 
 
@@ -317,7 +352,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  { ...profileActions },
+  { ...profileActions, ...authActions },
   dispatch,
 );
 

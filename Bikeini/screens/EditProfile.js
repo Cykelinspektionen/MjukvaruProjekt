@@ -18,47 +18,26 @@ const styles = StyleSheet.create({
 
 
   background: {
-    margin: 20,
-    padding: 30,
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     flex: 1,
     alignItems: 'center',
-    borderRadius: 30,
-    borderColor: 'black',
-    borderWidth: 2,
     justifyContent: 'center',
   },
 
-  outerContainer: {
-    flex: 1,
-    backgroundColor: 'transparent',
+
+  container: {
+    borderRadius: 30,
+    borderColor: 'black',
+    borderWidth: 2,
+    margin: 20,
+    padding: 30,
+    backgroundColor: 'white',
   },
 
   backImg: {
-    // width: '100%',
-    // height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
-    // alignSelf: 'stretch',
-  },
-  container: {
-    // flex: 1,
-    // alignItems: 'flex-start',
-    // justifyContent: 'flex-start',
-    // backgroundColor: 'transparent',
-    // alignItems: 'flex-start',
-    flex: 1,
-
-    backgroundColor: 'white',
-    alignItems: 'center',
-    // justifyContent: 'center',
-    // backgroundColor: 'transparent',
-    margin: 20,
-    padding: 30,
-    borderRadius: 30,
-    borderColor: 'black',
-    borderWidth: 2,
   },
   inputContainer: {
     borderBottomColor: '#F5FCFF',
@@ -266,12 +245,7 @@ class EditProfile extends React.Component {
 
       <ImageBackground style={styles.backImg} source={background}>
             <KeyboardAvoidingView behavior="padding" style={styles.background} enabled> 
-
-
-        {/* <KeyboardAvoidingView keyboardVerticalOffset={500}  enabled style={styles.container}> */}
-        {/* <ScrollView style={styles.container}> */}
-          {/* <View style={styles.background}> */}
-          {/* <View style={styles.container}> */}
+              <View style={styles.container}>
           <Text style={styles.locationText}>
             {'Current Location: '}
             { location }
@@ -322,9 +296,7 @@ class EditProfile extends React.Component {
             <Text style={styles.loginText}>Remove Account</Text>
           </TouchableHighlight>
 
-          {/* </View> */}
-          {/* </View> */}
-          {/* </ScrollView> */}
+          </View>
           </KeyboardAvoidingView>
 
       </ImageBackground>

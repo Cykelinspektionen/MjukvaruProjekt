@@ -292,12 +292,11 @@ class Profile extends React.Component {
                     onPress={this.startCameraRoll}
                   />
                   <Icon
-                    name={Platform.OS === 'ios' ? 'ios-add-circle' : 'md-add-circle'}
+                    name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'}
                     size={39}
                     color="black"
                     style={{
                       right: 1,
-                      opacity: 0.7,
                     }}
                   />
                 </View>

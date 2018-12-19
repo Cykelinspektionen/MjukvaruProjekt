@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { NavigationActions } from 'react-navigation';
+// import { NavigationActions } from 'react-navigation';
 import PropTypes from 'prop-types';
 import { ButtonGroup } from 'react-native-elements';
 import { Dropdown } from 'react-native-material-dropdown';
@@ -237,7 +237,9 @@ class AddBike extends React.Component {
         bikeData.keywords[key] = response[key] ? 1 : 0;
       }
     });
-    this.setState({ bikeData });
+    this.setState({ bikeData }, () => {
+      // console.log(this.state.bikeData);
+    });
   }
 
   startCameraRoll = () => {
@@ -408,7 +410,10 @@ class AddBike extends React.Component {
                 onPress={() => {
                   this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
                     imgUploadInit(compressedUri.uri, bikeData.type, authState.jwt[0])
-                      .then(response => this.setServerResponse(response));
+                      .then((response) => {
+                        console.log(response);
+                        this.setServerResponse(response);
+                      });
                   });
                 }
             }

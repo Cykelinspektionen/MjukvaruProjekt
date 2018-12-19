@@ -181,8 +181,10 @@ class Profile extends React.Component {
       const { authState } = this.props;
       const { jwt } = authState;
 
-      serverApi.get('bikes/getmybikes/', jwt[0])
+      serverApi.post('bikes/getmybikes/', '', 'application/x-www-form-urlencoded', jwt[0])
         .then((responseJson) => {
+          console.log(responseJson);
+          // console.log(jwt[0]);
           const yourBicycles = responseJson.filter(x => x.type === 'STOLEN');
           const yourTips = responseJson.filter(x => x.type === 'FOUND');
           this.setState({ yourBicycles, yourTips, isFetching: false });
@@ -278,13 +280,13 @@ class Profile extends React.Component {
             <View style={[styles.container, styles.background]}>
               <View style={styles.rowContainer}>
 
-              <Image source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} style={styles.profile} resizeMode="contain" />
-              <TouchableOpacity
-                style={styles.addPic}
-                onPress={this.startCameraRoll}
-              >
-                <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
-              </TouchableOpacity>
+                <Image source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} style={styles.profile} resizeMode="contain" />
+                <TouchableOpacity
+                  style={styles.addPic}
+                  onPress={this.startCameraRoll}
+                >
+                  <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
+                </TouchableOpacity>
 
                 <View style={styles.columnContainer}>
                   <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>

@@ -58,7 +58,7 @@ class FooterIcon extends React.Component {
     const { jwt } = authState;
     const { profileNotification } = profileState;
     if (!holdNotification && !profileNotification) {
-      serverApi.get('users/userhasnotifications/', jwt[0])
+      serverApi.post('users/userhasnotifications/', '', 'application/x-www-form-urlencoded', jwt[0])
         .then((responseJson) => {
           const { message } = responseJson;
           if (message) {

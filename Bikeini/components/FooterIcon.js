@@ -32,8 +32,9 @@ class FooterIcon extends React.Component {
       notification: profileNotification,
       timer: setInterval(() => {
         // Only check with server if the user is NOT in the Profile-screen.
-        this.checkIfNotification();
-      }, 10000),
+        console.log('Should check for notification now! :-)');
+        //this.checkIfNotification();
+      }, 60000),
     });
   }
 

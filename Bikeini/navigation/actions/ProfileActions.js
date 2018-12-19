@@ -132,5 +132,6 @@ function handleProfileData(data) {
 }
 
 export function loadProfileInit(jwt) {
-  return serverApi.getDispatch('users/getuser/', jwt, loadProfileBegin, loadProfileFailure, handleProfileData);
+  //return serverApi.getDispatch('users/getuser/', jwt, loadProfileBegin, loadProfileFailure, handleProfileData);
+  return serverApi.postDispatch('users/getuser/', '', 'application/x-www-form-urlencoded', jwt, loadProfileBegin, loadProfileFailure, handleProfileData);
 }

@@ -1,8 +1,7 @@
 import React from 'react';
 import {
-  ScrollView, ImageBackground, StyleSheet, Text, View, TextInput, TouchableHighlight, KeyboardAvoidingView,
+  Alert, ImageBackground, StyleSheet, Text, View, TextInput, TouchableHighlight, KeyboardAvoidingView,
 } from 'react-native';
-// import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -59,16 +58,12 @@ const styles = StyleSheet.create({
   buttonContainer: {
     height: 45,
     width: 250,
-    // flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
     borderRadius: 10,
   },
   requestButton: {
-    // width: '90%',
-    // justifyContent: 'center',
-    // alignItems: 'center',
     marginTop: 35,
     backgroundColor: '#74C3AE',
   },
@@ -109,8 +104,9 @@ class EditProfile extends React.Component {
   }
 
   componentDidMount() {
-    const { updateReset } = this.props;
+    const { updateReset, deleteReset } = this.props;
     updateReset();
+    deleteReset();
   }
 
   componentDidUpdate() {
@@ -216,8 +212,15 @@ class EditProfile extends React.Component {
 
   deleteUser = () => {
     const { profileState, deleteUserInit, authState } = this.props;
-    deleteUserInit(profileState.email, null);
-    deleteUserInit(profileState.email, authState.jwt[0]);
+    Alert.alert(
+      'Warning',
+      'Are you sure you want to remove your account?',
+      [
+        { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+        { text: 'Yes', onPress: () => deleteUserInit(profileState.email, authState.jwt[0]) },
+      ],
+      { cancelable: false },
+    );
   }
 
   render() {
@@ -225,17 +228,16 @@ class EditProfile extends React.Component {
     const { newPassword, newPassword2, credStatus } = this.state;
     const { location } = profileState;
     const { deleteUser } = authState;
-
-
     const { updateProfile } = profileState;
     let success = '';
+
     if (!updateProfile.loadingUpdate && updateProfile.updateDone && updateProfile.error === '') {
       success = 'Password succesfully changed';
     }
 
-    if (profileState.loadingUpdate || deleteUser.deletingUser) {
+    if (updateProfile.loadingUpdate || deleteUser.deletingUser) {
       return (
-        <View style={styles.container}>
+        <View>
           <Text>Loading...</Text>
         </View>
       );
@@ -244,60 +246,57 @@ class EditProfile extends React.Component {
     return (
 
       <ImageBackground style={styles.backImg} source={background}>
-            <KeyboardAvoidingView behavior="padding" style={styles.background} enabled> 
-              <View style={styles.container}>
-          <Text style={styles.locationText}>
-            {'Current Location: '}
-            { location }
-            {' '}
-          </Text>
-          <TouchableHighlight
-            style={[styles.buttonContainer, styles.requestButton]}
-            onPress={() => this.changeLocation()}
-          >
-            <Text style={styles.loginText}>Change Location</Text>
-          </TouchableHighlight>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.inputs}
-              placeholder="New password"
-              underlineColorAndroid="transparent"
-              secureTextEntry
-              value={newPassword}
-              onChangeText={text => this.setState({ newPassword: text })}
-            />
-          </View>
-          <Text style={{ color: 'red' }}>
-            { profileState.error ? profileState.error : ''}
-          </Text>
-          <Text style={{ color: 'red' }}>{credStatus.newPassword}</Text>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.inputs}
-              placeholder="Repeat new password"
-              underlineColorAndroid="transparent"
-              secureTextEntry
-              value={newPassword2}
-              onChangeText={text => this.setState({ newPassword2: text })}
-            />
-          </View>
-          <Text style={{ color: 'red' }}>{credStatus.newPassword2}</Text>
-          <TouchableHighlight
-            style={[styles.buttonContainer, styles.requestButton]}
-            onPress={() => this.changePassword()}
-          >
-            <Text style={styles.loginText}>Change password</Text>
-          </TouchableHighlight>
-          <Text style={{ color: 'blue' }}>{success}</Text>
-          <TouchableHighlight
-            style={[styles.buttonContainer, styles.removeButton]}
-            onPress={() => this.deleteUser()}
-          >
-            <Text style={styles.loginText}>Remove Account</Text>
-          </TouchableHighlight>
+        <KeyboardAvoidingView behavior="padding" style={styles.background} enabled>
+          <View style={styles.container}>
+            <Text style={styles.locationText}>
+              {'Current Location: '}
+              { location }
+              {' '}
+            </Text>
+            <TouchableHighlight
+              style={[styles.buttonContainer, styles.requestButton]}
+              onPress={() => this.changeLocation()}
+            >
+              <Text style={styles.loginText}>Change Location</Text>
+            </TouchableHighlight>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.inputs}
+                placeholder="New password"
+                underlineColorAndroid="transparent"
+                secureTextEntry
+                value={newPassword}
+                onChangeText={text => this.setState({ newPassword: text })}
+              />
+            </View>
+            <Text style={{ color: 'red' }}>{credStatus.newPassword}</Text>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.inputs}
+                placeholder="Repeat new password"
+                underlineColorAndroid="transparent"
+                secureTextEntry
+                value={newPassword2}
+                onChangeText={text => this.setState({ newPassword2: text })}
+              />
+            </View>
+            <Text style={{ color: 'red' }}>{credStatus.newPassword2}</Text>
+            <TouchableHighlight
+              style={[styles.buttonContainer, styles.requestButton]}
+              onPress={() => this.changePassword()}
+            >
+              <Text style={styles.loginText}>Change password</Text>
+            </TouchableHighlight>
+            <Text style={{ color: 'blue' }}>{success}</Text>
+            <TouchableHighlight
+              style={[styles.buttonContainer, styles.removeButton]}
+              onPress={() => this.deleteUser()}
+            >
+              <Text style={styles.loginText}>Remove Account</Text>
+            </TouchableHighlight>
 
           </View>
-          </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
 
       </ImageBackground>
 
@@ -340,6 +339,7 @@ EditProfile.propTypes = {
   updateUserInit: PropTypes.func.isRequired,
   updateReset: PropTypes.func.isRequired,
   deleteUserInit: PropTypes.func.isRequired,
+  deleteReset: PropTypes.func.isRequired,
 };
 
 

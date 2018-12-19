@@ -8,6 +8,7 @@ import {
   DELETE_USER_BEGIN,
   DELETE_USER_FAILURE,
   DELETE_USER_SUCCESS,
+  DELETE_USER_RESET,
 } from './types';
 import serverApi from '../../utilities/serverApi';
 import { loadProfileSuccess, unloadProfile } from './ProfileActions';
@@ -71,18 +72,23 @@ export const deletUserSuccess = () => (
   }
 );
 
-export function deletUserHandleResponse(json) {
+export const deleteReset = () => (
+  {
+    type: DELETE_USER_RESET,
+  }
+);
+
+function deletUserHandleResponse(json) {
+  console.log('handle delete');
   console.log(json.message);
   return (dispatch) => {
-    dispatch(deleteJWTInit);
-    dispatch(unloadProfile);
-    dispatch(deletUserSuccess);
+    dispatch(unloadProfile());
+    dispatch(deletUserSuccess());
+    dispatch(deleteJWTInit());
   };
 }
 
 export function deleteUserInit(email, jwt) {
-  console.log(email);
-  console.log('deleting user');
   let body = { email };
   body = JSON.stringify(body);
   return serverApi.postDispatch(

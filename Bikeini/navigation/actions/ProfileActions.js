@@ -108,7 +108,7 @@ export const updateReset = () => (
   {
     type: UPDATE_RESET,
   }
-)
+);
 
 
 export function updateUserInit(newUser, jwt) {

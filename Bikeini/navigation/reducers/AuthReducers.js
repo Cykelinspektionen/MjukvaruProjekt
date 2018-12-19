@@ -19,6 +19,7 @@ import {
   DELETE_USER_BEGIN,
   DELETE_USER_FAILURE,
   DELETE_USER_SUCCESS,
+  DELETE_USER_RESET,
 } from '../actions/types';
 
 const AUTH_STATE = {
@@ -85,19 +86,31 @@ const authReducer = (state = AUTH_STATE, action) => {
         ...state, storingJwt: false, error: '',
       };
     case DELETE_USER_BEGIN:
-      return { ...state, deleteUser: { ...state.deleteUser, deletingUser: true } };
+      return {
+        ...state,
+        deleteUser: {
+          ...state.deleteUser, deletingUser: true, userdeleted: false, error: '',
+        },
+      };
     case DELETE_USER_FAILURE:
       return {
         ...state,
         deleteUser: {
-          ...state.deleteUser, deletingUser: false, error: action.payload, userdeleted: false,
+          ...state.deleteUser, deletingUser: false, userdeleted: false, error: action.payload,
         },
       };
     case DELETE_USER_SUCCESS:
       return {
         ...state,
         deleteUser: {
-          ...state.deleteUser, deletingUser: false, error: '', userdeleted: true,
+          ...state.deleteUser, deletingUser: false, userdeleted: true, error: '',
+        },
+      };
+    case DELETE_USER_RESET:
+      return {
+        ...state,
+        deleteUser: {
+          ...state.deleteUser, deletingUser: false, userdeleted: false, error: '',
         },
       };
     default:

@@ -325,7 +325,7 @@ class AddBike extends React.Component {
     } = this.props;
     const { userMarker } = mapState;
     const { bikeData } = this.state;
-    if (!bikeData.lat) {
+    if (!bikeData.lat && !userMarker.userMarkerSet) {
       Alert.alert('Please set a location');
       return;
     }

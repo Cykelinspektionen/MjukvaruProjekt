@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     height: undefined,
   },
   descriptionContainer: {
-    flex: 0.65,
+    flex: 0.55,
     marginLeft: 10,
     flexDirection: 'row',
     width: '95%',

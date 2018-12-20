@@ -32,7 +32,7 @@ class FooterIcon extends React.Component {
       notification: profileNotification,
       timer: setInterval(() => {
         this.checkIfNotification();
-      }, 10000),
+      }, 60000),
     });
   }
 

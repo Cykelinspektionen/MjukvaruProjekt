@@ -1,8 +1,9 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, TouchableOpacity, Alert,
+  StyleSheet, Text, View, Image, TouchableOpacity,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import serverApi from '../utilities/serverApi';
 
 const emptyCommentIcon = require('../assets/images/emptyComment.png');
 const locationIcon = require('../assets/images/location.png');
@@ -40,6 +41,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
+  matchingNum: {
+    fontSize: 25,
+    fontWeight: '500',
+  },
   commentsTag: {
     width: 30,
     height: 35,
@@ -65,7 +70,19 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class Item extends React.PureComponent {
+export default class Item extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      matchingBikes: 0,
+    };
+  }
+
+  componentDidMount() {
+    const { bikeData, matchingBikesCount } = this.props;
+    if (matchingBikesCount) this.getNumOfMatchingBikes(bikeData);
+  }
+
   handleLocation = () => {
     const { actions, location, navigation } = this.props;
     actions.setMarker({ latitude: location.lat, longitude: location.long });
@@ -73,12 +90,29 @@ export default class Item extends React.PureComponent {
     navigation.navigate('PinMap');
   }
 
+  getNumOfMatchingBikes = (bikeData) => {
+    const { authState } = this.props;
+    const { jwt } = authState;
+    const formBody = this.jsonToFormData(bikeData);
+    serverApi.post('bikes/getmatchingbikes', formBody, 'application/x-www-form-urlencoded', jwt[0])
+      .then((responseJson) => {
+        const matchingBikesFiltered = responseJson.filter(x => x.active === true);
+        this.setState({ matchingBikes: matchingBikesFiltered.length });
+      }).catch(error => console.log(error));
+  }
+
+  jsonToFormData = (details) => {
+    const formBody = Object.entries(details).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+    return formBody;
+  }
+
   render() {
     const {
-      title, brand, imageUrl, bikeData, navigation, refresh, location, commentsLength,
+      title, brand, imageUrl, bikeData, navigation, refresh, location, commentsLength, matchingBikesCount,
     } = this.props;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
     let locationButton = null;
+    let matchingNum = null;
     if (location.lat && location.long) {
       locationButton = (
         <TouchableOpacity
@@ -87,6 +121,14 @@ export default class Item extends React.PureComponent {
         >
           <Image style={styles.locationTag} source={locationIcon} />
         </TouchableOpacity>
+      );
+    }
+    if (matchingBikesCount) {
+      const { matchingBikes } = this.state;
+      matchingNum = (
+        <Text style={styles.matchingNum}>
+          {matchingBikes}
+        </Text>
       );
     }
     return (
@@ -114,6 +156,7 @@ export default class Item extends React.PureComponent {
             </Text>
           </TouchableOpacity>
           {locationButton}
+          {matchingNum}
         </View>
       </View>
     );
@@ -137,4 +180,8 @@ Item.propTypes = {
     setShowMarker: PropTypes.func.isRequired,
     setMarker: PropTypes.func.isRequired,
   }).isRequired,
+  authState: PropTypes.shape({
+    jwt: PropTypes.array.isRequired,
+  }),
+  matchingBikesCount: PropTypes.bool.isRequired,
 };

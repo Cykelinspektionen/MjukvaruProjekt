@@ -13,6 +13,9 @@ import {
   UPDATE_USER_FAILURE,
   UPDATE_USER_SUCCESS,
   UPDATE_RESET,
+  RESET_PROFILE_NOTIFICATION,
+  SET_PROFILE_NOTIFICATION,
+  SET_PROFILE_NOTIFICATION_INTERVAL,
 } from './types';
 import serverApi from '../../utilities/serverApi';
 import { deleteJWTInit } from './JwtActions';
@@ -123,6 +126,24 @@ export function updateUserInit(newUser, jwt) {
     UpdateUserSuccess,
   );
 }
+
+export const resetNotifiction = () => (
+  {
+    type: RESET_PROFILE_NOTIFICATION,
+  }
+);
+
+export const setNotifiction = () => (
+  {
+    type: SET_PROFILE_NOTIFICATION,
+  }
+);
+
+export const setNotifictionInterval = () => (
+  {
+    type: SET_PROFILE_NOTIFICATION_INTERVAL,
+  }
+);
 
 export function uploadProfilePicToServer(imgUri, username, jwt) {
   const file = {

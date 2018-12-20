@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, TouchableOpacity, Alert,
+  StyleSheet, Text, View, Image, TouchableOpacity, Alert, FlatList,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import serverApi from '../utilities/serverApi';
@@ -13,13 +13,26 @@ const FoundBike = require('../assets/images/FoundBike.png');
 const userPlaceholder = require('../assets/images/userPlaceholder.jpg');
 
 const styles = StyleSheet.create({
+  commentWrap: {
+    flexDirection: 'column',
+    flex: 1,
+    borderBottomWidth: 1,
+    paddingBottom: 2,
+  },
+  commentWrapReply: {
+    flexDirection: 'column',
+    flex: 1,
+    paddingBottom: 2,
+    width: '90%',
+    alignSelf: 'flex-end',
+  },
   item: {
+    flex: 1,
     alignItems: 'flex-start',
     flexDirection: 'row',
     width: '100%',
     height: 75,
     borderWidth: 0,
-    borderBottomWidth: 1,
   },
   image: {
     alignSelf: 'center',
@@ -90,10 +103,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   answer: {
+    flexDirection: 'row',
     position: 'absolute',
     alignSelf: 'flex-end',
     left: '25%',
     bottom: 4,
+  },
+  answerWithReplyField: {
+    alignSelf: 'flex-start',
+    left: '25%',
   },
   answerText: {
     fontWeight: '700',
@@ -107,6 +125,9 @@ const styles = StyleSheet.create({
   ownCommentThumbs: {
     opacity: 0.2,
   },
+  separate: {
+    marginRight: 2,
+  },
 });
 
 export default class Comment extends React.Component {
@@ -115,6 +136,9 @@ export default class Comment extends React.Component {
     this.state = {
       thumbDown: false,
       thumbUp: false,
+      answer: false,
+      replyText: '', // not unsused...just not used here => bikeinformation
+      showReplys: false,
     };
   }
 
@@ -307,10 +331,63 @@ export default class Comment extends React.Component {
     );
   }
 
+  renderAnsShowReply = () => {
+    const { answer, showReplys } = this.state;
+    const { replyList } = this.props;
+    return (
+      <View style={styles.answer}>
+        {!answer ? (
+          <TouchableOpacity
+            style={styles.separate}
+            onPress={() => this.setState({ answer: true })}
+          >
+            <Text style={styles.answerText}>Answer</Text>
+          </TouchableOpacity>) : null}
+        {replyList.length ? (
+          <TouchableOpacity
+            style={styles.separate}
+            onPress={() => this.setState({ showReplys: !showReplys })}
+          >
+            <Text style={styles.answerText}>Show replys</Text>
+          </TouchableOpacity>
+        ) : null}
+      </View>);
+  }
+
+  keyExtractor = (item) => {
+    const { _id } = item;
+    return _id;
+  };
+
+  renderReplys = () => {
+    const { replyList, renderComment } = this.props;
+    return (
+      <FlatList
+        data={replyList}
+        extraData={this.state}
+        keyExtractor={this.keyExtractor}
+        renderItem={renderComment}
+        ItemSeparatorComponent={this.renderSeparator}
+      />
+    );
+  }
+
+  renderSeparator = () => (
+    <View
+      style={{
+        height: 1,
+        width: '90%',
+        backgroundColor: '#CED0CE',
+        alignSelf: 'flex-end',
+      }}
+    />
+  );
+
   render() {
     const {
-      body, username, date, avatarUri,
+      body, username, date, avatarUri, isReplyToCommentId, renderCommentField,
     } = this.props;
+    const { answer, showReplys } = this.state;
     const dateRaw = date.split('-');
     let day = `${dateRaw[2]}`;
     day = day.split('T');
@@ -320,25 +397,29 @@ export default class Comment extends React.Component {
     } = this.renderButtonSet();
 
     const thumbTotal = this.getThumbTotal();
-
+    const answerField = this.renderAnsShowReply();
+    const replys = this.renderReplys();
     return (
-      <View style={styles.item}>
-        <Image style={styles.image} source={avatarUri.length ? { uri: avatarUri } : userPlaceholder} />
-        <View style={styles.textView}>
-          <Text style={styles.userText}>
-            {username}
-            {dateClean}
-          </Text>
-          <Text style={styles.description}>{body}</Text>
+      <View style={isReplyToCommentId ? styles.commentWrapReply : styles.commentWrap}>
+        <View style={styles.item}>
+          <Image style={styles.image} source={avatarUri.length ? { uri: avatarUri } : userPlaceholder} />
+          <View style={styles.textView}>
+            <Text style={styles.userText}>
+              {username}
+              {''}
+              {dateClean}
+            </Text>
+            <Text style={styles.description}>{body}</Text>
+          </View>
+          {isReplyToCommentId ? null : answerField}
+          {positionButton}
+          {thumbDwButton}
+          {thumbTotal}
+          {thumbUpButton}
+          {resolveButton}
         </View>
-        <View style={styles.answer}>
-          <Text style={styles.answerText}>Answer</Text>
-        </View>
-        {positionButton}
-        {thumbDwButton}
-        {thumbTotal}
-        {thumbUpButton}
-        {resolveButton}
+        {answer ? renderCommentField(true, this) : null}
+        {showReplys ? replys : null}
       </View>
     );
   }
@@ -380,4 +461,8 @@ Comment.propTypes = {
     setMarker: PropTypes.func.isRequired,
   }).isRequired,
   refreshComments: PropTypes.func.isRequired,
+  renderCommentField: PropTypes.func.isRequired,
+  replyList: PropTypes.arrayOf(PropTypes.object).isRequired,
+  renderComment: PropTypes.func.isRequired,
+  isReplyToCommentId: PropTypes.bool.isRequired,
 };

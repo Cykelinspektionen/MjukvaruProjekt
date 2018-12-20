@@ -10,13 +10,12 @@ import { Dropdown } from 'react-native-material-dropdown';
 import { ImagePicker, ImageManipulator, Location } from 'expo';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
 import permissions from '../utilities/permissions';
-import { headerStyle } from './header';
 import * as mapActions from '../navigation/actions/MapActions';
 import * as addBikeActions from '../navigation/actions/AddBikeActions';
 
 const locationIcon = require('../assets/images/location.png');
-const defaultBike = require('../assets/images/robot-dev.png');
-const cameraImg = require('../assets/images/albumImage.png');
+const defaultBike = require('../assets/images/bikePlaceholder.png');
+const cameraImg = require('../assets/images/album.png');
 const albumImg = require('../assets/images/camera.png');
 
 const styles = StyleSheet.create({
@@ -27,7 +26,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    marginLeft: '2%',
     marginBottom: 100,
   },
   dropdowns: {
@@ -65,18 +63,34 @@ const styles = StyleSheet.create({
     width: 120,
     height: 100,
     resizeMode: 'contain',
+    marginLeft: 5,
+  },
+  placeholder: {
+    width: 110,
+    height: 100,
+    marginLeft: 15,
   },
   icons: {
     width: '20%',
     height: '60%',
     marginLeft: '2%',
-    left: '75%',
+    left: '65%',
   },
   addPhotoButtons: {
-    left: '20%',
+    left: '15%',
   },
   greenButton: {
     backgroundColor: '#44ccad',
+    borderRadius: 10,
+    // ios
+    shadowOpacity: 0.6,
+    shadowRadius: 3,
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    },
+    // android
+    elevation: 5,
   },
   greenButtonText: {
     color: 'white',
@@ -85,6 +99,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     margin: '2%',
     fontWeight: 'bold',
+    alignSelf: 'center',
   },
   uploadPhotoButton: {
     flex: 1,
@@ -97,7 +112,8 @@ const styles = StyleSheet.create({
   },
   radio: {
     flex: 0.2,
-    alignItems: 'center',
+    alignSelf: 'center',
+    width: '80%',
   },
   locationFrame: {
     flex: 1,
@@ -105,10 +121,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     alignSelf: 'center',
     flexDirection: 'row',
+    marginBottom: 10,
   },
   adressFrame: {
     flex: 0.9,
     flexDirection: 'column',
+    padding: 3,
   },
   locationTag: {
     flexDirection: 'row-reverse',
@@ -123,10 +141,6 @@ const styles = StyleSheet.create({
 });
 
 class AddBike extends React.Component {
-  static navigationOptions = {
-    ...headerStyle,
-  };
-
   constructor() {
     super();
     this.state = {
@@ -262,7 +276,6 @@ class AddBike extends React.Component {
     }
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: [4, 3],
       exif: true,
     });
 
@@ -312,7 +325,7 @@ class AddBike extends React.Component {
     } = this.props;
     const { userMarker } = mapState;
     const { bikeData } = this.state;
-    if (bikeData.lat) {
+    if (!bikeData.lat && !userMarker.userMarkerSet) {
       Alert.alert('Please set a location');
       return;
     }
@@ -357,7 +370,7 @@ class AddBike extends React.Component {
               </Text>
               <View style={styles.rowContainer}>
                 <View>
-                  {!addBikeState.uriSet && <Image source={defaultBike} /> }
+                  {!addBikeState.uriSet && <Image source={defaultBike} style={styles.placeholder} /> }
                   {addBikeState.uriSet && <Image source={{ uri: addBikeState.imgToUploadUri }} style={styles.thumbnail} />}
                 </View>
                 <View>
@@ -401,7 +414,7 @@ class AddBike extends React.Component {
                 <Text style={styles.greenButtonText}>UPLOAD IMAGE</Text>
               </TouchableHighlight>
               <Text style={styles.headerText}>
-              Last known loaction of your lost bike:
+              Last known location of the reported bike:
               </Text>
               <View style={styles.locationFrame}>
                 <View style={styles.adressFrame}>
@@ -428,8 +441,10 @@ class AddBike extends React.Component {
                 </TouchableOpacity>
               </View>
               <View style={styles.radio}>
+                <Text style={styles.headerText}> Fill in characteristics about the bike:</Text>
                 <ButtonGroup
                   selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  selectedTextStyle={{ color: 'white' }}
                   onPress={(data) => { this.setBikeData('type', data ? 'FOUND' : 'STOLEN'); }}
                   selectedIndex={bikeData.type === 'STOLEN' ? 0 : 1}
                   buttons={['Stolen', 'Found']}
@@ -438,6 +453,7 @@ class AddBike extends React.Component {
 
                 <ButtonGroup
                   selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  selectedTextStyle={{ color: 'white' }}
                   onPress={(data) => { this.setBikeData('frame_type', data ? 'FEMALE' : 'MALE', true); }}
                   selectedIndex={bikeData.keywords.frame_type === 'MALE' ? 0 : 1}
                   buttons={['Male', 'Female']}
@@ -445,6 +461,7 @@ class AddBike extends React.Component {
                 />
                 <ButtonGroup
                   selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  selectedTextStyle={{ color: 'white' }}
                   onPress={(data) => { this.setBikeData('child', data, true); }}
                   selectedIndex={bikeData.keywords.child}
                   buttons={['Adult', 'Child']}
@@ -452,6 +469,7 @@ class AddBike extends React.Component {
                 />
                 <ButtonGroup
                   selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  selectedTextStyle={{ color: 'white' }}
                   onPress={(data) => { this.setBikeData('sport', data, true); }}
                   selectedIndex={bikeData.keywords.sport}
                   buttons={['Casual', 'Sport']}
@@ -459,6 +477,7 @@ class AddBike extends React.Component {
                 />
                 <ButtonGroup
                   selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  selectedTextStyle={{ color: 'white' }}
                   onPress={(data) => { this.setBikeData('tandem', data, true); }}
                   selectedIndex={bikeData.keywords.tandem}
                   buttons={['Single', 'Tandem']}
@@ -466,6 +485,7 @@ class AddBike extends React.Component {
                 />
                 <ButtonGroup
                   selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  selectedTextStyle={{ color: 'white' }}
                   onPress={(data) => { this.setBikeData('rack', data, true); }}
                   selectedIndex={bikeData.keywords.rack}
                   buttons={['No Rack', 'Rack']}
@@ -473,6 +493,7 @@ class AddBike extends React.Component {
                 />
                 <ButtonGroup
                   selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  selectedTextStyle={{ color: 'white' }}
                   onPress={(data) => { this.setBikeData('basket', data, true); }}
                   selectedIndex={bikeData.keywords.basket}
                   buttons={['No Basket', 'Basket']}
@@ -480,6 +501,7 @@ class AddBike extends React.Component {
                 />
                 <ButtonGroup
                   selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  selectedTextStyle={{ color: 'white' }}
                   onPress={(data) => { this.setBikeData('mudguard', data, true); }}
                   selectedIndex={bikeData.keywords.mudguard}
                   buttons={['No Mudguard', 'Mudguard']}
@@ -487,6 +509,7 @@ class AddBike extends React.Component {
                 />
                 <ButtonGroup
                   selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  selectedTextStyle={{ color: 'white' }}
                   onPress={(data) => { this.setBikeData('chain_protection', data, true); }}
                   selectedIndex={bikeData.keywords.chain_protection}
                   buttons={['No Chain Protector', 'Chain Protector']}
@@ -494,6 +517,7 @@ class AddBike extends React.Component {
                 />
                 <ButtonGroup
                   selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  selectedTextStyle={{ color: 'white' }}
                   onPress={(data) => { this.setBikeData('net', data, true); }}
                   selectedIndex={bikeData.keywords.net}
                   buttons={['No Net', 'Net']}
@@ -501,6 +525,7 @@ class AddBike extends React.Component {
                 />
                 <ButtonGroup
                   selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  selectedTextStyle={{ color: 'white' }}
                   onPress={(data) => { this.setBikeData('winter_tires', data, true); }}
                   selectedIndex={bikeData.keywords.winter_tires}
                   buttons={['Summer Tires', 'Winter Tires']}
@@ -508,6 +533,7 @@ class AddBike extends React.Component {
                 />
                 <ButtonGroup
                   selectedButtonStyle={{ backgroundColor: '#44ccad' }}
+                  selectedTextStyle={{ color: 'white' }}
                   onPress={(data) => { this.setBikeData('light', data, true); }}
                   selectedIndex={bikeData.keywords.light}
                   buttons={['No Light', 'Light']}

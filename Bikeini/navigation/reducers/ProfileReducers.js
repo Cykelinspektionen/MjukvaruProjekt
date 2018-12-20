@@ -12,10 +12,12 @@ import {
   UPDATE_USER_FAILURE,
   UPDATE_USER_SUCCESS,
   UPDATE_RESET,
+  RESET_PROFILE_NOTIFICATION,
+  SET_PROFILE_NOTIFICATION,
 } from '../actions/types';
 
 const PROFILE_INITIAL_STATE = {
-  id: null,
+  id: '',
   location: '',
   username: '',
   email: '',
@@ -40,6 +42,8 @@ const PROFILE_INITIAL_STATE = {
     updateDone: false,
     error: '',
   },
+  profileNotification: false,
+  avatarUri: { img: '', thumbnail: '' },
 };
 
 const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
@@ -76,6 +80,7 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         id: action.payload._id,
         loadingProfile: false,
         profileLoaded: true,
+        profileNotification: action.payload.has_notification,
         avatarUri: action.payload.avatar_url || { img: '', thumbnail: '' },
       };
     case UNLOAD_PROFILE:
@@ -130,6 +135,13 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
           error: '',
         },
       };
+    case RESET_PROFILE_NOTIFICATION:
+      return { ...state, profileNotification: false };
+    case SET_PROFILE_NOTIFICATION:
+      if (!state.profileNotification) {
+        return { ...state, profileNotification: true };
+      }
+      return state;
     default:
       return state;
   }

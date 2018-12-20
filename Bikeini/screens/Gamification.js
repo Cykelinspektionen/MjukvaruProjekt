@@ -6,7 +6,6 @@ import {
 } from 'react-native';
 import { bindActionCreators } from 'redux';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
-import { headerStyle } from './header';
 import serverApi from '../utilities/serverApi';
 import * as profileActions from '../navigation/actions/ProfileActions';
 
@@ -100,22 +99,18 @@ const styles = StyleSheet.create({
 });
 
 class Gamification extends React.Component {
-    static navigationOptions = {
-      ...headerStyle,
+  constructor(props) {
+    super(props);
+    this.state = {
+      topPlayersSwe: '',
+      topPlayersLocal: '',
+      isFetching: false,
     };
+  }
 
-    constructor(props) {
-      super(props);
-      this.state = {
-        topPlayersSwe: '',
-        topPlayersLocal: '',
-        isFetching: false,
-      };
-    }
-
-    componentDidMount() {
-      this.handleServerTopPlayers();
-    }
+  componentDidMount() {
+    this.handleServerTopPlayers();
+  }
 
       handleServerTopPlayers = () => {
         const { authState, profileState, loadProfileInit } = this.props;
@@ -161,13 +156,13 @@ class Gamification extends React.Component {
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => (
               <View style={styles.rowContainer}>
-                <Text style={styles.topName}>
+                <Text style={styles.topName} adjustsFontSizeToFit>
                   {index + 1}
                 .
                   {item.username}
 
                 </Text>
-                <Text style={styles.topScore}>
+                <Text style={styles.topScore} adjustsFontSizeToFit>
                   {item.game_score.total_score}
 p
                 </Text>
@@ -188,13 +183,13 @@ p
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => (
               <View style={styles.rowContainer}>
-                <Text style={styles.topName}>
+                <Text style={styles.topName} adjustsFontSizeToFit>
                   {index + 1}
                   .
                   {item.username}
 
                 </Text>
-                <Text style={styles.topScore}>
+                <Text style={styles.topScore} adjustsFontSizeToFit>
                   {item.game_score.total_score}
   p
                 </Text>
@@ -232,25 +227,27 @@ p
             >
               <View style={styles.container} />
               <View style={styles.rowContainer}>
-                <Image style={styles.profile} source={profileState.avatarUri.thumbnail.length ? { uri: profileState.avatarUri.thumbnail } : profilePic} />
+                <Image style={styles.profile} source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} />
                 <View style={styles.columnContainer}>
-                  <Text style={styles.UserInfo}>
+                  <Text style={styles.UserInfo} adjustsFontSizeToFit>
                 Found Bikes:
                     {' '}
                     {game_score.bike_score}
                   </Text>
-                  <Text style={styles.UserInfo}>
+                  <Text style={styles.UserInfo} adjustsFontSizeToFit>
                 Helpful tips:
                     {' '}
                     {game_score.thumb_score}
                   </Text>
-                  <Text style={styles.UserInfo}>
+                  <Text style={styles.UserInfo} adjustsFontSizeToFit>
                 Your stolen Bikes:
                     {' '}
                     {game_score.bikes_lost}
                   </Text>
-                  <Text style={[styles.UserInfo, { fontWeight: 'bold' },
-                  ]}
+                  <Text
+                    style={[styles.UserInfo, { fontWeight: 'bold' },
+                    ]}
+                    adjustsFontSizeToFit
                   >
                 Total points earned:
                     {' '}
@@ -259,11 +256,11 @@ p
                 </View>
               </View>
               <View style={styles.listBack}>
-                <Text style={styles.categories}>
-            Top list in
+                <Text style={styles.categories} adjustsFontSizeToFit>
+                  Top list in
                   {' '}
                   {location}
-            :
+                  :
                 </Text>
                 <View>
                   {this.renderLocalList()}
@@ -271,7 +268,7 @@ p
               </View>
               <Text>{' '}</Text>
               <View style={styles.listBack}>
-                <Text style={styles.categories}>Top list in Sweden:</Text>
+                <Text style={styles.categories} adjustsFontSizeToFit>Top list in Sweden:</Text>
                 <View>
                   {this.renderSweList()}
                 </View>

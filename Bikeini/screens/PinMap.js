@@ -3,7 +3,7 @@ import {
   Platform, View, Text, StyleSheet, Image, TouchableHighlight,
 } from 'react-native';
 import {
-  Constants, Location, Permissions, MapView,
+  Constants, Location, Permissions, MapView, IntentLauncherAndroid,
 } from 'expo';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '50%',
     marginLeft: -20,
-    marginTop: -25,
+    marginTop: -10,
   },
   header: {
     flex: 0.1,
@@ -100,7 +100,7 @@ class PinMap extends React.Component {
         errorMessage: 'Permission to access location was denied',
       });
     }
-    const location = await Location.getCurrentPositionAsync({});
+    const location = await Location.getCurrentPositionAsync({ enableHighAccuracy: true });
     const geocode = await Location.reverseGeocodeAsync(location.coords);
     setMapLocation({ ...location.coords, ...geocode[0] });
   };
@@ -108,6 +108,8 @@ class PinMap extends React.Component {
   onRegionChangeComplete = async (region) => {
     const { setMapLocation } = this.props;
     const geocode = await Location.reverseGeocodeAsync({ latitude: region.latitude, longitude: region.longitude });
+    geocode[0].street = geocode[0].street || '';
+    geocode[0].postalCode = geocode[0].postalCode || '';
     setMapLocation({ ...region, ...geocode[0] });
   }
 
@@ -152,6 +154,7 @@ class PinMap extends React.Component {
     }
 
     if (mapState.loadedCurrPos) {
+      const { OS } = Platform;
       return (
         <View style={styles.main}>
           <View style={styles.header}>
@@ -163,9 +166,8 @@ class PinMap extends React.Component {
             style={styles.map}
             initialRegion={mapState}
             onRegionChangeComplete={this.onRegionChangeComplete}
-          >
-            <Image style={[styles.markerFixed, styles.marker]} source={bikeIcon} />
-          </MapView>
+          />
+          <Image style={[styles.markerFixed, styles.marker]} source={bikeIcon} />
           <View style={styles.buttonView}>
             <TouchableHighlight
               style={[styles.buttonContainer, styles.greenButton]}
@@ -192,7 +194,7 @@ class PinMap extends React.Component {
 }
 
 /*
-Marker implementation (real).
+Marker implementation (real). Use this to calibrate the "fake marker"
 <MapView.Marker
   // draggable
   coordinate={{ latitude: mapState.latitude, longitude: mapState.longitude }}

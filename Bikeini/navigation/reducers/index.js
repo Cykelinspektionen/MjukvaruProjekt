@@ -7,6 +7,7 @@ import PermissionsReducer from './PermissionsReducers';
 import profileReducer from './ProfileReducers';
 import resetPasswordReducer from './ResetPasswordReducers';
 import mapReducer from './MapReducers';
+import routeReducer from './RouteReducers';
 
 export default combineReducers({
   authState: authReducer,
@@ -17,4 +18,5 @@ export default combineReducers({
   profileState: profileReducer,
   resetState: resetPasswordReducer,
   mapState: mapReducer,
+  routeState: routeReducer,
 });

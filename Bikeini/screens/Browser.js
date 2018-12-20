@@ -6,12 +6,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/Ionicons';
-import * as mapActions from '../navigation/actions/MapActions';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
+import * as mapActions from '../navigation/actions/MapActions';
 import Filter from '../components/Filter';
 import Item from '../components/Item';
 import serverApi from '../utilities/serverApi';
-import { headerStyle } from './header';
 
 const background = require('../assets/images/background.jpeg');
 
@@ -21,8 +20,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#fff',
     alignItems: 'center',
-  },
-  header: {
   },
   headerText: {
     marginTop: '5%',
@@ -57,7 +54,6 @@ const styles = StyleSheet.create({
   breakLine: {
     width: '100%',
     height: '1%',
-    marginTop: '1%',
     borderWidth: 0,
     borderBottomWidth: 1,
   },
@@ -68,10 +64,6 @@ const styles = StyleSheet.create({
 });
 
 class Browser extends React.Component {
-  static navigationOptions = {
-    ...headerStyle,
-  };
-
   constructor() {
     super();
 
@@ -116,7 +108,7 @@ class Browser extends React.Component {
   renderItem = ({ item }) => {
     if (!item.active) return null;
     const {
-      navigation, profileState, setMarker, setShowMarker,
+      navigation, profileState, setMarker, setShowMarker, authState,
     } = this.props;
     const bikeData = item;
     bikeData.showComments = true;// true = shows comments , false = shows similar bikes!
@@ -141,6 +133,8 @@ class Browser extends React.Component {
           commentsLength={bikeData.comments.length}
           navigation={navigation}
           refresh={this.onRefresh}
+          authState={authState}
+          matchingBikesCount={false}
         />
       </TouchableOpacity>
     );
@@ -153,7 +147,7 @@ class Browser extends React.Component {
 
     if (showMissing) {
       return (
-        <View style={styles.header}>
+        <View>
           <Text style={styles.headerText}>
             Missing bikes in
             {' '}

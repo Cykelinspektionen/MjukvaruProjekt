@@ -55,8 +55,14 @@ const serverApi = {
           if (json.error) {
             if (!(typeof json.error === 'boolean')) {
               dispatch(dispatchFailure(String(json.error)));
+              console.log(String(JSON.stringify(json.error, null, 4)));
+              Alert.alert(JSON.stringify(json.error, null, 4));
+              // Alert.alert(String(json.error));
+
+              // Alert.alert(json.message);
             } else {
               dispatch(dispatchFailure(String(json.message)));
+              Alert.alert(json.message);
             }
             return false;
           } if (json.status === 'error') {

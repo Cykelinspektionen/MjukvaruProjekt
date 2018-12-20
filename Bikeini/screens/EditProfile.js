@@ -115,6 +115,11 @@ class EditProfile extends React.Component {
     if (deleteUser.userdeleted) {
       navigation.navigate('Login');
     }
+    /*
+    if (deleteUser.error) {
+      Alert.alert(deleteUser.error.payload);
+    }
+    */
   }
 
   checkPasswordStrength = () => {

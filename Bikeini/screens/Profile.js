@@ -243,7 +243,7 @@ class Profile extends React.Component {
       deleteJWTInit();
       navigation.navigate('Login');
     }
-    
+
     startCameraRoll = () => {
       this.cameraRollPermission(this.pickImage);
     }

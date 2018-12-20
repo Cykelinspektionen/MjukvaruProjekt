@@ -92,7 +92,7 @@ export function deleteUserInit(email, jwt) {
   let body = { email };
   body = JSON.stringify(body);
   return serverApi.postDispatch(
-    'users/removeuser/',
+    'users/wipeuser/',
     body,
     'application/json',
     jwt,

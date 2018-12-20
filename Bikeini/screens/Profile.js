@@ -149,6 +149,10 @@ const styles = StyleSheet.create({
     // android
     elevation: 5,
   },
+  modalContaner: {
+    backgroundColor: '#44ccad',
+    flex: 1,
+  },
 });
 
 class Profile extends React.Component {
@@ -270,6 +274,11 @@ class Profile extends React.Component {
       });
     }
 
+    editProfilePress = () => {
+      const { navigation } = this.props;
+      navigation.navigate('EditProfile');
+    }
+
     onBackButtonPressAndroid = () => true;
 
     render() {
@@ -318,7 +327,7 @@ class Profile extends React.Component {
                 </View>
               </View>
               <View style={styles.editAndLogoutButtonContainer}>
-                <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => console.log('Pressed: Edit user')}>
+                <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => this.editProfilePress()}>
                   <Text style={styles.greenButtonText}>EDIT USER</Text>
                 </TouchableHighlight>
                 <TouchableHighlight style={[styles.editButtonContainer, styles.actionButton, styles.greenButton]} onPress={() => this.onLogoutPress()}>

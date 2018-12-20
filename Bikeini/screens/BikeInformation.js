@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import DialogInput from 'react-native-dialog-input';
+import RF from 'react-native-responsive-fontsize';
 import serverApi from '../utilities/serverApi';
 import * as jwtActions from '../navigation/actions/JwtActions';
 import * as mapActions from '../navigation/actions/MapActions';
@@ -58,12 +59,12 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   head: {
-    fontSize: 18,
+    fontSize: RF(3.5),
     fontWeight: '200',
     width: '85%',
   },
   body: {
-    fontSize: 12,
+    fontSize: RF(2.5),
     fontWeight: '100',
     alignSelf: 'flex-start',
   },

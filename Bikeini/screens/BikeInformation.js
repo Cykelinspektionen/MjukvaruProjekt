@@ -34,14 +34,15 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-    width: null,
-    height: null,
+    width: undefined,
+    height: undefined,
   },
   descriptionContainer: {
     flex: 0.65,
     marginLeft: 10,
     flexDirection: 'row',
     width: '100%',
+    height: '100%',
     alignItems: 'flex-end',
   },
   colFlex: {
@@ -61,12 +62,12 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   head: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: '200',
     width: '85%',
   },
   body: {
-    fontSize: 18,
+    fontSize: 12,
     fontWeight: '100',
     alignSelf: 'flex-start',
   },

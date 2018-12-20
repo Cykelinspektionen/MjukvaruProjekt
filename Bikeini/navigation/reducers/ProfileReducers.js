@@ -36,7 +36,7 @@ const PROFILE_INITIAL_STATE = {
   loadingProfile: false,
   profileLoaded: false,
   error: '',
-  avatarUri: '',
+  // avatarUri: '',
   updateProfile: {
     loadingUpdate: false,
     updateDone: false,
@@ -46,7 +46,7 @@ const PROFILE_INITIAL_STATE = {
   avatarUri: { img: '', thumbnail: '' },
 };
 
-const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
+const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {  
   switch (action.type) {
     case PROFILE_IMG_URI:
       return {
@@ -69,6 +69,7 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         error: action.payload,
       };
     case LOAD_PROFILE_SUCCESS:
+
       return {
         ...state,
         location: action.payload.location,
@@ -81,7 +82,8 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         loadingProfile: false,
         profileLoaded: true,
         profileNotification: action.payload.has_notification,
-        avatarUri: action.payload.avatar_url || { img: '', thumbnail: '' },
+        avatarUri: action.payload.avatar_url === undefined || action.payload.avatar_url === 'deleted avatar' ? { img: '', thumbnail: '' } : action.payload.avatar_url,
+
       };
     case UNLOAD_PROFILE:
       return { ...PROFILE_INITIAL_STATE };
@@ -105,6 +107,7 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         },
       };
     case UPDATE_USER_SUCCESS:
+
       return {
         ...state,
         location: action.payload.location,
@@ -116,7 +119,7 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         id: action.payload._id,
         loadingProfile: false,
         profileLoaded: true,
-        avatarUri: action.payload.avatar_url || { img: '', thumbnail: '' },
+        avatarUri: action.payload.avatar_url === undefined || action.payload.avatar_url === 'deleted avatar' ? { img: '', thumbnail: '' } : action.payload.avatar_url,
         updateProfile: {
           ...state.updateProfile,
           error: '',

@@ -110,16 +110,11 @@ class EditProfile extends React.Component {
   }
 
   componentDidUpdate() {
-    const { authState, navigation } = this.props;
+    const { authState, navigation, unloadProfile } = this.props;
     const { deleteUser } = authState;
-    if (deleteUser.userdeleted) {
+    if (deleteUser.userdeleted && !authState.jwt[0] && !unloadProfile.profileLoaded) {
       navigation.navigate('Login');
     }
-    /*
-    if (deleteUser.error) {
-      Alert.alert(deleteUser.error.payload);
-    }
-    */
   }
 
   checkPasswordStrength = () => {
@@ -222,7 +217,7 @@ class EditProfile extends React.Component {
       'Are you sure you want to remove your account?',
       [
         { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-        { text: 'Yes', onPress: () => deleteUserInit(profileState.email, authState.jwt[0]) },
+        { text: 'Yes', onPress: () => { deleteUserInit(profileState.email, authState.jwt[0]); } },
       ],
       { cancelable: false },
     );
@@ -345,6 +340,7 @@ EditProfile.propTypes = {
   updateReset: PropTypes.func.isRequired,
   deleteUserInit: PropTypes.func.isRequired,
   deleteReset: PropTypes.func.isRequired,
+  unloadProfile: PropTypes.func.isRequired,
 };
 
 

@@ -78,13 +78,11 @@ export const deleteReset = () => (
   }
 );
 
-function deletUserHandleResponse(json) {
-  console.log('handle delete');
-  console.log(json.message);
+function deletUserHandleResponse() {
   return (dispatch) => {
     dispatch(unloadProfile());
-    dispatch(deletUserSuccess());
     dispatch(deleteJWTInit());
+    dispatch(deletUserSuccess());
   };
 }
 

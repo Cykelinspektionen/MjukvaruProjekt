@@ -4,7 +4,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { NavigationActions } from 'react-navigation';
 import PropTypes from 'prop-types';
 import { ButtonGroup } from 'react-native-elements';
 import { Dropdown } from 'react-native-material-dropdown';
@@ -296,7 +295,6 @@ class AddBike extends React.Component {
     }
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: [4, 3],
       exif: true,
     });
 

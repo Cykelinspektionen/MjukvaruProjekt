@@ -14,7 +14,7 @@ import Item from '../components/Item';
 import * as jwtActions from '../navigation/actions/JwtActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as mapActions from '../navigation/actions/MapActions';
-import { setHoldNotification } from '../navigation/actions/RouteActions';
+import * as routeActions from '../navigation/actions/RouteActions';
 
 const background = require('../assets/images/background.jpeg');
 const profilePic = require('../assets/images/userPlaceholder.jpg');
@@ -35,31 +35,32 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   rowContainer: {
-    flex: 0.25,
+    flex: 0.20,
     flexDirection: 'row',
-    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
     marginTop: 5,
   },
   profile: {
-    flex: 0.3,
-    height: undefined,
-    width: undefined,
-    marginLeft: 20,
-    borderRadius: 10,
+    height: '100%',
+    width: '25%',
     borderColor: 'black',
     borderWidth: 1,
+    borderRadius: 5,
+    alignItems: 'center',
+    alignSelf: 'stretch',
   },
   columnContainer: {
-    flex: 0.6,
     flexDirection: 'column',
     justifyContent: 'center',
     backgroundColor: '#fff',
     alignContent: 'flex-end',
-    left: 7,
     borderRadius: 10,
     borderColor: 'black',
     borderWidth: 1,
+    height: '100%',
+    width: '60%',
   },
   categories: {
     flex: 0.15,
@@ -72,6 +73,7 @@ const styles = StyleSheet.create({
     marginTop: '4%',
   },
   UserInfo: {
+    paddingRight: 5,
     fontSize: 17,
     paddingLeft: 5,
     borderRadius: 15,
@@ -91,7 +93,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     flex: 0.075,
-    margin: 3,
+    borderRadius: 5,
+    margin: 5,
     flexDirection: 'row',
   },
   editButtonContainer: {
@@ -119,8 +122,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   addPic: {
-    justifyContent: 'flex-end',
-    right: 30,
+    alignSelf: 'flex-end',
+    justifyContent: 'center',
+    right: 19,
+    bottom: -10,
+
   },
   missing: {
     flex: 0.5,
@@ -196,7 +202,7 @@ class Profile extends React.Component {
     renderItem = ({ item }) => {
       if (!item.active) return null;
       const {
-        navigation, profileState, setMarker, setShowMarker,
+        navigation, profileState, setMarker, setShowMarker, authState,
       } = this.props;
       const bikeData = item;
       bikeData.showComments = false;// true = shows comments , false = shows similar bikes!
@@ -220,6 +226,8 @@ class Profile extends React.Component {
             commentsLength={bikeData.comments.length}
             navigation={navigation}
             refresh={this.onRefresh}
+            authState={authState}
+            matchingBikesCount
           />
         </TouchableOpacity>
       );
@@ -244,7 +252,7 @@ class Profile extends React.Component {
       }
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
-        aspect: [4, 3],
+        aspect: [4, 4],
       });
 
       if (!result.cancelled) {
@@ -276,15 +284,24 @@ class Profile extends React.Component {
           <ImageBackground style={styles.backImg} source={background}>
             <View style={[styles.container, styles.background]}>
               <View style={styles.rowContainer}>
-
-                <Image source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} style={styles.profile} resizeMode="contain" />
-                <TouchableOpacity
-                  style={styles.addPic}
-                  onPress={this.startCameraRoll}
-                >
-                  <Icon name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'} size={35} color="black" />
-                </TouchableOpacity>
-
+                <Image source={profileState.avatarUri.thumbnail.length ? { uri: `${profileState.avatarUri.thumbnail}?time=${new Date()}` } : profilePic} style={styles.profile} />
+                <View style={styles.addPic}>
+                  <Icon
+                    name={Platform.OS === 'ios' ? 'ios-add-circle' : 'md-add-circle'}
+                    size={35}
+                    color="white"
+                    style={{ position: 'absolute', zIndex: 1 }}
+                    onPress={this.startCameraRoll}
+                  />
+                  <Icon
+                    name={Platform.OS === 'ios' ? 'ios-add-circle-outline' : 'md-add-circle-outline'}
+                    size={39}
+                    color="black"
+                    style={{
+                      right: 1,
+                    }}
+                  />
+                </View>
                 <View style={styles.columnContainer}>
                   <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
                     {''}
@@ -402,7 +419,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => bindActionCreators(
   {
-    setHoldNotification, ...jwtActions, ...profileActions, ...mapActions,
+    ...routeActions, ...jwtActions, ...profileActions, ...mapActions,
   },
   dispatch,
 );

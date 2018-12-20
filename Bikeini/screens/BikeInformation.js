@@ -47,10 +47,6 @@ const styles = StyleSheet.create({
   colFlex: {
     flexDirection: 'column',
     flex: 1,
-    marginBottom: 5,
-  },
-  locView: {
-    flexDirection: 'row',
   },
   rowFlex: {
     flexDirection: 'row',
@@ -75,7 +71,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    marginTop: 10,
+    marginTop: 5,
     width: '95%',
   },
   commentContainer: {
@@ -678,7 +674,7 @@ class BikeInformation extends React.Component {
             <View style={[styles.headContainer, styles.rowFlex]}>
               <Text style={styles.head} adjustsFontSizeToFit>{title}</Text>
             </View>
-            <View style={styles.locView}>
+            <View style={styles.rowFlex}>
               <Text style={styles.body} adjustsFontSizeToFit>
                 {city}
                 {', '}

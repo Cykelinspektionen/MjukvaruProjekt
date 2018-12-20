@@ -13,6 +13,7 @@ import {
 import serverApi from '../../utilities/serverApi';
 import { loadProfileSuccess, unloadProfile } from './ProfileActions';
 import { storeJWTInit, deleteJWTInit } from './JwtActions';
+import { resetAll } from './rootActions';
 
 export const login = credentials => (
   {
@@ -80,7 +81,7 @@ export const deleteReset = () => (
 
 function deletUserHandleResponse() {
   return (dispatch) => {
-    dispatch(unloadProfile());
+    resetAll();
     dispatch(deleteJWTInit());
     dispatch(deletUserSuccess());
   };

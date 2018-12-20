@@ -15,6 +15,7 @@ import * as jwtActions from '../navigation/actions/JwtActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as mapActions from '../navigation/actions/MapActions';
 import * as routeActions from '../navigation/actions/RouteActions';
+import * as rootActions from '../navigation/actions/rootActions';
 
 const background = require('../assets/images/background.jpeg');
 const profilePic = require('../assets/images/userPlaceholder.jpg');
@@ -238,8 +239,13 @@ class Profile extends React.Component {
     }
 
     onLogoutPress = () => {
-      const { deleteJWTInit, navigation, unloadProfile } = this.props;
-      unloadProfile();
+      const {
+        deleteJWTInit,
+        navigation,
+        resetAll,
+      } = this.props;
+
+      resetAll();
       deleteJWTInit();
       navigation.navigate('Login');
     }
@@ -414,11 +420,11 @@ Profile.propTypes = {
   }).isRequired,
   uploadProfilePicToServer: PropTypes.func.isRequired,
   deleteJWTInit: PropTypes.func.isRequired,
-  unloadProfile: PropTypes.func.isRequired,
   setMarker: PropTypes.func.isRequired,
   setShowMarker: PropTypes.func.isRequired,
   resetNotifiction: PropTypes.func.isRequired,
   setHoldNotification: PropTypes.func.isRequired,
+  resetAll: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
@@ -428,7 +434,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = dispatch => bindActionCreators(
   {
-    ...routeActions, ...jwtActions, ...profileActions, ...mapActions,
+    ...routeActions, ...jwtActions, ...profileActions, ...mapActions, ...rootActions,
   },
   dispatch,
 );

@@ -10,7 +10,6 @@ import { headerBackStyle } from './header';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as authActions from '../navigation/actions/AuthActions';
 
-
 const background = require('../assets/images/background.jpeg');
 
 const styles = StyleSheet.create({
@@ -216,7 +215,7 @@ class EditProfile extends React.Component {
       'Warning',
       'Are you sure you want to remove your account?',
       [
-        { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+        { text: 'Cancel', onPress: () => {}, style: 'cancel' },
         { text: 'Yes', onPress: () => { deleteUserInit(profileState.email, authState.jwt[0]); } },
       ],
       { cancelable: false },

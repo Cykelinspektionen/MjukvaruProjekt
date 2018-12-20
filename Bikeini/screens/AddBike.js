@@ -236,9 +236,7 @@ class AddBike extends React.Component {
         bikeData.keywords[key] = response[key] ? 1 : 0;
       }
     });
-    this.setState({ bikeData }, () => {
-      // console.log(this.state.bikeData);
-    });
+    this.setState({ bikeData });
   }
 
   startCameraRoll = () => {
@@ -408,10 +406,7 @@ class AddBike extends React.Component {
                 onPress={() => {
                   this.compressUri(addBikeState.imgToUploadUri).then((compressedUri) => {
                     imgUploadInit(compressedUri.uri, bikeData.type, authState.jwt[0])
-                      .then((response) => {
-                        console.log(response);
-                        this.setServerResponse(response);
-                      });
+                      .then(response => this.setServerResponse(response));
                   });
                 }
             }

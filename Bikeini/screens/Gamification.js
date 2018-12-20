@@ -113,7 +113,7 @@ class Gamification extends React.Component {
   }
 
       handleServerTopPlayers = () => {
-        const { authState, profileState /* loadProfileInit */ } = this.props;
+        const { authState, profileState } = this.props;
         const { jwt } = authState;
 
         const { location } = profileState;
@@ -308,7 +308,6 @@ Gamification.propTypes = {
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
-  /* loadProfileInit: PropTypes.func.isRequired, */
 };
 
 const mapStateToProps = (state) => {

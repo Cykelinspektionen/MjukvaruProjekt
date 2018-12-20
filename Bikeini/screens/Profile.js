@@ -188,8 +188,6 @@ class Profile extends React.Component {
 
       serverApi.post('bikes/getmybikes/', '', 'application/x-www-form-urlencoded', jwt[0])
         .then((responseJson) => {
-          console.log(responseJson);
-          // console.log(jwt[0]);
           const yourBicycles = responseJson.filter(x => x.type === 'STOLEN');
           const yourTips = responseJson.filter(x => x.type === 'FOUND');
           this.setState({ yourBicycles, yourTips, isFetching: false });

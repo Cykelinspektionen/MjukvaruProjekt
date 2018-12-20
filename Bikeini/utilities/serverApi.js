@@ -76,8 +76,6 @@ const serverApi = {
   },
 
   post(_urlEnd, _body, _contentType, _jwt) {
-    // application/x-www-form-urlencoded ??
-    // const formBody = Object.entries(_body).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
     return fetch(`http://bikeify.student.it.uu.se/${_urlEnd}`, {
 	  method: 'POST',
 	  body: _body,
@@ -94,13 +92,11 @@ const serverApi = {
   },
 
   get(_urlEnd, _jwt) {
-    // fetch('http://bikeify.student.it.uu.se:3000/bikes/getmybikes/');
     return fetch(`http://bikeify.student.it.uu.se/${_urlEnd}`, {
       method: 'GET',
       headers: {
         'x-access-token': _jwt,
       },
-    // Authorization: 'Bearer ' + 'SECRET_OAUTH2_TOKEN_IF_AUTH' },
     })
       .then(handleErrors)
       .then(response => response.json())

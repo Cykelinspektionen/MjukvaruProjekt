@@ -116,7 +116,6 @@ class Filter extends React.Component {
       for (let j = 0; j < items.length; j += 1) {
         if (items[j].isChecked) {
           if (items[j].data === 'male' || items[j].data === 'female') {
-            // FIX SO THAT ITS POSSIBLE TO SEARCH FOR 'TYPE' AGAIN!
             filterOptions['keywords.frame_type'] = (items[j].data).toUpperCase();
           } else {
             filterOptions[`keywords.${items[j].data}`] = true;

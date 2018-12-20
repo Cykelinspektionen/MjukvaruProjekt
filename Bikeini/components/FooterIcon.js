@@ -31,9 +31,8 @@ class FooterIcon extends React.Component {
     this.setState({
       notification: profileNotification,
       timer: setInterval(() => {
-        // Only check with server if the user is NOT in the Profile-screen.
         this.checkIfNotification();
-      }, 10000),
+      }, 60000),
     });
   }
 
@@ -56,9 +55,9 @@ class FooterIcon extends React.Component {
     } = this.props;
     const { holdNotification } = routeState;
     const { jwt } = authState;
-    const { profileNotification } = profileState;
-    if (!holdNotification && !profileNotification) {
-      serverApi.get('users/userhasnotifications/', jwt[0])
+    const { profileNotification, profileLoaded } = profileState;
+    if (!holdNotification && !profileNotification && profileLoaded) {
+      serverApi.post('users/userhasnotifications/', '', 'application/x-www-form-urlencoded', jwt[0])
         .then((responseJson) => {
           const { message } = responseJson;
           if (message) {
@@ -90,7 +89,6 @@ class FooterIcon extends React.Component {
 
 FooterIcon.propTypes = {
   profileState: PropTypes.shape({
-    id: PropTypes.string.isRequired,
     location: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,

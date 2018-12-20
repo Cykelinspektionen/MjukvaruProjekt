@@ -53,9 +53,8 @@ const styles = StyleSheet.create({
   },
   breakLine: {
     width: '100%',
-    height: '1%',
     borderWidth: 0,
-    borderBottomWidth: 1,
+    borderBottomWidth: 2,
   },
   headerContainer: {
     backgroundColor: '#44ccad',

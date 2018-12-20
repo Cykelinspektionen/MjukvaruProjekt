@@ -115,7 +115,11 @@ class Filter extends React.Component {
       const { items } = checkBoxes[i];
       for (let j = 0; j < items.length; j += 1) {
         if (items[j].isChecked) {
-          filterOptions[items[j].data] = true;
+          if (items[j].data === 'male' || items[j].data === 'female') {
+            filterOptions['keywords.frame_type'] = (items[j].data).toUpperCase();
+          } else {
+            filterOptions[`keywords.${items[j].data}`] = true;
+          }
         }
       }
     }

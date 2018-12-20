@@ -47,12 +47,12 @@ const styles = StyleSheet.create({
   },
   commentsTag: {
     width: 30,
-    height: 35,
+    height: 30,
     marginBottom: 5,
   },
   locationTag: {
-    width: 25,
-    height: 25,
+    width: 30,
+    height: 30,
     marginBottom: 5,
   },
   buttonRow: {
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   commentsNumber: {
     position: 'absolute',
-    top: 5,
+    top: 3,
     left: 7,
     alignItems: 'center',
     justifyContent: 'center',

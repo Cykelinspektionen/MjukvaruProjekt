@@ -350,6 +350,8 @@ class BikeInformation extends React.Component {
           commentsLength={bikeData.comments.length}
           navigation={navigation}
           refresh={refresh}
+          authState={authState}
+          matchingBikesCount={false}
         />
       </TouchableOpacity>
     );

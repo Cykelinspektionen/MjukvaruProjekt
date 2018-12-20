@@ -15,8 +15,8 @@ import * as addBikeActions from '../navigation/actions/AddBikeActions';
 
 const locationIcon = require('../assets/images/location.png');
 const defaultBike = require('../assets/images/bikePlaceholder.png');
-const cameraImg = require('../assets/images/album.png');
-const albumImg = require('../assets/images/camera.png');
+const cameraImg = require('../assets/images/camera.png');
+const albumImg = require('../assets/images/album.png');
 
 const styles = StyleSheet.create({
   background: {
@@ -399,7 +399,7 @@ class AddBike extends React.Component {
                     </TouchableHighlight>
                     <Image
                       style={styles.icons}
-                      source={cameraImg}
+                      source={albumImg}
                     />
                   </View>
                   <View style={styles.rowContainer}>
@@ -408,7 +408,7 @@ class AddBike extends React.Component {
                     </TouchableHighlight>
                     <Image
                       style={styles.icons}
-                      source={albumImg}
+                      source={cameraImg}
                     />
                   </View>
                 </View>

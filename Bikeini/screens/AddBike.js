@@ -559,15 +559,16 @@ class AddBike extends React.Component {
                 style={styles.inputs}
                 placeholder="Frame number"
                 underlineColorAndroid="transparent"
-                value={bikeData.frameNumber}
-                onChangeText={text => this.setBikeData('frameNumber', text)}
+                keyboardType="numeric"
+                value={bikeData.frame_number}
+                onChangeText={text => this.setBikeData('frame_number', text)}
               />
               <TextInput
                 style={styles.inputs}
                 placeholder="Anti Theft Code"
                 underlineColorAndroid="transparent"
-                value={bikeData.antiTheftCode}
-                onChangeText={text => this.setBikeData('antiTheftCode', text)}
+                value={bikeData.antitheft_code}
+                onChangeText={text => this.setBikeData('antitheft_code', text)}
               />
               <TextInput
                 style={styles.inputs}

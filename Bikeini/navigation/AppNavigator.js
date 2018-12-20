@@ -26,7 +26,13 @@ const AppNavigator = createStackNavigator({
     },
   },
   BikeInformation: { screen: BikeInformation },
-  PinMap: { screen: PinMap },
+  PinMap: {
+    screen: PinMap,
+    navigationOptions: {
+      headerLeft: null,
+      gesturesEnabled: false,
+    },
+  },
   EditProfile: { screen: EditProfile },
   TabNavigator: {
     screen: TabNavigator,

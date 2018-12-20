@@ -41,9 +41,7 @@ const styles = StyleSheet.create({
     flex: 0.65,
     marginLeft: 10,
     flexDirection: 'row',
-    width: '100%',
-    height: '100%',
-    alignItems: 'flex-end',
+    width: '95%',
   },
   colFlex: {
     flexDirection: 'column',
@@ -58,18 +56,15 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   head: {
-    fontSize: 18,
-    fontWeight: '200',
-    width: '85%',
+    fontSize: 20,
+    fontWeight: 'bold',
+    width: '100%',
   },
   body: {
-    fontSize: 12,
-    fontWeight: '100',
+    fontSize: 16,
     alignSelf: 'flex-start',
   },
-  infoBox: {
-    flex: 1,
-  },
+
   listContainer: {
     flex: 1,
     marginTop: 5,
@@ -121,7 +116,6 @@ const styles = StyleSheet.create({
     flex: 0.4,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    height: 30,
   },
   found: {
     height: 25,

@@ -32,7 +32,7 @@ class FooterIcon extends React.Component {
       notification: profileNotification,
       timer: setInterval(() => {
         this.checkIfNotification();
-      }, 60000),
+      }, 10000),
     });
   }
 
@@ -55,8 +55,8 @@ class FooterIcon extends React.Component {
     } = this.props;
     const { holdNotification } = routeState;
     const { jwt } = authState;
-    const { profileNotification } = profileState;
-    if (!holdNotification && !profileNotification) {
+    const { profileNotification, profileLoaded } = profileState;
+    if (!holdNotification && !profileNotification && profileLoaded) {
       serverApi.post('users/userhasnotifications/', '', 'application/x-www-form-urlencoded', jwt[0])
         .then((responseJson) => {
           const { message } = responseJson;
@@ -89,7 +89,6 @@ class FooterIcon extends React.Component {
 
 FooterIcon.propTypes = {
   profileState: PropTypes.shape({
-    id: PropTypes.string.isRequired,
     location: PropTypes.string.isRequired,
     username: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,

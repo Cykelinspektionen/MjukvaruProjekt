@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import DialogInput from 'react-native-dialog-input';
+import RF from 'react-native-responsive-fontsize';
 import serverApi from '../utilities/serverApi';
 import * as jwtActions from '../navigation/actions/JwtActions';
 import * as mapActions from '../navigation/actions/MapActions';
@@ -30,21 +31,22 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
     flex: 0.5,
+    marginTop: 5,
   },
   image: {
     flex: 1,
-    width: null,
-    height: null,
+    width: undefined,
+    height: undefined,
   },
   descriptionContainer: {
-    flex: 0.5,
+    flex: 0.55,
     marginLeft: 10,
     flexDirection: 'row',
-    width: '100%',
-    alignItems: 'flex-end',
+    width: '95%',
   },
   colFlex: {
     flexDirection: 'column',
+    flex: 1,
   },
   rowFlex: {
     flexDirection: 'row',
@@ -55,19 +57,18 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   head: {
-    fontSize: 24,
-    fontWeight: '200',
+    fontSize: RF(3.5),
+    fontWeight: 'bold',
+    width: '100%',
   },
   body: {
-    fontSize: 18,
-    fontWeight: '100',
+    fontSize: RF(2.5),
+    alignSelf: 'flex-start',
   },
-  infoBox: {
-    flex: 1,
-  },
+
   listContainer: {
     flex: 1,
-    marginTop: 10,
+    marginTop: 5,
     width: '95%',
   },
   commentContainer: {
@@ -113,10 +114,21 @@ const styles = StyleSheet.create({
     marginLeft: '2%',
   },
   closeButton: {
-    flex: 1,
+    flex: 0.4,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    marginRight: 5,
+  },
+  found: {
+    height: 25,
+    // ios
+    shadowOpacity: 0.6,
+    shadowRadius: 3,
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    },
+    // android
+    elevation: 5,
   },
   buttonSmall: {
     justifyContent: 'center',
@@ -156,6 +168,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   locationTag: {
+    width: 20,
+    height: 20,
+  },
+  locationTagComment: {
+    justifyContent: 'flex-end',
     width: 25,
     height: '90%',
   },
@@ -464,11 +481,11 @@ class BikeInformation extends React.Component {
         <View style={reply ? styles.replyInputContainer : styles.commentInputContainer}>
           {cancelButton}
           <TouchableOpacity
-            style={[styles.locationTag, styles.send]}
+            style={[styles.locationTagComment, styles.send]}
             onPress={() => navigation.navigate('PinMap')}
           >
             <Image
-              style={styles.locationTag}
+              style={styles.locationTagComment}
               source={locationIcon}
             />
           </TouchableOpacity>
@@ -509,7 +526,7 @@ class BikeInformation extends React.Component {
     if (bikeSubmitter === profileState.username || bikeData.type === 'FOUND') {
       return (
         <View style={styles.closeButton}>
-          <TouchableHighlight style={[styles.buttonSmall, styles.greenButton]} onPress={() => this.handleFound()}>
+          <TouchableHighlight style={[styles.buttonSmall, styles.greenButton, styles.found]} onPress={() => this.handleFound()}>
             <Text style={styles.greenButtonText}>BIKE IS FOUND</Text>
           </TouchableHighlight>
         </View>
@@ -613,6 +630,8 @@ class BikeInformation extends React.Component {
     } = bikeData;
     const city = location ? location.city : '';
     const neighborhood = location ? location.neighborhood : '';
+    const comma = (brand || model) ? ', ' : '';
+    const newLine = (brand || model) ? ' ' : '';
 
     const list = this.renderList();
     const commentField = this.renderCommentField(false);
@@ -627,9 +646,7 @@ class BikeInformation extends React.Component {
           onPress={() => this.handleLocation()}
         >
           <Image
-            style={styles.image}
-            resizeMode="contain"
-            resizeMethod="scale"
+            style={styles.locationTag}
             source={locationIcon}
           />
         </TouchableOpacity>
@@ -652,13 +669,15 @@ class BikeInformation extends React.Component {
           <View style={styles.colFlex}>
             <View style={[styles.headContainer, styles.rowFlex]}>
               <Text style={styles.head} adjustsFontSizeToFit>{title}</Text>
+            </View>
+            <View style={styles.rowFlex}>
+              <Text style={styles.body} adjustsFontSizeToFit>
+                {city}
+                {', '}
+                {neighborhood}
+              </Text>
               {positionButton}
             </View>
-            <Text style={styles.body} adjustsFontSizeToFit>
-              {city}
-              {', '}
-              {neighborhood}
-            </Text>
             <Text
               style={styles.body}
               adjustsFontSizeToFit
@@ -667,9 +686,9 @@ class BikeInformation extends React.Component {
             </Text>
             <Text style={styles.body} adjustsFontSizeToFit>
               {brand}
-              {' '}
+              {newLine}
               {model}
-              {', '}
+              {comma}
               {color}
             </Text>
             <Text style={styles.body} adjustsFontSizeToFit>
@@ -677,8 +696,8 @@ class BikeInformation extends React.Component {
               {' '}
               {frameNumber}
             </Text>
+            {foundButton}
           </View>
-          {foundButton}
         </View>
         <View style={styles.commentContainer}>
           {list}

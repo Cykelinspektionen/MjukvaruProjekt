@@ -125,6 +125,9 @@ const styles = StyleSheet.create({
   ownCommentThumbs: {
     opacity: 0.2,
   },
+  ownCommentTotal: {
+    opacity: 0.4,
+  },
   separate: {
     marginRight: 2,
   },
@@ -261,7 +264,6 @@ export default class Comment extends React.Component {
         </TouchableOpacity>
       );
     }
-
     if (!ownersComment) {
       if (showResolveBike && username !== '1') {
         resolveButton = (
@@ -320,12 +322,12 @@ export default class Comment extends React.Component {
   }
 
   getThumbTotal = () => {
-    const { rating } = this.props;
+    const { rating, ownersComment } = this.props;
     const upPoints = rating.up.length;
     const downPoints = rating.down.length;
     const total = upPoints - downPoints;
     return (
-      <Text style={styles.totalThumbs}>
+      <Text style={[styles.totalThumbs, ownersComment ? styles.ownCommentTotal : []]}>
         {total}
       </Text>
     );

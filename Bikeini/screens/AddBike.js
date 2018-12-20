@@ -15,8 +15,8 @@ import * as addBikeActions from '../navigation/actions/AddBikeActions';
 
 const locationIcon = require('../assets/images/location.png');
 const defaultBike = require('../assets/images/bikePlaceholder.png');
-const cameraImg = require('../assets/images/album.png');
-const albumImg = require('../assets/images/camera.png');
+const cameraImg = require('../assets/images/camera.png');
+const albumImg = require('../assets/images/album.png');
 
 const styles = StyleSheet.create({
   background: {
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
   locationTag: {
     flexDirection: 'row-reverse',
     alignSelf: 'flex-end',
+    right: 2,
     height: '100%',
     width: '100%',
   },
@@ -186,6 +187,24 @@ class AddBike extends React.Component {
         },
         {
           value: 'Black',
+        },
+        {
+          value: 'Gray',
+        },
+        {
+          value: 'Orange',
+        },
+        {
+          value: 'Pink',
+        },
+        {
+          value: 'Purple',
+        },
+        {
+          value: 'Silver',
+        },
+        {
+          value: 'Yellow',
         },
       ],
     };
@@ -380,7 +399,7 @@ class AddBike extends React.Component {
                     </TouchableHighlight>
                     <Image
                       style={styles.icons}
-                      source={cameraImg}
+                      source={albumImg}
                     />
                   </View>
                   <View style={styles.rowContainer}>
@@ -389,7 +408,7 @@ class AddBike extends React.Component {
                     </TouchableHighlight>
                     <Image
                       style={styles.icons}
-                      source={albumImg}
+                      source={cameraImg}
                     />
                   </View>
                 </View>
@@ -543,6 +562,7 @@ class AddBike extends React.Component {
               <View style={styles.dropdowns}>
                 <Dropdown
                   value={color}
+                  itemCount={5}
                   label="Color"
                   data={Color}
                   onChangeText={value => this.setBikeData('color', value)}

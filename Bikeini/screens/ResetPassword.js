@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    borderRadius: 30,
+    borderRadius: 10,
     width: 250,
   },
   requestButton: {

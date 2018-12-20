@@ -113,7 +113,7 @@ class Gamification extends React.Component {
   }
 
       handleServerTopPlayers = () => {
-        const { authState, profileState, loadProfileInit } = this.props;
+        const { authState, profileState } = this.props;
         const { jwt } = authState;
 
         const { location } = profileState;
@@ -128,7 +128,7 @@ class Gamification extends React.Component {
         };
         const formBody = JSON.stringify(topScoreSwe);
         const formBodyLocal = JSON.stringify(topScoreLocal);
-        loadProfileInit(jwt[0]);
+
         serverApi.post('users/gethighscores/', formBody, 'application/json', jwt[0])
           .then((responseJson) => {
             for (let i = 0; i < responseJson.length; i += 1) {
@@ -308,7 +308,6 @@ Gamification.propTypes = {
     profileLoaded: PropTypes.bool.isRequired,
     error: PropTypes.string.isRequired,
   }).isRequired,
-  loadProfileInit: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {

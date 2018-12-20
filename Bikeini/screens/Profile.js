@@ -190,7 +190,7 @@ class Profile extends React.Component {
       const { authState } = this.props;
       const { jwt } = authState;
 
-      serverApi.get('bikes/getmybikes/', jwt[0])
+      serverApi.post('bikes/getmybikes/', '', 'application/x-www-form-urlencoded', jwt[0])
         .then((responseJson) => {
           const yourBicycles = responseJson.filter(x => x.type === 'STOLEN');
           const yourTips = responseJson.filter(x => x.type === 'FOUND');

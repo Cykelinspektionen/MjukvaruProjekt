@@ -123,8 +123,8 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     flex: 0.4,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
     height: 30,
   },
   found: {

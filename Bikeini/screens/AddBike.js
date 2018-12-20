@@ -348,8 +348,8 @@ class AddBike extends React.Component {
       Alert.alert('Please set a location');
       return;
     }
-    if (!bikeData.title || !bikeData.model || !bikeData.description) {
-      Alert.alert('Please make sure your ad contains a title, model-information and description');
+    if (!bikeData.title || !bikeData.brand || !bikeData.description) {
+      Alert.alert('Please make sure your ad contains a title, brand-information and description');
       return;
     }
     if (userMarker.userMarkerSet) {

@@ -264,7 +264,6 @@ export default class Comment extends React.Component {
         </TouchableOpacity>
       );
     }
-
     if (!ownersComment) {
       if (showResolveBike && username !== '1') {
         resolveButton = (

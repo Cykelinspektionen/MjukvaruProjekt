@@ -49,6 +49,9 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: 5,
   },
+  locView: {
+    flexDirection: 'row',
+  },
   rowFlex: {
     flexDirection: 'row',
   },
@@ -65,6 +68,7 @@ const styles = StyleSheet.create({
   body: {
     fontSize: 18,
     fontWeight: '100',
+    alignSelf: 'flex-start',
   },
   infoBox: {
     flex: 1,
@@ -117,15 +121,13 @@ const styles = StyleSheet.create({
     marginLeft: '2%',
   },
   closeButton: {
-    flex: 1,
+    flex: 0.4,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 5,
     height: 30,
   },
   found: {
     height: 25,
-    marginBottom: 5,
     // ios
     shadowOpacity: 0.6,
     shadowRadius: 3,
@@ -174,6 +176,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   locationTag: {
+    width: 20,
+    height: 20,
+  },
+  locationTagComment: {
+    justifyContent: 'flex-end',
     width: 25,
     height: '90%',
   },
@@ -482,11 +489,11 @@ class BikeInformation extends React.Component {
         <View style={reply ? styles.replyInputContainer : styles.commentInputContainer}>
           {cancelButton}
           <TouchableOpacity
-            style={[styles.locationTag, styles.send]}
+            style={[styles.locationTagComment, styles.send]}
             onPress={() => navigation.navigate('PinMap')}
           >
             <Image
-              style={styles.locationTag}
+              style={styles.locationTagComment}
               source={locationIcon}
             />
           </TouchableOpacity>
@@ -647,9 +654,7 @@ class BikeInformation extends React.Component {
           onPress={() => this.handleLocation()}
         >
           <Image
-            style={styles.image}
-            resizeMode="contain"
-            resizeMethod="scale"
+            style={styles.locationTag}
             source={locationIcon}
           />
         </TouchableOpacity>
@@ -672,13 +677,15 @@ class BikeInformation extends React.Component {
           <View style={styles.colFlex}>
             <View style={[styles.headContainer, styles.rowFlex]}>
               <Text style={styles.head} adjustsFontSizeToFit>{title}</Text>
+            </View>
+            <View style={styles.locView}>
+              <Text style={styles.body} adjustsFontSizeToFit>
+                {city}
+                {', '}
+                {neighborhood}
+              </Text>
               {positionButton}
             </View>
-            <Text style={styles.body} adjustsFontSizeToFit>
-              {city}
-              {', '}
-              {neighborhood}
-            </Text>
             <Text
               style={styles.body}
               adjustsFontSizeToFit

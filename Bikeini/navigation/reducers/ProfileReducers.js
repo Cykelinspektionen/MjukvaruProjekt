@@ -8,6 +8,10 @@ import {
   UPLOAD_PROFILE_IMG_SUCCESS,
   UPLOAD_PROFILE_IMG_FAILURE,
   UNLOAD_PROFILE,
+  UPDATE_USER_BEGIN,
+  UPDATE_USER_FAILURE,
+  UPDATE_USER_SUCCESS,
+  UPDATE_RESET,
   RESET_PROFILE_NOTIFICATION,
   SET_PROFILE_NOTIFICATION,
 } from '../actions/types';
@@ -32,11 +36,17 @@ const PROFILE_INITIAL_STATE = {
   loadingProfile: false,
   profileLoaded: false,
   error: '',
+  // avatarUri: '',
+  updateProfile: {
+    loadingUpdate: false,
+    updateDone: false,
+    error: '',
+  },
   profileNotification: false,
   avatarUri: { img: '', thumbnail: '' },
 };
 
-const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
+const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {  
   switch (action.type) {
     case PROFILE_IMG_URI:
       return {
@@ -59,6 +69,7 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         error: action.payload,
       };
     case LOAD_PROFILE_SUCCESS:
+
       return {
         ...state,
         location: action.payload.location,
@@ -71,7 +82,8 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
         loadingProfile: false,
         profileLoaded: true,
         profileNotification: action.payload.has_notification,
-        avatarUri: action.payload.avatar_url || { img: '', thumbnail: '' },
+        avatarUri: action.payload.avatar_url === undefined || action.payload.avatar_url === 'deleted avatar' ? { img: '', thumbnail: '' } : action.payload.avatar_url,
+
       };
     case UNLOAD_PROFILE:
       return { ...PROFILE_INITIAL_STATE };
@@ -81,6 +93,51 @@ const profileReducer = (state = PROFILE_INITIAL_STATE, action) => {
       return { ...state, avatarUri: action.payload.avatar_url };
     case UPLOAD_PROFILE_IMG_FAILURE:
       return { ...state, imgUploaded: false };
+    case UPDATE_USER_BEGIN:
+      return { ...state, updateProfile: { ...state.updateProfile, loadingUpdate: true, updateDone: false } };
+    case UPDATE_USER_FAILURE:
+      return {
+        ...state,
+        updateProfile:
+        {
+          ...state.updateProfile,
+          error: action.payload,
+          loadingUpdate: false,
+          updateDone: false,
+        },
+      };
+    case UPDATE_USER_SUCCESS:
+
+      return {
+        ...state,
+        location: action.payload.location,
+        username: action.payload.username,
+        email: action.payload.email,
+        phone_number: action.payload.phone_number,
+        create_time: action.payload.create_time,
+        game_score: action.payload.game_score,
+        id: action.payload._id,
+        loadingProfile: false,
+        profileLoaded: true,
+        avatarUri: action.payload.avatar_url === undefined || action.payload.avatar_url === 'deleted avatar' ? { img: '', thumbnail: '' } : action.payload.avatar_url,
+        updateProfile: {
+          ...state.updateProfile,
+          error: '',
+          loadingUpdate: false,
+          updateDone: true,
+        },
+      };
+    case UPDATE_RESET:
+      return {
+        ...state,
+        updateProfile:
+        {
+          ...state.updateProfile,
+          loadingUpdate: false,
+          updateDone: false,
+          error: '',
+        },
+      };
     case RESET_PROFILE_NOTIFICATION:
       return { ...state, profileNotification: false };
     case SET_PROFILE_NOTIFICATION:

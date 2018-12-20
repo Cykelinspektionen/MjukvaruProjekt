@@ -8,6 +8,7 @@ import Camera from '../screens/Camera';
 import Location from '../screens/Location';
 import BikeInformation from '../screens/BikeInformation';
 import PinMap from '../screens/PinMap';
+import EditProfile from '../screens/EditProfile';
 
 import { headerStyle } from '../screens/header';
 
@@ -26,6 +27,7 @@ const AppNavigator = createStackNavigator({
   },
   BikeInformation: { screen: BikeInformation },
   PinMap: { screen: PinMap },
+  EditProfile: { screen: EditProfile },
   TabNavigator: {
     screen: TabNavigator,
     navigationOptions: {

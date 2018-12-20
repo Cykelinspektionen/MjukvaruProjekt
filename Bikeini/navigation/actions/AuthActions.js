@@ -5,10 +5,14 @@ import {
   LOGIN_BEGIN,
   LOGIN_FAILURE,
   LOGIN_SUCCESS,
+  DELETE_USER_BEGIN,
+  DELETE_USER_FAILURE,
+  DELETE_USER_SUCCESS,
+  DELETE_USER_RESET,
 } from './types';
 import serverApi from '../../utilities/serverApi';
-import { loadProfileSuccess } from './ProfileActions';
-import { storeJWTInit } from './JwtActions';
+import { loadProfileSuccess, unloadProfile } from './ProfileActions';
+import { storeJWTInit, deleteJWTInit } from './JwtActions';
 
 export const login = credentials => (
   {
@@ -49,6 +53,52 @@ export const loginSuccess = () => (
     type: LOGIN_SUCCESS,
   }
 );
+
+export const deletUserBegin = () => (
+  {
+    type: DELETE_USER_BEGIN,
+  }
+);
+
+export const deletUserFailure = error => (
+  {
+    type: DELETE_USER_FAILURE,
+    payload: error,
+  }
+);
+export const deletUserSuccess = () => (
+  {
+    type: DELETE_USER_SUCCESS,
+  }
+);
+
+export const deleteReset = () => (
+  {
+    type: DELETE_USER_RESET,
+  }
+);
+
+function deletUserHandleResponse() {
+  return (dispatch) => {
+    dispatch(unloadProfile());
+    dispatch(deleteJWTInit());
+    dispatch(deletUserSuccess());
+  };
+}
+
+export function deleteUserInit(email, jwt) {
+  let body = { email };
+  body = JSON.stringify(body);
+  return serverApi.postDispatch(
+    'users/wipeuser/',
+    body,
+    'application/json',
+    jwt,
+    deletUserBegin,
+    deletUserFailure,
+    deletUserHandleResponse,
+  );
+}
 
 function handleUserData(json) {
   return (dispatch) => {

@@ -9,6 +9,10 @@ import {
   LOAD_PROFILE_SUCCESS,
   LOAD_PROFILE_FAILURE,
   UNLOAD_PROFILE,
+  UPDATE_USER_BEGIN,
+  UPDATE_USER_FAILURE,
+  UPDATE_USER_SUCCESS,
+  UPDATE_RESET,
   RESET_PROFILE_NOTIFICATION,
   SET_PROFILE_NOTIFICATION,
   SET_PROFILE_NOTIFICATION_INTERVAL,
@@ -82,6 +86,46 @@ export const unloadProfile = () => (
     type: UNLOAD_PROFILE,
   }
 );
+
+export const UpdateUserBegin = () => (
+  {
+    type: UPDATE_USER_BEGIN,
+  }
+);
+
+export const UpdateUserFailure = error => (
+  {
+    type: UPDATE_USER_FAILURE,
+    payload: error,
+  }
+);
+
+export const UpdateUserSuccess = data => (
+  {
+    type: UPDATE_USER_SUCCESS,
+    payload: data,
+  }
+);
+
+export const updateReset = () => (
+  {
+    type: UPDATE_RESET,
+  }
+);
+
+
+export function updateUserInit(newUser, jwt) {
+  const body = JSON.stringify(newUser);
+  return serverApi.postDispatch(
+    'users/updateuser/',
+    body,
+    'application/json',
+    jwt,
+    UpdateUserBegin,
+    UpdateUserFailure,
+    UpdateUserSuccess,
+  );
+}
 
 export const resetNotifiction = () => (
   {

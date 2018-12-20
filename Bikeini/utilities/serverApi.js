@@ -57,6 +57,7 @@ const serverApi = {
               dispatch(dispatchFailure(String(json.error)));
             } else {
               dispatch(dispatchFailure(String(json.message)));
+              Alert.alert(json.message);
             }
             return false;
           } if (json.status === 'error') {

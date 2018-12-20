@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { ImagePicker } from 'expo';
 import { AndroidBackHandler } from 'react-navigation-backhandler';
 import Icon from 'react-native-vector-icons/Ionicons';
+import RF from 'react-native-responsive-fontsize';
 import serverApi from '../utilities/serverApi';
 import permissions from '../utilities/permissions';
 import Item from '../components/Item';
@@ -35,7 +36,6 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   rowContainer: {
-    flex: 0.20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -43,13 +43,14 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   profile: {
-    height: '100%',
-    width: '25%',
+    flex: 0.8,
+    height: undefined,
+    width: undefined,
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 5,
-    alignItems: 'center',
     alignSelf: 'stretch',
+    resizeMode: 'contain',
   },
   columnContainer: {
     flexDirection: 'column',
@@ -59,8 +60,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: 'black',
     borderWidth: 1,
-    height: '100%',
-    width: '60%',
+    width: '70%',
+    marginTop: 5,
   },
   categories: {
     flex: 0.15,
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
   },
   UserInfo: {
     paddingRight: 5,
-    fontSize: 17,
+    fontSize: RF(2.5),
     paddingLeft: 5,
     borderRadius: 15,
     alignSelf: 'stretch',
@@ -313,17 +314,17 @@ class Profile extends React.Component {
                 </View>
                 <View style={styles.columnContainer}>
                   <Text style={[styles.UserInfo, { fontWeight: 'bold' }]}>
-                    {''}
-                    {username}
-                  </Text>
+                      {''}
+                      {username}
+                    </Text>
                   <Text style={styles.UserInfo}>
-                    {''}
-                    {location}
-                  </Text>
+                      {''}
+                      {location}
+                    </Text>
                   <Text style={styles.UserInfo}>
-                    {''}
-                    {email}
-                  </Text>
+                      {''}
+                      {email}
+                    </Text>
                 </View>
               </View>
               <View style={styles.editAndLogoutButtonContainer}>

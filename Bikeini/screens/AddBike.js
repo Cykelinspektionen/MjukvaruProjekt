@@ -152,7 +152,7 @@ class AddBike extends React.Component {
         brand: '',
         model: '',
         color: '',
-        frame_number: 0,
+        frame_number: '',
         antitheft_code: '',
         description: '',
         lat: 0,

@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, TextInput, TouchableHighlight, Image, KeyboardAvoidingView,
+  StyleSheet, Text, View, TextInput, TouchableHighlight, Image, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -283,7 +283,7 @@ class SignUp extends React.Component {
       username, email, phoneNumber, password, clicked, credStatus,
     } = this.state;
     return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+      <KeyboardAvoidingView style={styles.container} behavior="padding" enabled keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 140}>
         <Image style={styles.logo} source={logo} />
         <View style={styles.logoTextCont}>
           <Text style={styles.logoText}> Cykelinspektionen </Text>

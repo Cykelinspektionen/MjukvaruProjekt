@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  StyleSheet, Text, View, Image, TouchableHighlight, TextInput, Alert, ScrollView, TouchableOpacity, KeyboardAvoidingView,
+  StyleSheet, Text, View, Image, TouchableHighlight, TextInput, Alert, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -19,10 +19,20 @@ const cameraImg = require('../assets/images/camera.png');
 const albumImg = require('../assets/images/album.png');
 
 const styles = StyleSheet.create({
+
+  parent: {
+    flex: 1,
+  },
   background: {
     backgroundColor: '#fff',
   },
-  container: {
+  containerIos: {
+    height: '75%',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    marginBottom: 100,
+  },
+  containerAndroid: {
     flex: 1,
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
@@ -381,9 +391,9 @@ class AddBike extends React.Component {
     }
     return (
       <AndroidBackHandler onBackPress={this.onBackButtonPressAndroid}>
-        <KeyboardAvoidingView behavior="position" enabled>
+        <KeyboardAvoidingView style={styles.parent} behavior="position" enabled keyboardVerticalOffset={Platform.OS === 'ios' ? 15 : 30}>
           <ScrollView style={styles.background}>
-            <View style={styles.container}>
+            <View style={Platform.OS === 'ios' ? styles.containerIos : styles.containerAndroid}>
               <Text style={styles.headerText}>
           Add a picture of your bike
               </Text>

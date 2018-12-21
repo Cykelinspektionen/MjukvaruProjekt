@@ -81,7 +81,7 @@ export const deleteReset = () => (
 
 function deletUserHandleResponse() {
   return (dispatch) => {
-    resetAll();
+    dispatch(resetAll());
     dispatch(deleteJWTInit());
     dispatch(deletUserSuccess());
   };

@@ -15,7 +15,7 @@ import * as jwtActions from '../navigation/actions/JwtActions';
 import * as profileActions from '../navigation/actions/ProfileActions';
 import * as mapActions from '../navigation/actions/MapActions';
 import * as routeActions from '../navigation/actions/RouteActions';
-import * as rootActions from '../navigation/actions/rootActions';
+import * as rootActions from '../navigation/actions/RootActions';
 
 const background = require('../assets/images/background.jpeg');
 const profilePic = require('../assets/images/userPlaceholder.jpg');

@@ -22,7 +22,7 @@ const allReducers = combineReducers({
 });
 
 const rootReducer = (state, action) => {
-  if (action.type === 'RESET_APP') {
+  if (action.type === 'RESET_ALL') {
     state = undefined;
   }
   return allReducers(state, action);

@@ -13,7 +13,7 @@ import {
 import serverApi from '../../utilities/serverApi';
 import { loadProfileSuccess, unloadProfile } from './ProfileActions';
 import { storeJWTInit, deleteJWTInit } from './JwtActions';
-import { resetAll } from './rootActions';
+import { resetAll } from './RootActions';
 
 export const login = credentials => (
   {

@@ -9,7 +9,7 @@ import resetPasswordReducer from './ResetPasswordReducers';
 import mapReducer from './MapReducers';
 import routeReducer from './RouteReducers';
 
-export default combineReducers({
+const allReducers = combineReducers({
   authState: authReducer,
   signUpState: signUpReducer,
   filterState: filterReducer,
@@ -20,3 +20,12 @@ export default combineReducers({
   mapState: mapReducer,
   routeState: routeReducer,
 });
+
+const rootReducer = (state, action) => {
+  if (action.type === 'RESET_ALL') {
+    state = undefined;
+  }
+  return allReducers(state, action);
+};
+
+export default rootReducer;

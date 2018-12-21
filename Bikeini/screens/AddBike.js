@@ -348,6 +348,10 @@ class AddBike extends React.Component {
       Alert.alert('Please set a location');
       return;
     }
+    if (!bikeData.title || !bikeData.brand || !bikeData.description) {
+      Alert.alert('Please make sure your ad contains a title, brand-information and description');
+      return;
+    }
     if (userMarker.userMarkerSet) {
       bikeData.lat = userMarker.latitude;
       bikeData.long = userMarker.longitude;
@@ -585,7 +589,7 @@ class AddBike extends React.Component {
               />
               <TextInput
                 style={styles.inputs}
-                placeholder="Brand"
+                placeholder="Brand*"
                 underlineColorAndroid="transparent"
                 value={bikeData.brand}
                 onChangeText={text => this.setBikeData('brand', text)}
@@ -599,14 +603,14 @@ class AddBike extends React.Component {
               />
               <TextInput
                 style={styles.inputs}
-                placeholder="Title"
+                placeholder="Title*"
                 underlineColorAndroid="transparent"
                 value={bikeData.title}
                 onChangeText={text => this.setBikeData('title', text)}
               />
               <TextInput
                 style={styles.inputs}
-                placeholder="Description"
+                placeholder="Description*"
                 underlineColorAndroid="transparent"
                 value={bikeData.description}
                 onChangeText={text => this.setBikeData('description', text)}

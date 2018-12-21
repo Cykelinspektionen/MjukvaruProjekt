@@ -270,7 +270,7 @@ class Profile extends React.Component {
           saveImageToState, uploadProfilePicToServer, profileState, authState,
         } = this.props;
         saveImageToState(result.uri);
-        uploadProfilePicToServer(result.uri, profileState.username, authState.jwt[0]);
+        uploadProfilePicToServer(result.uri, profileState.email, authState.jwt[0]);
       }
     };
 

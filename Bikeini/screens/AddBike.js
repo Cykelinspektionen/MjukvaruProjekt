@@ -588,14 +588,14 @@ class AddBike extends React.Component {
               />
               <TextInput
                 style={styles.inputs}
-                placeholder="Brand"
+                placeholder="Brand*"
                 underlineColorAndroid="transparent"
                 value={bikeData.brand}
                 onChangeText={text => this.setBikeData('brand', text)}
               />
               <TextInput
                 style={styles.inputs}
-                placeholder="Model*"
+                placeholder="Model"
                 underlineColorAndroid="transparent"
                 value={bikeData.model}
                 onChangeText={text => this.setBikeData('model', text)}

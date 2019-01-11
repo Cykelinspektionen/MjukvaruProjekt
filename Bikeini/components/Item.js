@@ -75,6 +75,7 @@ export default class Item extends React.Component {
     super();
     this.state = {
       matchingBikes: 0,
+      commentsLength: 0,
     };
   }
 
@@ -106,10 +107,21 @@ export default class Item extends React.Component {
     return formBody;
   }
 
+  getNoComments = (bikeId) => {
+    const { authState } = this.props;
+    const { jwt } = authState;
+    let body = { bikeId };
+    body = JSON.stringify(body);
+    serverApi.post('comments/getbikecomments', body, 'application/json', jwt[0])
+      .then(responseJson => this.setState({ commentsLength: responseJson.result.length })).catch(error => console.log(error));
+  }
+
   render() {
     const {
-      title, brand, imageUrl, bikeData, navigation, refresh, location, commentsLength, matchingBikesCount,
+      title, brand, imageUrl, bikeData, navigation, refresh, location, matchingBikesCount,
     } = this.props;
+    this.getNoComments(bikeData._id);
+    const { commentsLength } = this.state;
     const imgSource = imageUrl ? { uri: imageUrl } : stockBicycle;
     let locationButton = null;
     let matchingNum = null;
@@ -170,7 +182,6 @@ Item.propTypes = {
   bikeData: PropTypes.shape({
     showComments: PropTypes.bool.isRequired,
   }).isRequired,
-  commentsLength: PropTypes.number.isRequired,
   refresh: PropTypes.func.isRequired,
   location: PropTypes.shape({
     lat: PropTypes.number.isRequired,

@@ -245,9 +245,9 @@ class BikeInformation extends React.Component {
     };
 
     const formBody = this.jsonToFormData(bikeInformation);
-
-    serverApi.post('bikes/getcomments', formBody, 'application/x-www-form-urlencoded', jwt[0])
-      .then((responseJson) => {
+    serverApi.post('comments/getbikecomments', formBody, 'application/x-www-form-urlencoded', jwt[0])
+      .then((response) => {
+        const responseJson = response.result;
         if (responseJson.length > 0) {
           responseJson.reverse();
           const comments = [];
@@ -284,7 +284,7 @@ class BikeInformation extends React.Component {
       const {
         author,
       } = item;
-      const avatarUri = author.avatar_url ? author.avatar_url.thumbnail : null;
+      const avatarUri = author.avatar_url ? author.avatar_url.thumbnail : '';
       const { _id } = item;
       const { jwt } = authState;
       const ownersComment = profileState.username === item.author.username;
@@ -330,7 +330,7 @@ class BikeInformation extends React.Component {
             bikeType={bikeData.type}
             showResolveBike={bikeData.showResolveBike}
             bikeId={bikeId}
-            avatarUri={avatarUri || ''}
+            avatarUri={avatarUri}
             myId={profileState.id}
             username={author.username}
             jwt={jwt}
@@ -364,7 +364,6 @@ class BikeInformation extends React.Component {
           brand={item.brand || ''}
           imageUrl={item.image_url.thumbnail || ''}
           bikeData={bikeData}
-          commentsLength={bikeData.comments.length}
           navigation={navigation}
           refresh={refresh}
           authState={authState}
@@ -388,6 +387,7 @@ class BikeInformation extends React.Component {
 
 
     if (bikeData.showComments) {
+      console.log(comments);
       return (
         <View style={styles.listContainer}>
           <View style={styles.breakLine}>
@@ -448,8 +448,9 @@ class BikeInformation extends React.Component {
       return;
     }
     const formBody = this.jsonToFormData(commentInformation);
-    serverApi.post('bikes/addcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('comments/add', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then(() => {
+        // TODO FIX REPLY!
         if (reply) {
           comment.setState({ replyText: '', answer: false }, () => {
             cleanMapState();
@@ -595,7 +596,7 @@ class BikeInformation extends React.Component {
 
     const body = { bikeId: _id, commentId: this.editCommentId, body: text };
     const formBody = this.jsonToFormData(body);
-    serverApi.post('bikes/editcomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('comments/edit', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then(() => {
         this.setState({ isDialogVisible: false }, () => {
           this.fetchComments();
@@ -615,7 +616,7 @@ class BikeInformation extends React.Component {
     const body = { bikeId: _id, commentId: this.editCommentId };
     const formBody = this.jsonToFormData(body);
 
-    serverApi.post('bikes/removecomment', formBody, 'application/x-www-form-urlencoded', jwt[0])
+    serverApi.post('comments/remove', formBody, 'application/x-www-form-urlencoded', jwt[0])
       .then(() => {
         this.fetchComments();
       }).catch((error) => {

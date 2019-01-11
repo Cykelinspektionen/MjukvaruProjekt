@@ -233,12 +233,13 @@ class AddBike extends React.Component {
   setServerResponse(response) {
     // console.log(response); // <- Used for checking the structure of the ML-response, please leave it until it's been testsed on live! :)
     const { bikeData } = this.state;
+
+    if (response.bikefound === false) {
+      Alert.alert('No bicycle found!\nTry again with a new image.');
+      return;
+    }
     // For this to work the response from the server CAN'T have any nestled attrbiutes!
     Object.keys(response).forEach((key) => {
-      if (key === 'lamp') {
-        // Has to be left in until back-end changes the key "lamp" to "light"!
-        bikeData.keywords.light = response[key] ? 1 : 0;
-      }
       if (key === 'frame') {
         const frameKey = response[key];
         switch (frameKey) {
@@ -254,10 +255,6 @@ class AddBike extends React.Component {
           default:
             console.log(`Unknown key: ${frameKey}`);
             break;
-        }
-      } else if (key === 'bikeFound') {
-        if (!response[key]) {
-          console.log('There was NOT a bike in the picture!');
         }
       } else if (key === 'color') {
         bikeData.color = response[key];

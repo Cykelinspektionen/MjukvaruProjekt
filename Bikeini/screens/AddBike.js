@@ -92,15 +92,6 @@ const styles = StyleSheet.create({
   greenButton: {
     backgroundColor: '#44ccad',
     borderRadius: 10,
-    // ios
-    shadowOpacity: 0.6,
-    shadowRadius: 3,
-    shadowOffset: {
-      height: 0,
-      width: 0,
-    },
-    // android
-    elevation: 5,
   },
   greenButtonText: {
     color: 'white',

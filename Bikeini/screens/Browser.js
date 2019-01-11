@@ -26,7 +26,13 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: 'bold',
     alignSelf: 'center',
+    shadowOffset: { width: 1, height: 1 },
+    shadowColor: 'white',
+    shadowOpacity: 10.0,
     textDecorationLine: 'underline',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowColor: 'white',
+    textShadowRadius: 5,
   },
   filter: {
     alignSelf: 'flex-start',
@@ -284,6 +290,9 @@ class Browser extends React.Component {
           shadowOffset: { width: 1, height: 1 },
           shadowColor: 'white',
           shadowOpacity: 10.0,
+          textShadowOffset: { width: -1, height: 1 },
+          textShadowColor: 'white',
+          textShadowRadius: 5,
         }}
         >
         Filter

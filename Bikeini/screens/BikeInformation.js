@@ -57,12 +57,12 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   head: {
-    fontSize: RF(3.5),
+    fontSize: RF(3.0),
     fontWeight: 'bold',
     width: '100%',
   },
   body: {
-    fontSize: RF(2.5),
+    fontSize: RF(2.1),
     alignSelf: 'flex-start',
   },
 
@@ -668,10 +668,10 @@ class BikeInformation extends React.Component {
         <View style={styles.descriptionContainer}>
           <View style={styles.colFlex}>
             <View style={[styles.headContainer, styles.rowFlex]}>
-              <Text style={styles.head} adjustsFontSizeToFit>{title}</Text>
+              <Text style={styles.head}>{title}</Text>
             </View>
             <View style={styles.rowFlex}>
-              <Text style={styles.body} adjustsFontSizeToFit>
+              <Text style={styles.body}>
                 {city}
                 {', '}
                 {neighborhood}
@@ -680,18 +680,17 @@ class BikeInformation extends React.Component {
             </View>
             <Text
               style={styles.body}
-              adjustsFontSizeToFit
             >
               {description}
             </Text>
-            <Text style={styles.body} adjustsFontSizeToFit>
+            <Text style={styles.body}>
               {brand}
               {newLine}
               {model}
               {comma}
               {color}
             </Text>
-            <Text style={styles.body} adjustsFontSizeToFit>
+            <Text style={styles.body}>
               Frame number:
               {' '}
               {frameNumber}

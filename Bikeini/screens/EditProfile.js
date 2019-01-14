@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   requestButton: {
     marginTop: 35,
-    backgroundColor: '#74C3AE',
+    backgroundColor: '#44ccad',
   },
   removeButton: {
     alignItems: 'center',

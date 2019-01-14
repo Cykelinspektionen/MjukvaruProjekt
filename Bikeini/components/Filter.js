@@ -33,19 +33,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 120,
     height: 35,
-    borderWidth: 1,
-    borderColor: 'black',
     borderRadius: 10,
     backgroundColor: '#44ccad',
-    // ios
-    shadowOpacity: 0.6,
-    shadowRadius: 3,
-    shadowOffset: {
-      height: 0,
-      width: 0,
-    },
-    // android
-    elevation: 5,
   },
   filterButtonsText: {
     textAlignVertical: 'center',

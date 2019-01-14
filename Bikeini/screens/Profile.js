@@ -83,9 +83,9 @@ const styles = StyleSheet.create({
   },
   greenButton: {
     backgroundColor: '#44ccad',
-    borderRadius: 10,
+    borderRadius: 8,
     borderColor: 'black',
-    borderWidth: 1,
+    borderWidth: 1.25,
   },
   greenButtonText: {
     color: 'white',
@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     flex: 0.075,
-    borderRadius: 5,
     margin: 5,
     flexDirection: 'row',
   },
@@ -105,15 +104,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 2,
-    // ios
-    shadowOpacity: 0.6,
-    shadowRadius: 3,
-    shadowOffset: {
-      height: 0,
-      width: 0,
-    },
-    // android
-    elevation: 5,
   },
   actionButton: {
     backgroundColor: '#00b5ec',

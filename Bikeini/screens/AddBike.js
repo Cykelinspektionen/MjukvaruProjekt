@@ -357,6 +357,16 @@ class AddBike extends React.Component {
     } else {
       uploadBikeToServer(addBikeState.imgToUploadUri, bikeData, authState.jwt[0]);
     }
+
+    let resetBikeData = bikeData;
+    resetBikeData.title = '';
+    resetBikeData.brand = '';
+    resetBikeData.color = '';
+    resetBikeData.model = '';
+    resetBikeData.frame_number = '';
+    resetBikeData.antitheft_code = '';
+    resetBikeData.description = '';
+    this.setState({bikeData: resetBikeData});
   }
 
   onBackButtonPressAndroid = () => true;

@@ -41,7 +41,7 @@ const addBikeReducers = (state = ADD_BIKE_STATE, action) => {
       };
     case UPLOAD_IMG_SUCCESS:
       return {
-        ...state, uploadingImg: false, imgUploaded: true, uploadDisabled: true,
+        ...state, uploadingImg: false, imgUploaded: true, uploadDisabled: false,
       };
     case UPLOAD_BIKE_BEGIN:
       return {

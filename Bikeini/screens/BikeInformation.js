@@ -674,32 +674,35 @@ class BikeInformation extends React.Component {
         <View style={styles.imageContainer}>
           <Image style={styles.image} resizeMode="contain" resizeMethod="scale" source={imgSource} />
         </View>
-        <View style={styles.descriptionContainer}>
-          <View style={styles.colFlex}>
-            <View style={[styles.headContainer, styles.rowFlex]}>
-              <Text style={styles.head}>{title}</Text>
-            </View>
-            <View style={styles.rowFlex}>
-              <Text style={styles.body}>
-                {city}
-                {', '}
-                {neighborhood}
-              </Text>
-              {positionButton}
-            </View>
-            <Text
-              style={styles.body}
-            >
-              {description}
-            </Text>
-            <Text style={styles.body}>
-              {brand}
-              {newLine}
-              {model}
-              {comma}
-              {color}
-            </Text>
-            <Text style={styles.body}>
+        {!keyBoardVisible
+          ? (
+            <View style={styles.descriptionContainer}>
+              <View style={styles.colFlex}>
+                <View style={[styles.headContainer, styles.rowFlex]}>
+                  <Text style={styles.head} adjustsFontSizeToFit>{title}</Text>
+                </View>
+                <View style={styles.rowFlex}>
+                  <Text style={styles.body} adjustsFontSizeToFit>
+                    {city}
+                    {', '}
+                    {neighborhood}
+                  </Text>
+                  {positionButton}
+                </View>
+                <Text
+                  style={styles.body}
+                  adjustsFontSizeToFit
+                >
+                  {description}
+                </Text>
+                <Text style={styles.body} adjustsFontSizeToFit>
+                  {brand}
+                  {newLine}
+                  {model}
+                  {comma}
+                  {color}
+                </Text>
+                <Text style={styles.body} adjustsFontSizeToFit>
               Frame number:
                   {' '}
                   {frameNumber}
@@ -707,6 +710,8 @@ class BikeInformation extends React.Component {
                 {foundButton}
               </View>
             </View>
+          )
+          : null}
         <View style={styles.commentContainer}>
           {list}
         </View>

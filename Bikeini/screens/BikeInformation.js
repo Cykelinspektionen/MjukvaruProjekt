@@ -63,12 +63,12 @@ const styles = StyleSheet.create({
     marginBottom: 1,
   },
   head: {
-    fontSize: RF(3.5),
+    fontSize: RF(3.0),
     fontWeight: 'bold',
     width: '100%',
   },
   body: {
-    fontSize: RF(2.5),
+    fontSize: RF(2.1),
     alignSelf: 'flex-start',
   },
 

@@ -44,6 +44,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '95%',
   },
+  descriptionContainerHidden: {
+    flex: 0,
+    marginLeft: 10,
+    flexDirection: 'row',
+    width: '95%',
+  },
   colFlex: {
     flexDirection: 'column',
     flex: 1,
@@ -203,7 +209,7 @@ class BikeInformation extends React.Component {
       refresh,
       isFetching: false,
       isDialogVisible: false,
-      // keyBoardVisible: false,
+      keyBoardVisible: false,
     };
 
     this.editCommentId = 0;
@@ -623,8 +629,12 @@ class BikeInformation extends React.Component {
       });
   }
 
+  handleKeyboard = (keyboardState, keyboardSpace) => {
+    this.setState({ keyBoardVisible: keyboardState });
+  }
+
   render() {
-    const { bikeData, isDialogVisible } = this.state;
+    const { bikeData, isDialogVisible, keyBoardVisible } = this.state;
     const {
       title, location, description, brand, color, frameNumber, model,
     } = bikeData;
@@ -652,7 +662,6 @@ class BikeInformation extends React.Component {
         </TouchableOpacity>
       );
     }
-
     return (
       <View style={styles.container}>
         <DialogInput
@@ -692,17 +701,17 @@ class BikeInformation extends React.Component {
             </Text>
             <Text style={styles.body}>
               Frame number:
-              {' '}
-              {frameNumber}
-            </Text>
-            {foundButton}
-          </View>
-        </View>
+                  {' '}
+                  {frameNumber}
+                </Text>
+                {foundButton}
+              </View>
+            </View>
         <View style={styles.commentContainer}>
           {list}
         </View>
         {commentField}
-        <KeyboardSpacer /* onToggle={this.handleKeyboard} *//>
+        <KeyboardSpacer onToggle={this.handleKeyboard} />
       </View>
     );
   }
